@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "286245196387",
+    "project_id": "deveres-faa4f",
+    "storage_bucket": "deveres-faa4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286245196387:android:d811660d7091134660de56",
+        "android_client_info": {
+          "package_name": "com.cronolab.cronolab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286245196387-8kg2q07e1l4vbjf4h91o19du5i5bdi2m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cronolab.cronolab",
+            "certificate_hash": "d352c2b6f5e3f96ce891c9ece021dc5fd389c7a1"
+          }
+        },
+        {
+          "client_id": "286245196387-dpnqdg22vidq6a00qddulmudr30t5dr1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADokojB6V778BvQvL5kFXcrKUFFobSArc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286245196387-dpnqdg22vidq6a00qddulmudr30t5dr1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cronolab.cronolab"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286245196387:android:822f5950a61beb3b60de56",
+        "android_client_info": {
+          "package_name": "com.example.deveres"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286245196387-u3pl2avi0g2t8ub2if44rns9gkup74d7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.deveres",
+            "certificate_hash": "d352c2b6f5e3f96ce891c9ece021dc5fd389c7a1"
+          }
+        },
+        {
+          "client_id": "286245196387-dpnqdg22vidq6a00qddulmudr30t5dr1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADokojB6V778BvQvL5kFXcrKUFFobSArc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286245196387-dpnqdg22vidq6a00qddulmudr30t5dr1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cronolab.cronolab"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
