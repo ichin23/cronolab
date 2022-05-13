@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/turmasProvider.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +19,7 @@ class DeverTile extends StatefulWidget {
 class _DeverTileState extends State<DeverTile> {
   @override
   Widget build(BuildContext context) {
-    var turmas = Provider.of(context, listen: false);
+    var turmas = Provider.of<TurmasProvider>(context, listen: false);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
@@ -36,6 +37,11 @@ class _DeverTileState extends State<DeverTile> {
     return GestureDetector(
       onTapDown: (tapDetail) {
         tapDetails = tapDetail;
+        print(DateTime.now().year);
+        print(DateTime.now().month);
+        print(data.day == DateTime.now().day);
+
+        print(data.difference(DateTime.now()).inDays);
       },
       onLongPress: () {
         showMenu(

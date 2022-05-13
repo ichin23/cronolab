@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cronolab/modules/dever/cadastraDever.dart';
+import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/turmasProvider.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: primary,
       systemNavigationBarColor: primary,
@@ -53,133 +57,207 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(slivers: [
-        SliverAppBar(
-          leading: IconButton(
-              onPressed: () {
-                scaffoldKey.currentState!.openDrawer();
-              },
-              icon: const Icon(Icons.menu, color: Colors.black26)),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10))),
-          backgroundColor: const Color(0xffB8DCFF),
-          elevation: 0,
-          centerTitle: true,
-          toolbarHeight: 70,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/perfil");
-                },
-                icon: const Icon(Icons.person, color: Colors.black26))
-          ],
-          title: GestureDetector(
-              onDoubleTap: _incrementCounter,
-              onTap: () {
-                // print(turmas.turmaAtual!.isAdmin);
-              },
-              onLongPress: () async {},
-              child: Text(
-                frases[_counter],
-                // (turmas.turmaAtual != null
-                //     ? " - ${turmas.turmaAtual!.nome.toString()}"
-                //     : ""),
-                style: const TextStyle(color: Colors.black26),
-              )),
-        ),
-        // SliverPadding(
-        //   padding: const EdgeInsets.all(10),
-        //   // sliver: SliverGrid(
-        //   //     gridDelegate:
-        //   //         const SliverGridDelegateWithFixedCrossAxisCount(
-        //   //             childAspectRatio: 1 / 1.7,
-        //   //             crossAxisCount: kIsWeb ? 5 : 2,
-        //   //             crossAxisSpacing: 5,
-        //   //             mainAxisSpacing: 5),
-        //   //     delegate: SliverChildBuilderDelegate(
-        //   //       (context, i) => DeverTile(list![i].data(),
-        //   //           notifyParent: refresh),
-        //   //       childCount: list!.length,
-        //   //     )),
-        // )
-      ]),
-    );
-    // return Consumer(builder: (context, turmas, _) {
-    //   if (turmas.turmaAtual != null) {
-    //     return FutureBuilder<List<QueryDocumentSnapshot<Dever>>?>(
-    //       future: turmas.turmaAtual!.getAtividades(),
-    //       builder: (context, snapshot) {
-    //         if (snapshot.connectionState == ConnectionState.done &&
-    //             snapshot.hasData) {
-    //           var list = snapshot.data;
-    //           return Consumer<TurmasProvider>(
-    //             builder: (context, turmas, _) =>
-    //                 CustomScrollView(slivers: [
-    //               SliverAppBar(
-    //                 leading: IconButton(
-    //                     onPressed: () {
-    //                       widget.scaffoldKey.currentState!.openDrawer();
-    //                     },
-    //                     icon: const Icon(Icons.menu,
-    //                         color: Colors.black26)),
-    //                 shape: const RoundedRectangleBorder(
-    //                     borderRadius: BorderRadius.only(
-    //                         bottomLeft: Radius.circular(10),
-    //                         bottomRight: Radius.circular(10))),
-    //                 backgroundColor: const Color(0xffB8DCFF),
-    //                 elevation: 0,
-    //                 centerTitle: true,
-    //                 toolbarHeight: 70,
-    //                 actions: [
-    //                   IconButton(
-    //                       onPressed: () {
-    //                         Navigator.pushNamed(context, "/perfil");
-    //                       },
-    //                       icon: const Icon(Icons.person,
-    //                           color: Colors.black26))
-    //                 ],
-    //                 title: GestureDetector(
-    //                     onDoubleTap: _incrementCounter,
-    //                     onTap: () {
-    //                       print(turmas.turmaAtual!.isAdmin);
-    //                     },
-    //                     onLongPress: () async {},
-    //                     child: Text(
-    //                       frases[_counter] +
-    //                           (turmas.turmaAtual != null
-    //                               ? " - ${turmas.turmaAtual!.nome.toString()}"
-    //                               : ""),
-    //                       style: const TextStyle(color: Colors.black26),
-    //                     )),
-    //               ),
-    //               SliverPadding(
-    //                 padding: const EdgeInsets.all(10),
-    //                 sliver: SliverGrid(
-    //                     gridDelegate:
-    //                         const SliverGridDelegateWithFixedCrossAxisCount(
-    //                             childAspectRatio: 1 / 1.7,
-    //                             crossAxisCount: kIsWeb ? 5 : 2,
-    //                             crossAxisSpacing: 5,
-    //                             mainAxisSpacing: 5),
-    //                     delegate: SliverChildBuilderDelegate(
-    //                       (context, i) => DeverTile(list![i].data(),
-    //                           notifyParent: refresh),
-    //                       childCount: list!.length,
-    //                     )),
-    //               )
-    //             ]),
-    //           );
-    //         } else if (snapshot.hasError) {}
-    //         return const Center(child: CircularProgressIndicator());
-    //       },
-    //     );
-    //   } else {
-    //     turmas.getTurmas();
-    //     return Container();
-    //   }
-    // });
+    var width = MediaQuery.of(context).size.width;
+    print(width);
+    return Consumer<TurmasProvider>(builder: (context, turmas, _) {
+      if (turmas.turmaAtual == null) {
+        turmas.getTurmas();
+        return Container();
+      }
+      return Scaffold(
+          drawer: Drawer(
+            backgroundColor: black,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: ListView.builder(
+                itemCount: turmas.turmas.length,
+                itemBuilder: ((context, index) => ListTile(
+                    tileColor:
+                        (turmas.turmaAtual!.id == turmas.turmas[index].id)
+                            ? pretoClaro
+                            : black,
+                    onTap: () {
+                      turmas.changeTurma = turmas.turmas[index];
+                      // value.changeTurma(value.turmas[index]);
+                      // setState(() {});
+                      scaffoldKey.currentState!.openEndDrawer();
+                    },
+                    title: Text(
+                      turmas.turmas[index].nome,
+                      style: const TextStyle(color: white),
+                    )))),
+          ),
+          key: scaffoldKey,
+          backgroundColor: black,
+          body: FutureBuilder<List<QueryDocumentSnapshot<Dever>>?>(
+            future: turmas.turmaAtual!.getAtividades(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                var list = snapshot.data;
+                // print(list);
+                if (snapshot.hasData) {
+                  return CustomScrollView(slivers: [
+                    SliverAppBar(
+                      leading: IconButton(
+                          onPressed: () {
+                            scaffoldKey.currentState!.openDrawer();
+                          },
+                          icon: const Icon(Icons.menu, color: Colors.black26)),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10))),
+                      backgroundColor: const Color(0xffB8DCFF),
+                      elevation: 0,
+                      centerTitle: true,
+                      toolbarHeight: 70,
+                      actions: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/perfil");
+                            },
+                            icon:
+                                const Icon(Icons.person, color: Colors.black26))
+                      ],
+                      title: GestureDetector(
+                          onDoubleTap: _incrementCounter,
+                          onTap: () {
+                            print(turmas.turmaAtual!.isAdmin);
+                          },
+                          onLongPress: () async {},
+                          child: Text(
+                            frases[_counter] +
+                                (turmas.turmaAtual != null
+                                    ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                    : ""),
+                            style: const TextStyle(color: Colors.black26),
+                          )),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.all(10),
+                      sliver: SliverGrid(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: 1 / 1.7,
+                                  crossAxisCount:
+                                      width < 600 ? 2 : (width / 300).round(),
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 5),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, i) => DeverTile(list![i].data(),
+                                notifyParent: refresh),
+                            childCount: list!.length,
+                          )),
+                    )
+                  ]);
+                } else {
+                  return CustomScrollView(slivers: [
+                    SliverAppBar(
+                      leading: IconButton(
+                          onPressed: () {
+                            scaffoldKey.currentState!.openDrawer();
+                          },
+                          icon: const Icon(Icons.menu, color: Colors.black26)),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10))),
+                      backgroundColor: const Color(0xffB8DCFF),
+                      elevation: 0,
+                      centerTitle: true,
+                      toolbarHeight: 70,
+                      actions: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/perfil");
+                            },
+                            icon:
+                                const Icon(Icons.person, color: Colors.black26))
+                      ],
+                      title: GestureDetector(
+                          onDoubleTap: _incrementCounter,
+                          onTap: () {
+                            print(turmas.turmaAtual!.isAdmin);
+                          },
+                          onLongPress: () async {},
+                          child: Text(
+                            frases[_counter] +
+                                (turmas.turmaAtual != null
+                                    ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                    : ""),
+                            style: const TextStyle(color: Colors.black26),
+                          )),
+                    ),
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                      Center(child: Text("Não há tarefas Pendentes!!"))
+                    ])),
+                  ]);
+                }
+              } else {
+                return CustomScrollView(slivers: [
+                  SliverAppBar(
+                    leading: IconButton(
+                        onPressed: () {
+                          scaffoldKey.currentState!.openDrawer();
+                        },
+                        icon: const Icon(Icons.menu, color: Colors.black26)),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10))),
+                    backgroundColor: const Color(0xffB8DCFF),
+                    elevation: 0,
+                    centerTitle: true,
+                    toolbarHeight: 70,
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, "/perfil");
+                          },
+                          icon: const Icon(Icons.person, color: Colors.black26))
+                    ],
+                    title: GestureDetector(
+                        onDoubleTap: _incrementCounter,
+                        onTap: () {
+                          print(turmas.turmaAtual!.isAdmin);
+                        },
+                        onLongPress: () async {},
+                        child: Text(
+                          frases[_counter] +
+                              (turmas.turmaAtual != null
+                                  ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                  : ""),
+                          style: const TextStyle(color: Colors.black26),
+                        )),
+                  ),
+                  SliverList(
+                      delegate: SliverChildListDelegate(
+                          [const Center(child: Text("OCorreu algum ERRO "))]))
+                ]);
+              }
+            },
+          ),
+          floatingActionButton: turmas.turmaAtual != null
+              ? turmas.turmaAtual!.isAdmin
+                  ? FloatingActionButton(
+                      onPressed: () {
+                        cadastra(context, turmas, () {
+                          setState(() {});
+                        });
+                      },
+                      // shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(15)),
+                      child: const Icon(
+                        Icons.add,
+                        color: darkPrimary,
+                      ),
+                      backgroundColor: primary,
+                    )
+                  : null
+              : null);
+    });
+
+    // : Container(color: black));
   }
 }

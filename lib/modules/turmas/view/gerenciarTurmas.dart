@@ -1,4 +1,4 @@
-
+import 'package:cronolab/modules/turmas/turmasProvider.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,8 +26,9 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
     // TurmasProvider turmas = Provider.of<TurmasProvider>(context);
     TextEditingController code = TextEditingController();
     // var auth = Provider.of<Auth>(context);
-    return Consumer(builder: (context, turmas, child) {
+    return Consumer<TurmasProvider>(builder: (context, turmas, child) {
       // print(turmas.turmas);
+      // List turmas = [];
       return Scaffold(
         backgroundColor: black,
         appBar: AppBar(
@@ -46,6 +47,10 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                 itemBuilder: (context, i) => Padding(
                       padding: const EdgeInsets.all(10),
                       child: ListTile(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/turma',
+                                arguments: turmas.turmas[i]);
+                          },
                           trailing: Icon(
                             Icons.settings,
                             color: white,
@@ -106,8 +111,10 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                                 BorderRadius.circular(15)))),
                                 onPressed: () async {
                                   // print("AAAAAAAAAAAAAAAAAAAAA");
-                                  await turmas.enterTurma(code.text, context);
-                                  await turmas.getTurmas();
+                                  TurmasProvider().initTurma(code.text);
+                                  //TODO:
+                                  // await turmas.enterTurma(code.text, context);
+                                  // await turmas.getTurmas();
                                   Navigator.pop(context);
                                   setState(() {});
                                 },

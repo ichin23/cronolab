@@ -32,6 +32,14 @@ class Turma {
   }
 
   addDever(Dever dever) async {
+    await firestoreTurma
+        .doc(id)
+        .collection("deveres")
+        .withConverter<Dever>(
+            fromFirestore: (json, _) => Dever.fromJson(json),
+            toFirestore: (dev, _) => dev.toJson())
+        .doc()
+        .set(dever);
     // await firestoreTurma
     //     .doc(id)
     //     .collection("deveres")
@@ -44,7 +52,34 @@ class Turma {
     // provider.getTurmas();
   }
 
+  Future<List<QueryDocumentSnapshot<Map>>> getMaterias() async {
+    var materias = await firestoreTurma.doc(id).collection("materias").get();
+    return materias.docs;
+  }
+
+  Future addMateria(String nome) async {
+    await firestoreTurma
+        .doc(id)
+        .collection("materias")
+        .doc()
+        .set({"nome": nome});
+  }
+
+  Future update() async {
+    await firestoreTurma.doc(id).update({'nome': nome});
+  }
+
   Future<List<QueryDocumentSnapshot<Dever>>?> getAtividades() async {
+    var deveres = await firestoreTurma
+        .doc(id)
+        .collection("deveres")
+        .withConverter<Dever>(
+            fromFirestore: (json, _) => Dever.fromJson(json),
+            toFirestore: (dev, _) => dev.toJson())
+        .orderBy("data")
+        .get();
+    // print(deveres.docs[0].data().data);
+    return deveres.docs;
     // print("AAAAAAAAAAA" +
     //     (await FirebaseFirestore.instance
     //             .collection("turmas-test")
