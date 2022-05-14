@@ -104,33 +104,19 @@ class _EditarTurmaState extends State<EditarTurma>
               ),
               child: Stack(
                 children: [
-                  FutureBuilder<List<QueryDocumentSnapshot<Map>>>(
-                    future: widget.turma.getMaterias(),
-                    builder: (context, snap) {
-                      if (snap.connectionState == ConnectionState.done) {
-                        if (snap.hasData && snap.data!.length > 0) {
-                          return ListView.builder(
-                            itemCount: snap.data!.length,
-                            itemBuilder: (context, i) => ListTile(
-                                title:
-                                    Text(snap.data![i]["nome"], style: label)),
-                          );
-                        } else {
-                          return Center(
-                            child: Text(
-                              "Nada foi encontrado.......",
-                              style: label,
-                            ),
-                          );
-                        }
-                      } else if (snap.connectionState ==
-                          ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else {
-                        return Center(child: Text("Não encontramos nada"));
-                      }
-                    },
-                  ),
+                  widget.turma.materias.length > 0
+                      ? ListView.builder(
+                          itemCount: widget.turma.materias.length,
+                          itemBuilder: (context, i) => ListTile(
+                              title:
+                                  Text(widget.turma.materias[i], style: label)),
+                        )
+                      : Center(
+                          child: Text(
+                            "Nada foi encontrado.......",
+                            style: label,
+                          ),
+                        ),
                   Positioned(
                       bottom: 10,
                       right: 10,

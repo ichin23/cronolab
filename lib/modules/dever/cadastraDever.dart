@@ -14,6 +14,8 @@ cadastra(
   TextEditingController titulo = TextEditingController();
   TextEditingController materia = TextEditingController();
   TextEditingController pontos = TextEditingController();
+
+  bool mateiraFocus = false;
   // String? senhaField;
   FocusNode tituloFoc = FocusNode();
   FocusNode materiaFoc = FocusNode();
@@ -51,14 +53,19 @@ cadastra(
                               TextFormField(
                                 enabled: true,
                                 style: fonts.white,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.done,
+                                keyboardType: TextInputType.name,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                textInputAction: TextInputAction.next,
                                 focusNode: tituloFoc,
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Digite algum valor";
                                   }
                                   return null;
+                                },
+                                onFieldSubmitted: (value) {
+                                  materiaFoc.requestFocus();
                                 },
                                 controller: titulo,
                                 decoration: InputDecoration(
@@ -72,16 +79,22 @@ cadastra(
                                     )),
                               ),
                               const SizedBox(height: 10),
+
                               TextFormField(
                                 style: fonts.white,
                                 focusNode: materiaFoc,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.done,
+                                keyboardType: TextInputType.name,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                textInputAction: TextInputAction.next,
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Digite algum valor";
                                   }
                                   return null;
+                                },
+                                onChanged: (value) {
+                                  setState(() {});
                                 },
                                 controller: materia,
                                 decoration: InputDecoration(
@@ -93,18 +106,65 @@ cadastra(
                                       borderRadius: BorderRadius.circular(20),
                                     )),
                               ),
+                              SizedBox(height: 5),
+                              // ListTile(
+                              //     title:
+                              //         Text(turmas.turmaAtual!.materias[0])),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Container(
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: white.withOpacity(0.1),
+                                  ),
+                                  child: ListView(
+                                    children: [
+                                      ...turmas.turmaAtual!.materias
+                                          .where((element) =>
+                                              element.startsWith(materia.text))
+                                          .map((e) => ListTile(
+                                              title:
+                                                  Text(e, style: fonts.label),
+                                              onTap: () {
+                                                materia.text = e;
+                                                setState(() {});
+                                              }))
+                                          .toList(),
+                                      turmas.turmaAtual!.materias
+                                                  .where((element) => element
+                                                      .startsWith(materia.text))
+                                                  .length ==
+                                              0
+                                          ? TextButton(
+                                              onPressed: () async {
+                                                await turmas.turmaAtual!
+                                                    .addMateria(materia.text);
+                                                setState(() {});
+                                              },
+                                              child: Text(
+                                                  "Adicionar ${materia.text} à turma"))
+                                          : Container()
+                                    ],
+                                  ),
+                                ),
+                              ),
                               const SizedBox(height: 10),
                               TextFormField(
                                 style: fonts.white,
                                 focusNode: pontosFoc,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(),
-                                textInputAction: TextInputAction.done,
+                                textInputAction: TextInputAction.next,
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Digite algum valor";
                                   }
                                   return null;
+                                },
+                                onFieldSubmitted: (value) {
+                                  pontosFoc.unfocus();
                                 },
                                 controller: pontos,
                                 decoration: InputDecoration(
@@ -118,6 +178,17 @@ cadastra(
                                 ),
                               ),
                               const SizedBox(height: 10),
+                              // DropdownButton<String>(
+                              //     value: "Selecione",
+                              //     items: [
+                              //       DropdownMenuItem<String>(
+                              //           child: Text("Selecione")),
+                              //       ...turmas.turmaAtual!.materias
+                              //           .map((e) => DropdownMenuItem<String>(
+                              //               child: Text(e)))
+                              //           .toList()
+                              //     ],
+                              //     onChanged: (value) {}),
                               Row(
                                 children: [
                                   Icon(Icons.calendar_month, color: white),

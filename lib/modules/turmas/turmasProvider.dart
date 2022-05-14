@@ -65,6 +65,11 @@ class TurmasProvider extends ChangeNotifier {
         turmas.add(turmaData!);
       }
     }
+
+    for (var element in turmas) {
+      await element.getMaterias();
+    }
+    ;
     // value.docs.forEach((element) {
     //   print(element.id);
     //   // turmas.add(element.)

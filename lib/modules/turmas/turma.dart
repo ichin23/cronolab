@@ -9,6 +9,7 @@ class Turma {
   String id;
   bool isAdmin;
   List? deveres;
+  List<String> materias = [];
 
   Turma(
       {required this.nome,
@@ -29,6 +30,14 @@ class Turma {
 
   Map<String, Object?> toJson() {
     return {'nome': nome, 'deveres': deveres};
+  }
+
+  getMaterias() async {
+    var data = await firestoreTurma.doc(id).collection("materias").get();
+    materias.clear();
+    data.docs.forEach((element) {
+      materias.add(element.data()["nome"]);
+    });
   }
 
   addDever(Dever dever) async {
@@ -52,7 +61,7 @@ class Turma {
     // provider.getTurmas();
   }
 
-  Future<List<QueryDocumentSnapshot<Map>>> getMaterias() async {
+  Future<List<QueryDocumentSnapshot<Map>>> getMateriasList() async {
     var materias = await firestoreTurma.doc(id).collection("materias").get();
     return materias.docs;
   }
@@ -63,6 +72,7 @@ class Turma {
         .collection("materias")
         .doc()
         .set({"nome": nome});
+    await getMaterias();
   }
 
   Future update() async {
