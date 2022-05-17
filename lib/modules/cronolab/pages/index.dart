@@ -4,11 +4,13 @@ import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasProvider.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../dever/view/deverTile.dart';
@@ -58,11 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     print(width);
     return Consumer<TurmasProvider>(builder: (context, turmas, _) {
       if (turmas.turmaAtual == null) {
         turmas.getTurmas();
-        return Container();
+        // return Container();
       }
       return Scaffold(
           drawer: Drawer(
@@ -89,113 +92,173 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           key: scaffoldKey,
           backgroundColor: black,
-          body: FutureBuilder<List<QueryDocumentSnapshot<Dever>>?>(
-            future: turmas.turmaAtual!.getAtividades(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                var list = snapshot.data;
-                // print(list);
-                if (snapshot.hasData) {
-                  return CustomScrollView(slivers: [
-                    SliverAppBar(
-                      leading: IconButton(
-                          onPressed: () {
-                            scaffoldKey.currentState!.openDrawer();
-                          },
-                          icon: const Icon(Icons.menu, color: Colors.black26)),
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10))),
-                      backgroundColor: const Color(0xffB8DCFF),
-                      elevation: 0,
-                      centerTitle: true,
-                      toolbarHeight: 70,
-                      actions: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, "/perfil");
-                            },
-                            icon:
-                                const Icon(Icons.person, color: Colors.black26))
-                      ],
-                      title: GestureDetector(
-                          onDoubleTap: _incrementCounter,
-                          onTap: () {
-                            print(turmas.turmaAtual!.isAdmin);
-                          },
-                          onLongPress: () async {},
-                          child: Text(
-                            frases[_counter] +
-                                (turmas.turmaAtual != null
-                                    ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                    : ""),
-                            style: const TextStyle(color: Colors.black26),
-                          )),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(10),
-                      sliver: SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  childAspectRatio: 1 / 1.7,
-                                  crossAxisCount:
-                                      width < 600 ? 2 : (width / 300).round(),
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 5),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, i) => DeverTile(list![i].data(),
-                                notifyParent: refresh),
-                            childCount: list!.length,
-                          )),
-                    )
-                  ]);
-                } else {
-                  return CustomScrollView(slivers: [
-                    SliverAppBar(
-                      leading: IconButton(
-                          onPressed: () {
-                            scaffoldKey.currentState!.openDrawer();
-                          },
-                          icon: const Icon(Icons.menu, color: Colors.black26)),
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10))),
-                      backgroundColor: const Color(0xffB8DCFF),
-                      elevation: 0,
-                      centerTitle: true,
-                      toolbarHeight: 70,
-                      actions: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, "/perfil");
-                            },
-                            icon:
-                                const Icon(Icons.person, color: Colors.black26))
-                      ],
-                      title: GestureDetector(
-                          onDoubleTap: _incrementCounter,
-                          onTap: () {
-                            print(turmas.turmaAtual!.isAdmin);
-                          },
-                          onLongPress: () async {},
-                          child: Text(
-                            frases[_counter] +
-                                (turmas.turmaAtual != null
-                                    ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                    : ""),
-                            style: const TextStyle(color: Colors.black26),
-                          )),
-                    ),
-                    SliverList(
-                        delegate: SliverChildListDelegate([
-                      Center(child: Text("Não há tarefas Pendentes!!"))
-                    ])),
-                  ]);
-                }
-              } else {
-                return CustomScrollView(slivers: [
+          body: turmas.turmaAtual != null
+              ? FutureBuilder<List<QueryDocumentSnapshot<Dever>>?>(
+                  future: turmas.turmaAtual!.getAtividades(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      List<QueryDocumentSnapshot<Dever>>? list = snapshot.data;
+                      // print(list);
+                      if (snapshot.hasData && list!.length > 0) {
+                        print("Lista");
+                        return CustomScrollView(slivers: [
+                          SliverAppBar(
+                            leading: IconButton(
+                                onPressed: () {
+                                  scaffoldKey.currentState!.openDrawer();
+                                },
+                                icon: const Icon(Icons.menu,
+                                    color: Colors.black26)),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            backgroundColor: const Color(0xffB8DCFF),
+                            elevation: 0,
+                            centerTitle: true,
+                            toolbarHeight: 70,
+                            actions: [
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, "/perfil");
+                                  },
+                                  icon: const Icon(Icons.person,
+                                      color: Colors.black26)),
+                              IconButton(
+                                  onPressed: () {
+                                    // Navigator.pushNamed(context, "/perfil");
+                                    // print(OneSignal().ex)
+                                  },
+                                  icon: const Icon(Icons.person,
+                                      color: Colors.black26)),
+                            ],
+                            title: GestureDetector(
+                                onDoubleTap: _incrementCounter,
+                                onTap: () {
+                                  print(turmas.turmaAtual!.isAdmin);
+                                },
+                                onLongPress: () async {},
+                                child: Text(
+                                  frases[_counter] +
+                                      (turmas.turmaAtual != null
+                                          ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                          : ""),
+                                  style: const TextStyle(color: Colors.black26),
+                                )),
+                          ),
+                          SliverPadding(
+                            padding: const EdgeInsets.all(10),
+                            sliver: SliverGrid(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        childAspectRatio: 1 / 1.7,
+                                        crossAxisCount: width < 600
+                                            ? 2
+                                            : (width / 300).round(),
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 5),
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, i) => DeverTile(list![i].data(),
+                                      notifyParent: refresh),
+                                  childCount: list!.length,
+                                )),
+                          )
+                        ]);
+                      } else {
+                        print("Sem tarefa");
+                        return CustomScrollView(slivers: [
+                          SliverAppBar(
+                            leading: IconButton(
+                                onPressed: () {
+                                  scaffoldKey.currentState!.openDrawer();
+                                },
+                                icon: const Icon(Icons.menu,
+                                    color: Colors.black26)),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            backgroundColor: const Color(0xffB8DCFF),
+                            elevation: 0,
+                            centerTitle: true,
+                            toolbarHeight: 70,
+                            actions: [
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, "/perfil");
+                                  },
+                                  icon: const Icon(Icons.person,
+                                      color: Colors.black26))
+                            ],
+                            title: GestureDetector(
+                                onDoubleTap: _incrementCounter,
+                                onTap: () {
+                                  print(turmas.turmaAtual!.isAdmin);
+                                },
+                                onLongPress: () async {},
+                                child: Text(
+                                  frases[_counter] +
+                                      (turmas.turmaAtual != null
+                                          ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                          : ""),
+                                  style: const TextStyle(color: Colors.black26),
+                                )),
+                          ),
+                          SliverList(
+                              delegate: SliverChildListDelegate([
+                            Center(child: Text("Não há tarefas Pendentes!!"))
+                          ])),
+                        ]);
+                      }
+                    } else {
+                      print("Erro");
+                      return CustomScrollView(slivers: [
+                        SliverAppBar(
+                          leading: IconButton(
+                              onPressed: () {
+                                scaffoldKey.currentState!.openDrawer();
+                              },
+                              icon: const Icon(Icons.menu,
+                                  color: Colors.black26)),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10))),
+                          backgroundColor: const Color(0xffB8DCFF),
+                          elevation: 0,
+                          centerTitle: true,
+                          toolbarHeight: 70,
+                          actions: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "/perfil");
+                                },
+                                icon: const Icon(Icons.person,
+                                    color: Colors.black26))
+                          ],
+                          title: GestureDetector(
+                              onDoubleTap: _incrementCounter,
+                              onTap: () {
+                                print(turmas.turmaAtual!.isAdmin);
+                              },
+                              onLongPress: () async {},
+                              child: Text(
+                                frases[_counter] +
+                                    (turmas.turmaAtual != null
+                                        ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                        : ""),
+                                style: const TextStyle(color: Colors.black26),
+                              )),
+                        ),
+                        SliverList(
+                            delegate: SliverChildListDelegate([
+                          const Center(child: Text("Ocorreu algum ERRO "))
+                        ]))
+                      ]);
+                    }
+                  },
+                )
+              : CustomScrollView(slivers: [
                   SliverAppBar(
                     leading: IconButton(
                         onPressed: () {
@@ -232,12 +295,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         )),
                   ),
                   SliverList(
-                      delegate: SliverChildListDelegate(
-                          [const Center(child: Text("OCorreu algum ERRO "))]))
-                ]);
-              }
-            },
-          ),
+                      delegate: SliverChildListDelegate([
+                    Container(
+                      height: height - 70 - MediaQuery.of(context).padding.top,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text("Cadastre turmas antes de usar",
+                                style: fonts.label),
+                            TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all(darkPrimary)),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed("/minhasTurmas");
+                                },
+                                child: Text("Adionar Turmas",
+                                    style: fonts.buttonText)),
+                          ]),
+                    ),
+                  ]))
+                ]),
           floatingActionButton: turmas.turmaAtual != null
               ? turmas.turmaAtual!.isAdmin
                   ? FloatingActionButton(

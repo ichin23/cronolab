@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -47,8 +49,16 @@ class _LoginPageState extends State<LoginPage> {
                   );
 
                   // Once signed in, return the UserCredential
-                  await FirebaseAuth.instance.signInWithCredential(credential);
 
+                  await FirebaseAuth.instance.signInWithCredential(credential);
+                  FirebaseFirestore.instance
+                      .collection("users-test")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update(
+                          {"email": FirebaseAuth.instance.currentUser!.email});
+
+                  OneSignal().setExternalUserId(
+                      FirebaseAuth.instance.currentUser!.uid);
                   // turmas.getTurmas();
                 },
                 child: Row(
