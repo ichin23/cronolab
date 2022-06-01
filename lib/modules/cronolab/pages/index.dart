@@ -124,13 +124,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   icon: const Icon(Icons.person,
                                       color: Colors.black26)),
-                              IconButton(
-                                  onPressed: () {
-                                    // Navigator.pushNamed(context, "/perfil");
-                                    // print(OneSignal().ex)
-                                  },
-                                  icon: const Icon(Icons.person,
-                                      color: Colors.black26)),
+                              // IconButton(
+                              //     onPressed: () {
+                              //       // Navigator.pushNamed(context, "/perfil");
+                              //       // print(OneSignal().ex)
+                              //     },
+                              //     icon: const Icon(Icons.person,
+                              //         color: Colors.black26)),
                             ],
                             title: GestureDetector(
                                 onDoubleTap: _incrementCounter,
@@ -158,9 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisSpacing: 5,
                                         mainAxisSpacing: 5),
                                 delegate: SliverChildBuilderDelegate(
-                                  (context, i) => DeverTile(list![i].data(),
+                                  (context, i) => DeverTile(list[i].data(),
                                       notifyParent: refresh),
-                                  childCount: list!.length,
+                                  childCount: list.length,
                                 )),
                           )
                         ]);
