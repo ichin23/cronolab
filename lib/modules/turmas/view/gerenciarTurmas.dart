@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

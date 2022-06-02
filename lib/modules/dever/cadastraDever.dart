@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:google_fonts/google_fonts.dart';
@@ -279,12 +279,12 @@ cadastra(
                                       //     .id);
                                       await turmas.turmaAtual!.addDever(
                                         Dever(
-                                            data: Timestamp.fromDate(DateTime(
+                                            data: DateTime(
                                                 dia!.year,
                                                 dia!.month,
                                                 dia!.day,
                                                 hora!.hour,
-                                                hora!.minute)),
+                                                hora!.minute),
                                             materia: materia.text,
                                             title: titulo.text,
                                             pontos: double.parse(pontos.text)),

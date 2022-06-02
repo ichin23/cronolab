@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/cronolab/pages/index.dart';
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/modules/user/view/perfil.dart';

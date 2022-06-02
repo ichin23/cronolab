@@ -182,12 +182,12 @@ cadastra(BuildContext context, var turmas, Function() setState) async {
                                       //     .id);
                                       await turmas.turmaAtual!.addDever(
                                           Dever(
-                                              data: Timestamp.fromDate(DateTime(
+                                              data: DateTime(
                                                   dia!.year,
                                                   dia!.month,
                                                   dia!.day,
                                                   hora!.hour,
-                                                  hora!.minute)),
+                                                  hora!.minute),
                                               materia: materia.text,
                                               title: titulo.text,
                                               pontos:

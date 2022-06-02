@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +24,7 @@ class _DeverTileState extends State<DeverTile> {
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
     // final width = MediaQuery.of(context).size.width;
-    var data = widget.dever.data.toDate();
+    var data = widget.dever.data;
     Color corText = data.day == DateTime.now().day &&
             data.month == DateTime.now().month &&
             data.year == DateTime.now().year
@@ -100,7 +100,7 @@ class _DeverTileState extends State<DeverTile> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(dateStr.format(widget.dever.data.toDate()),
+                Text(dateStr.format(widget.dever.data),
                     style: TextStyle(color: corText)),
                 Text(hourStr.format(DateTime(0, 0, 0, data.hour, data.minute)),
                     style: TextStyle(color: corText))
@@ -153,7 +153,7 @@ class Original extends StatelessWidget {
   final Dever dever;
   @override
   Widget build(BuildContext context) {
-    var data = dever.data.toDate();
+    var data = dever.data;
     return ListTile(
       title: Text(dever.title),
       subtitle: Text(dever.materia),

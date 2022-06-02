@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/cadastraDever.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
@@ -10,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../dever/view/deverTile.dart';
@@ -93,11 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
           key: scaffoldKey,
           backgroundColor: black,
           body: turmas.turmaAtual != null
-              ? FutureBuilder<List<QueryDocumentSnapshot<Dever>>?>(
+              ? FutureBuilder<List?>(
                   future: turmas.turmaAtual!.getAtividades(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      List<QueryDocumentSnapshot<Dever>>? list = snapshot.data;
+                      List? list = snapshot.data;
                       // print(list);
                       if (snapshot.hasData && list!.length > 0) {
                         print("Lista");
@@ -158,8 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisSpacing: 5,
                                         mainAxisSpacing: 5),
                                 delegate: SliverChildBuilderDelegate(
-                                  (context, i) => DeverTile(list[i].data(),
-                                      notifyParent: refresh),
+                                  (context, i) =>
+                                      DeverTile(list[i], notifyParent: refresh),
                                   childCount: list.length,
                                 )),
                           )
@@ -321,10 +323,24 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: turmas.turmaAtual != null
               ? turmas.turmaAtual!.isAdmin
                   ? FloatingActionButton(
-                      onPressed: () {
-                        cadastra(context, turmas, () {
-                          setState(() {});
-                        });
+                      onPressed: () async {
+                        var response = await http.put(
+                            Uri.parse(
+                                "https://cronolab-server.herokuapp.com/class/deveres/dever"),
+                            headers: {"Content-Type": "application/json"},
+                            body: jsonEncode({
+                              "turmaID": "2ti",
+                              "data": {
+                                "title": 'test',
+                                "data": DateTime(2022, 07, 24, 23, 59)
+                                    .millisecondsSinceEpoch,
+                                "materia": "testarr",
+                                "pontos": 10
+                              }
+                            }));
+                        // cadastra(context, turmas, () {
+                        //   setState(() {});
+                        // });
                       },
                       // shape: RoundedRectangleBorder(
                       //     borderRadius: BorderRadius.circular(15)),
