@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';

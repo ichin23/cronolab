@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -60,13 +59,16 @@ class _DeverTileState extends State<DeverTile> {
                     style: TextStyle(color: white),
                     textAlign: TextAlign.center),
                 onTap: () async {
-                  await FirebaseFirestore.instance
-                      .collection("turmas-test")
-                      .doc(turmas.turmaAtual!.id)
-                      .collection("deveres")
-                      .doc(widget.dever.id)
-                      .delete()
+                  turmas.turmaAtual!
+                      .deleteDever(widget.dever.id!)
                       .then((value) => widget.notifyParent());
+                  // Delete Dever await FirebaseFirestore.instance
+                  //     .collection("turmas-test")
+                  //     .doc(turmas.turmaAtual!.id)
+                  //     .collection("deveres")
+                  //     .doc(widget.dever.id)
+                  //     .delete()
+                  //     .then((value) => widget.notifyParent());
                 },
               ),
               PopupMenuItem(

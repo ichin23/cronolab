@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';

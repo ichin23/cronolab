@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cronolab/modules/dever/cadastraDever.dart';
-import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -15,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+import '../../dever/cadastraDever.dart';
 import '../../dever/view/deverTile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -63,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    print(width);
+
     return Consumer<TurmasProvider>(builder: (context, turmas, _) {
       if (turmas.turmaAtual == null) {
         turmas.getTurmas();
@@ -100,9 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       List? list = snapshot.data;
-                      // print(list);
-                      if (snapshot.hasData && list!.length > 0) {
-                        print("Lista");
+                      if (snapshot.hasData && list!.isNotEmpty) {
                         return CustomScrollView(slivers: [
                           SliverAppBar(
                             leading: IconButton(
@@ -126,19 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   icon: const Icon(Icons.person,
                                       color: Colors.black26)),
-                              // IconButton(
-                              //     onPressed: () {
-                              //       // Navigator.pushNamed(context, "/perfil");
-                              //       // print(OneSignal().ex)
-                              //     },
-                              //     icon: const Icon(Icons.person,
-                              //         color: Colors.black26)),
                             ],
                             title: GestureDetector(
                                 onDoubleTap: _incrementCounter,
-                                onTap: () {
-                                  print(turmas.turmaAtual!.isAdmin);
-                                },
                                 onLongPress: () async {},
                                 child: Text(
                                   frases[_counter] +
@@ -167,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         ]);
                       } else {
-                        print("Sem tarefa");
                         return CustomScrollView(slivers: [
                           SliverAppBar(
                             leading: IconButton(
@@ -194,9 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                             title: GestureDetector(
                                 onDoubleTap: _incrementCounter,
-                                onTap: () {
-                                  print(turmas.turmaAtual!.isAdmin);
-                                },
+                                onTap: () {},
                                 onLongPress: () async {},
                                 child: Text(
                                   frases[_counter] +
@@ -208,12 +191,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SliverList(
                               delegate: SliverChildListDelegate([
-                            Center(child: Text("Não há tarefas Pendentes!!"))
+                            SizedBox(
+                                height: height -
+                                    70 -
+                                    MediaQuery.of(context).padding.top,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      "Não há tarefas Pendentes!!",
+                                      style: fonts.white,
+                                    ),
+                                  ],
+                                ))
                           ])),
                         ]);
                       }
-                    } else {
-                      print("Erro");
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return CustomScrollView(slivers: [
                         SliverAppBar(
                           leading: IconButton(
@@ -240,9 +236,57 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                           title: GestureDetector(
                               onDoubleTap: _incrementCounter,
-                              onTap: () {
-                                print(turmas.turmaAtual!.isAdmin);
+                              onTap: () {},
+                              onLongPress: () async {},
+                              child: Text(
+                                frases[_counter] +
+                                    (turmas.turmaAtual != null
+                                        ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                        : ""),
+                                style: const TextStyle(color: Colors.black26),
+                              )),
+                        ),
+                        SliverList(
+                            delegate: SliverChildListDelegate([
+                          SizedBox(
+                            height: height -
+                                70 -
+                                MediaQuery.of(context).padding.top,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [const CircularProgressIndicator()]),
+                          ),
+                        ]))
+                      ]);
+                    } else {
+                      return CustomScrollView(slivers: [
+                        SliverAppBar(
+                          leading: IconButton(
+                              onPressed: () {
+                                scaffoldKey.currentState!.openDrawer();
                               },
+                              icon: const Icon(Icons.menu,
+                                  color: Colors.black26)),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10))),
+                          backgroundColor: const Color(0xffB8DCFF),
+                          elevation: 0,
+                          centerTitle: true,
+                          toolbarHeight: 70,
+                          actions: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "/perfil");
+                                },
+                                icon: const Icon(Icons.person,
+                                    color: Colors.black26))
+                          ],
+                          title: GestureDetector(
+                              onDoubleTap: _incrementCounter,
+                              onTap: () {},
                               onLongPress: () async {},
                               child: Text(
                                 frases[_counter] +
@@ -284,9 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                     title: GestureDetector(
                         onDoubleTap: _incrementCounter,
-                        onTap: () {
-                          print(turmas.turmaAtual!.isAdmin);
-                        },
+                        onTap: () {},
                         onLongPress: () async {},
                         child: Text(
                           frases[_counter] +
@@ -303,20 +345,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text("Cadastre turmas antes de usar",
-                                style: fonts.label),
-                            TextButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all(darkPrimary)),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed("/minhasTurmas");
-                                },
-                                child: Text("Adionar Turmas",
-                                    style: fonts.buttonText)),
-                          ]),
+                          children: turmas.loading
+                              ? [CircularProgressIndicator()]
+                              : [
+                                  Text("Cadastre turmas antes de usar",
+                                      style: fonts.label),
+                                  TextButton(
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  darkPrimary)),
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pushNamed("/minhasTurmas");
+                                      },
+                                      child: Text("Adionar Turmas",
+                                          style: fonts.buttonText)),
+                                ]),
                     ),
                   ]))
                 ]),
@@ -324,23 +369,23 @@ class _HomeScreenState extends State<HomeScreen> {
               ? turmas.turmaAtual!.isAdmin
                   ? FloatingActionButton(
                       onPressed: () async {
-                        var response = await http.put(
-                            Uri.parse(
-                                "https://cronolab-server.herokuapp.com/class/deveres/dever"),
-                            headers: {"Content-Type": "application/json"},
-                            body: jsonEncode({
-                              "turmaID": "2ti",
-                              "data": {
-                                "title": 'test',
-                                "data": DateTime(2022, 07, 24, 23, 59)
-                                    .millisecondsSinceEpoch,
-                                "materia": "testarr",
-                                "pontos": 10
-                              }
-                            }));
-                        // cadastra(context, turmas, () {
-                        //   setState(() {});
-                        // });
+                        // var response = await http.put(
+                        // Uri.parse(
+                        //     "https://cronolab-server.herokuapp.com/class/deveres/dever"),
+                        // headers: {"Content-Type": "application/json"},
+                        // body: jsonEncode({
+                        //   "turmaID": "2ti",
+                        //   "data": {
+                        //     "title": 'test',
+                        //     "data": DateTime(2022, 07, 24, 23, 59)
+                        //         .millisecondsSinceEpoch,
+                        //     "materia": "testarr",
+                        //     "pontos": 10
+                        //   }
+                        // }));
+                        cadastra(context, turmas, () {
+                          setState(() {});
+                        });
                       },
                       // shape: RoundedRectangleBorder(
                       //     borderRadius: BorderRadius.circular(15)),

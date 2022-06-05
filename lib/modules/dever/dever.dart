@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Dever {
   // var _firestore = FirebaseFirestore.instance.collection("");
   String title;
@@ -26,7 +24,12 @@ class Dever {
             pontos: double.tryParse(document['pontos'].toString()));
 
   Map<String, Object?> toJson() {
-    return {'title': title, 'materia': materia, 'data': data, 'pontos': pontos};
+    return {
+      'title': title,
+      'materia': materia,
+      'data': data.millisecondsSinceEpoch,
+      'pontos': pontos
+    };
   }
 
   delete() {}

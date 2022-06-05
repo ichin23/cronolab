@@ -1,14 +1,11 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:flutter/material.dart';
-
 class Turma {
-  String _url = "https://cronolab-server.herokuapp.com";
-  var _firestoreTurma = FirebaseFirestore.instance.collection("turmas-test");
+  final String _url = "https://cronolab-server.herokuapp.com";
+
   String nome;
   String id;
   bool isAdmin;
@@ -40,22 +37,33 @@ class Turma {
   set setMaterias(List<dynamic> materiasList) => {materias = materiasList};
 
   getMaterias() async {
-    var data = await _firestoreTurma.doc(id).collection("materias").get();
-    materias.clear();
-    data.docs.forEach((element) {
-      materias.add(element.data()["nome"]);
-    });
+    //TODO: GetMaterias var data = await _firestoreTurma.doc(id).collection("materias").get();
+    // materias.clear();
+    // data.docs.forEach((element) {
+    //   materias.add(element.data()["nome"]);
+    // });
+  }
+
+  Future deleteDever(String idDever) async {
+    await http.delete(Uri.parse(_url + "/class/deveres/dever"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"turmaID": id, "deverID": idDever}));
   }
 
   addDever(Dever dever) async {
-    await _firestoreTurma
-        .doc(id)
-        .collection("deveres")
-        .withConverter<Dever>(
-            fromFirestore: (json, _) => Dever.fromJson(json.data()!),
-            toFirestore: (dev, _) => dev.toJson())
-        .doc()
-        .set(dever);
+    await http.put(Uri.parse(_url + "/class/deveres/dever"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"turmaID": id, "data": dever.toJson()}));
+
+    // Dever await _firestoreTurma
+    //     .doc(id)
+    //     .collection("deveres")
+    //     .withConverter<Dever>(
+    //         fromFirestore: (json, _) => Dever.fromJson(json.data()!),
+    //         toFirestore: (dev, _) => dev.toJson())
+    //     .doc()
+    //     .set(dever);
+
     // await _firestoreTurma
     //     .doc(id)
     //     .collection("deveres")
@@ -68,28 +76,28 @@ class Turma {
     // provider.getTurmas();
   }
 
-  Future<List<QueryDocumentSnapshot<Map>>> getMateriasList() async {
-    var materias = await _firestoreTurma.doc(id).collection("materias").get();
-    return materias.docs;
-  }
+  // Future<List<QueryDocumentSnapshot<Map>>> getMateriasList() async {
+  //   var materias = await _firestoreTurma.doc(id).collection("materias").get();
+  //   return materias.docs;
+  // }
 
   Future addMateria(String nome) async {
-    await _firestoreTurma
-        .doc(id)
-        .collection("materias")
-        .doc()
-        .set({"nome": nome});
+    //TODO:ADD Materia await _firestoreTurma
+    //     .doc(id)
+    //     .collection("materias")
+    //     .doc()
+    //     .set({"nome": nome});
     await getMaterias();
   }
 
   Future update() async {
-    await _firestoreTurma.doc(id).update({'nome': nome});
+    //TODO:Update Materia await _firestoreTurma.doc(id).update({'nome': nome});
   }
 
   Future<List?> getAtividades() async {
     var response = await http
         .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
-    print(response.body);
+    // print(response.body);
     var deveresJson = jsonDecode(response.body);
     deveres = [];
     for (var dever in deveresJson) {

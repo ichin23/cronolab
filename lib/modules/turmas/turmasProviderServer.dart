@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +9,13 @@ class TurmasProvider extends ChangeNotifier {
   String url = "https://cronolab-server.herokuapp.com";
   List<Turma> turmas = [];
   Turma? turmaAtual;
-  var firestoreTurma = FirebaseFirestore.instance
-      .collection("turmas-test")
-      .withConverter(
-          fromFirestore: (snap, _) => Turma.fromJson(snap.data()!),
-          toFirestore: (Turma turma, _) => turma.toJson());
-  var firestoreUsers = FirebaseFirestore.instance.collection("users-test");
+  bool loading = false;
+  // var firestoreTurma = FirebaseFirestore.instance
+  //     .collection("turmas-test")
+  //     .withConverter(
+  //         fromFirestore: (snap, _) => Turma.fromJson(snap.data()!),
+  //         toFirestore: (Turma turma, _) => turma.toJson());
+  // var firestoreUsers = FirebaseFirestore.instance.collection("users-test");
 
   TurmasProvider() {
     // getTurmas();
@@ -49,6 +49,8 @@ class TurmasProvider extends ChangeNotifier {
   }
 
   getTurmas() async {
+    loading = true;
+    // notifyListeners();
     var response = await http.get(Uri.parse(url + "/users/turmas"), headers: {
       "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
     });
@@ -64,7 +66,9 @@ class TurmasProvider extends ChangeNotifier {
       turmas.add(turmaAdd);
     }
     turmaAtual = turmas[0];
-    print(turmasJson);
+    loading = false;
+
+    // print(turmasJson);
     // var value = await firestoreUsers
     //     .doc(FirebaseAuth.instance.currentUser!.uid)
     //     .collection("turmas")
