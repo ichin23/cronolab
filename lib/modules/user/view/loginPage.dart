@@ -8,6 +8,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../shared/fonts.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
 
@@ -38,28 +40,49 @@ class _LoginPageState extends State<LoginPage> {
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))))),
                 onPressed: () async {
-                  final GoogleSignInAccount? account =
-                      await GoogleSignIn().signIn();
-                  final GoogleSignInAuthentication? googleAuth =
-                      await account?.authentication;
-                  // Create a new credential
-                  final credential = GoogleAuthProvider.credential(
-                    accessToken: googleAuth?.accessToken,
-                    idToken: googleAuth?.idToken,
-                  );
+                  try {
+                    final GoogleSignInAccount? account =
+                        await GoogleSignIn().signIn();
+                    final GoogleSignInAuthentication? googleAuth =
+                        await account?.authentication;
+                    // Create a new credential
+                    final credential = GoogleAuthProvider.credential(
+                      accessToken: googleAuth?.accessToken,
+                      idToken: googleAuth?.idToken,
+                    );
 
-                  // Once signed in, return the UserCredential
+                    // Once signed in, return the UserCredential
 
-                  await FirebaseAuth.instance.signInWithCredential(credential);
-                  FirebaseFirestore.instance
-                      .collection("users-test")
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .update(
-                          {"email": FirebaseAuth.instance.currentUser!.email});
+                    await FirebaseAuth.instance
+                        .signInWithCredential(credential);
+                    FirebaseFirestore.instance
+                        .collection("users-test")
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update({
+                      "email": FirebaseAuth.instance.currentUser!.email
+                    });
 
-                  OneSignal().setExternalUserId(
-                      FirebaseAuth.instance.currentUser!.uid);
-                  // turmas.getTurmas();
+                    OneSignal().setExternalUserId(
+                        FirebaseAuth.instance.currentUser!.uid);
+                    // turmas.getTurmas();
+                  } catch (e) {
+                    print(e);
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: Text("Erro", style: label),
+                              content:
+                                  Text("Ocorreu um erro ao realizar o login"),
+                              backgroundColor: darkPrimary,
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("OK"))
+                              ],
+                            ));
+                  }
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
