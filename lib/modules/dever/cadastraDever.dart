@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
+import '../materia/materia.dart';
+
 DateFormat dateStr = DateFormat("dd/MM");
 cadastra(
     BuildContext context, TurmasProvider turmas, Function() setState) async {
@@ -13,9 +15,11 @@ cadastra(
   TextEditingController titulo = TextEditingController();
   TextEditingController materia = TextEditingController();
   TextEditingController pontos = TextEditingController();
+  bool loading = false;
 
   bool mateiraFocus = false;
   // String? senhaField;
+  Materia? materiaSelect;
   FocusNode tituloFoc = FocusNode();
   FocusNode materiaFoc = FocusNode();
   FocusNode pontosFoc = FocusNode();
@@ -87,8 +91,8 @@ cadastra(
                                     TextCapitalization.sentences,
                                 textInputAction: TextInputAction.next,
                                 validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Digite algum valor";
+                                  if (value!.isEmpty || materiaSelect == null) {
+                                    return "Selecione alguma matéria";
                                   }
                                   return null;
                                 },
@@ -118,26 +122,35 @@ cadastra(
                                   ),
                                   child: ListView(
                                     children: [
-                                      ...turmas.turmaAtual!.materias
-                                          .where((element) =>
-                                              element.startsWith(materia.text))
+                                      ...(turmas.turmaAtual!.materias)
+                                          .where((Materia element) => element
+                                              .nome
+                                              .toLowerCase()
+                                              .startsWith(
+                                                  materia.text.toLowerCase()))
                                           .map((e) => ListTile(
-                                              title:
-                                                  Text(e, style: fonts.label),
+                                              title: Text(e.nome,
+                                                  style: fonts.label),
                                               onTap: () {
-                                                materia.text = e;
+                                                materiaSelect = e;
+                                                materia.text = e.nome;
                                                 setState(() {});
                                               }))
                                           .toList(),
                                       turmas.turmaAtual!.materias
                                                   .where((element) => element
-                                                      .startsWith(materia.text))
+                                                      .nome
+                                                      .toLowerCase()
+                                                      .startsWith(materia.text
+                                                          .toLowerCase()))
                                                   .length ==
                                               0
                                           ? TextButton(
                                               onPressed: () async {
                                                 await turmas.turmaAtual!
                                                     .addMateria(materia.text);
+                                                await turmas.refreshTurma(
+                                                    turmas.turmaAtual!.id);
                                                 setState(() {});
                                               },
                                               child: Text(
@@ -253,63 +266,81 @@ cadastra(
                                       backgroundColor:
                                           MaterialStateProperty.all(
                                               darkPrimary)),
-                                  onPressed: () async {
-                                    if (dia == null || hora == null) {
-                                      await showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: const Text("OK"))
-                                                ],
-                                                title: const Text(
-                                                    "Faltam valores"),
-                                                content: const Text(
-                                                    "Insira a data/hora"),
-                                              ));
-                                      return;
-                                    }
-                                    if (_formKey.currentState!.validate()) {
-                                      // print(turmas
-                                      //     .turmaAtual!
-                                      //     .id);
-                                      await turmas.turmaAtual!.addDever(
-                                        Dever(
-                                            data: DateTime(
-                                                dia!.year,
-                                                dia!.month,
-                                                dia!.day,
-                                                hora!.hour,
-                                                hora!.minute),
-                                            materia: materia.text,
-                                            title: titulo.text,
-                                            pontos: double.parse(pontos.text)),
-                                      );
-                                      // FirestoreApp().getData(Dever(
-                                      //     data: Timestamp
-                                      //         .fromDate(DateTime(
-                                      //             dia!.year,
-                                      //             dia!.month,
-                                      //             dia!.day,
-                                      //             hora!.hour,
-                                      //             hora!
-                                      //                 .minute)),
-                                      //     materia:[]
-                                      //         materia.text,
-                                      //     title: titulo.text,
-                                      //     pontos: double
-                                      //         .parse(pontos
-                                      //             .text)));
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
-                                  child: const Text(
-                                    "Salvar",
-                                    style: TextStyle(color: white),
-                                  ))
+                                  onPressed: loading
+                                      ? null
+                                      : () async {
+                                          if (dia == null || hora == null) {
+                                            await showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      actions: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                "OK"))
+                                                      ],
+                                                      title: const Text(
+                                                          "Faltam valores"),
+                                                      content: const Text(
+                                                          "Insira a data/hora"),
+                                                    ));
+                                            return;
+                                          }
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            setState(() {
+                                              loading = true;
+                                            });
+                                            // print(turmas
+                                            //     .turmaAtual!
+                                            //     .id);
+                                            await turmas.turmaAtual!.addDever(
+                                              Dever(
+                                                  data: DateTime(
+                                                      dia!.year,
+                                                      dia!.month,
+                                                      dia!.day,
+                                                      hora!.hour,
+                                                      hora!.minute),
+                                                  materiaID: materiaSelect!.id,
+                                                  title: titulo.text,
+                                                  pontos: double.parse(
+                                                      pontos.text)),
+                                            );
+                                            // FirestoreApp().getData(Dever(
+                                            //     data: Timestamp
+                                            //         .fromDate(DateTime(
+                                            //             dia!.year,
+                                            //             dia!.month,
+                                            //             dia!.day,
+                                            //             hora!.hour,
+                                            //             hora!
+                                            //                 .minute)),
+                                            //     materia:[]
+                                            //         materia.text,
+                                            //     title: titulo.text,
+                                            //     pontos: double
+                                            //         .parse(pontos
+                                            //             .text)));
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                            Navigator.of(context).pop();
+                                          }
+                                        },
+                                  child: loading
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : const Text(
+                                          "Salvar",
+                                          style: TextStyle(color: white),
+                                        ))
                             ],
                           ),
                         ),

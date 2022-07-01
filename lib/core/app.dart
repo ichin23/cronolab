@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/cronolab/pages/index.dart';
+import 'package:cronolab/modules/dever/view/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../modules/dever/dever.dart';
 import '../modules/turmas/turma.dart';
 import '../modules/turmas/view/gerenciarTurmas.dart';
 
@@ -21,6 +23,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TurmasProvider())
       ],
       child: MaterialApp(
+          title: "Cronolab",
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
@@ -46,6 +49,11 @@ class MainApp extends StatelessWidget {
                     builder: (context) => EditarTurma(
                           turma: arg,
                         ));
+
+              case '/dever':
+                var arg = routeSettings.arguments as Dever;
+                return MaterialPageRoute(
+                    builder: (context) => DeverDetails(arg));
               // default:
               //   return MaterialPageRoute(builder: (context) => MyHomePage());
             }

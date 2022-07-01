@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import '../materia/materia.dart';
+
 class Dever {
   // var _firestore = FirebaseFirestore.instance.collection("");
   String title;
-  String materia;
+  Materia? materia;
+  String? materiaID;
   DateTime data;
   double? pontos;
   String? id;
@@ -11,14 +14,15 @@ class Dever {
   Dever(
       {this.id,
       required this.title,
-      required this.materia,
       required this.data,
+      this.materia,
+      this.materiaID,
       this.pontos});
   Dever.fromJson(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
             title: document['title'].toString(),
-            materia: document['materia'].toString(),
+            materia: Materia.fromJson(document['materia'] as Map),
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
             pontos: double.tryParse(document['pontos'].toString()));
@@ -26,7 +30,7 @@ class Dever {
   Map<String, Object?> toJson() {
     return {
       'title': title,
-      'materia': materia,
+      'materia': materiaID,
       'data': data.millisecondsSinceEpoch,
       'pontos': pontos
     };

@@ -1,19 +1,17 @@
-import 'dart:convert';
-
+import 'package:cronolab/modules/dever/view/deverTile.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
-import 'package:cronolab/modules/user/view/loginPage.dart';
+
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:provider/provider.dart';
 
 import '../../dever/cadastraDever.dart';
-import '../../dever/view/deverTile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -46,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   DateFormat dateStr = DateFormat("dd/MM/yyyy");
   DateFormat hourStr = DateFormat("Hm");
+  Future<List?> getAtv = Future(() => []);
+  bool erro = false;
+  bool loading = true;
 
   @override
   void initState() {
@@ -55,6 +56,25 @@ class _HomeScreenState extends State<HomeScreen> {
       statusBarColor: primary,
       systemNavigationBarColor: primary,
     ));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        var turmas = Provider.of<TurmasProvider>(context, listen: false);
+        setState(() {
+          loading = true;
+        });
+        await turmas.getTurmas();
+        while (turmas.turmaAtual == null) {}
+        getAtv = turmas.turmaAtual!.getAtividades();
+      } catch (e) {
+        setState(() {
+          erro = true;
+          loading = false;
+        });
+      }
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   @override
@@ -64,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Consumer<TurmasProvider>(builder: (context, turmas, _) {
       if (turmas.turmaAtual == null) {
-        turmas.getTurmas();
+        // turmas.getTurmas();
         // return Container();
       }
       return Scaffold(
@@ -80,8 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? pretoClaro
                             : black,
                     onTap: () {
-                      turmas.changeTurma = turmas.turmas[index];
+                      turmas.changeTurma(turmas.turmas[index]);
                       // value.changeTurma(value.turmas[index]);
+                      getAtv = turmas.turmaAtual!.getAtividades();
                       // setState(() {});
                       scaffoldKey.currentState!.openEndDrawer();
                     },
@@ -94,9 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: black,
           body: turmas.turmaAtual != null
               ? FutureBuilder<List?>(
-                  future: turmas.turmaAtual!.getAtividades(),
+                  future: getAtv,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        !erro &&
+                        !loading) {
                       List? list = snapshot.data;
                       if (snapshot.hasData && list!.isNotEmpty) {
                         return CustomScrollView(slivers: [
@@ -106,12 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   scaffoldKey.currentState!.openDrawer();
                                 },
                                 icon: const Icon(Icons.menu,
-                                    color: Colors.black26)),
+                                    color: Colors.black45)),
                             shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10))),
-                            backgroundColor: const Color(0xffB8DCFF),
+                            backgroundColor: primary,
                             elevation: 0,
                             centerTitle: true,
                             toolbarHeight: 70,
@@ -121,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pushNamed(context, "/perfil");
                                   },
                                   icon: const Icon(Icons.person,
-                                      color: Colors.black26)),
+                                      color: Colors.black45)),
                             ],
                             title: GestureDetector(
                                 onDoubleTap: _incrementCounter,
@@ -131,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (turmas.turmaAtual != null
                                           ? " - ${turmas.turmaAtual!.nome.toString()}"
                                           : ""),
-                                  style: const TextStyle(color: Colors.black26),
+                                  style: const TextStyle(color: Colors.black45),
                                 )),
                           ),
                           SliverPadding(
@@ -139,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             sliver: SliverGrid(
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                        childAspectRatio: 1 / 1.7,
+                                        childAspectRatio: 1 / 1,
                                         crossAxisCount: width < 600
                                             ? 2
                                             : (width / 300).round(),
@@ -160,12 +183,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   scaffoldKey.currentState!.openDrawer();
                                 },
                                 icon: const Icon(Icons.menu,
-                                    color: Colors.black26)),
+                                    color: Colors.black45)),
                             shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10))),
-                            backgroundColor: const Color(0xffB8DCFF),
+                            backgroundColor: primary,
                             elevation: 0,
                             centerTitle: true,
                             toolbarHeight: 70,
@@ -175,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pushNamed(context, "/perfil");
                                   },
                                   icon: const Icon(Icons.person,
-                                      color: Colors.black26))
+                                      color: Colors.black45))
                             ],
                             title: GestureDetector(
                                 onDoubleTap: _incrementCounter,
@@ -186,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (turmas.turmaAtual != null
                                           ? " - ${turmas.turmaAtual!.nome.toString()}"
                                           : ""),
-                                  style: const TextStyle(color: Colors.black26),
+                                  style: const TextStyle(color: Colors.black45),
                                 )),
                           ),
                           SliverList(
@@ -209,7 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]);
                       }
                     } else if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
+                            ConnectionState.waiting ||
+                        loading) {
                       return CustomScrollView(slivers: [
                         SliverAppBar(
                           leading: IconButton(
@@ -217,12 +241,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 scaffoldKey.currentState!.openDrawer();
                               },
                               icon: const Icon(Icons.menu,
-                                  color: Colors.black26)),
+                                  color: Colors.black45)),
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
                                   bottomRight: Radius.circular(10))),
-                          backgroundColor: const Color(0xffB8DCFF),
+                          backgroundColor: primary,
                           elevation: 0,
                           centerTitle: true,
                           toolbarHeight: 70,
@@ -232,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.pushNamed(context, "/perfil");
                                 },
                                 icon: const Icon(Icons.person,
-                                    color: Colors.black26))
+                                    color: Colors.black45))
                           ],
                           title: GestureDetector(
                               onDoubleTap: _incrementCounter,
@@ -243,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     (turmas.turmaAtual != null
                                         ? " - ${turmas.turmaAtual!.nome.toString()}"
                                         : ""),
-                                style: const TextStyle(color: Colors.black26),
+                                style: const TextStyle(color: Colors.black45),
                               )),
                         ),
                         SliverList(
@@ -267,12 +291,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 scaffoldKey.currentState!.openDrawer();
                               },
                               icon: const Icon(Icons.menu,
-                                  color: Colors.black26)),
+                                  color: Colors.black45)),
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
                                   bottomRight: Radius.circular(10))),
-                          backgroundColor: const Color(0xffB8DCFF),
+                          backgroundColor: primary,
                           elevation: 0,
                           centerTitle: true,
                           toolbarHeight: 70,
@@ -282,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.pushNamed(context, "/perfil");
                                 },
                                 icon: const Icon(Icons.person,
-                                    color: Colors.black26))
+                                    color: Colors.black45))
                           ],
                           title: GestureDetector(
                               onDoubleTap: _incrementCounter,
@@ -293,12 +317,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     (turmas.turmaAtual != null
                                         ? " - ${turmas.turmaAtual!.nome.toString()}"
                                         : ""),
-                                style: const TextStyle(color: Colors.black26),
+                                style: const TextStyle(color: Colors.black45),
                               )),
                         ),
                         SliverList(
                             delegate: SliverChildListDelegate([
-                          const Center(child: Text("Ocorreu algum ERRO "))
+                          const Center(child: Text("Ocorreu algum ERRO ")),
+                          TextButton(
+                              onPressed: () {
+                                getAtv = turmas.turmaAtual!.getAtividades();
+                              },
+                              child: Text("Refresh"))
                         ]))
                       ]);
                     }
@@ -310,12 +339,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           scaffoldKey.currentState!.openDrawer();
                         },
-                        icon: const Icon(Icons.menu, color: Colors.black26)),
+                        icon: const Icon(Icons.menu, color: Colors.black45)),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10))),
-                    backgroundColor: const Color(0xffB8DCFF),
+                    backgroundColor: primary,
                     elevation: 0,
                     centerTitle: true,
                     toolbarHeight: 70,
@@ -324,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             Navigator.pushNamed(context, "/perfil");
                           },
-                          icon: const Icon(Icons.person, color: Colors.black26))
+                          icon: const Icon(Icons.person, color: Colors.black45))
                     ],
                     title: GestureDetector(
                         onDoubleTap: _incrementCounter,
@@ -335,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               (turmas.turmaAtual != null
                                   ? " - ${turmas.turmaAtual!.nome.toString()}"
                                   : ""),
-                          style: const TextStyle(color: Colors.black26),
+                          style: const TextStyle(color: Colors.black45),
                         )),
                   ),
                   SliverList(
@@ -384,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   }
                         // }));
                         cadastra(context, turmas, () {
-                          setState(() {});
+                          getAtv = turmas.turmaAtual!.getAtividades();
                         });
                       },
                       // shape: RoundedRectangleBorder(

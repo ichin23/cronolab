@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,104 +11,80 @@ class TurmasProvider extends ChangeNotifier {
   List<Turma> turmas = [];
   Turma? turmaAtual;
   bool loading = false;
-  // var firestoreTurma = FirebaseFirestore.instance
-  //     .collection("turmas-test")
-  //     .withConverter(
-  //         fromFirestore: (snap, _) => Turma.fromJson(snap.data()!),
-  //         toFirestore: (Turma turma, _) => turma.toJson());
-  // var firestoreUsers = FirebaseFirestore.instance.collection("users-test");
-
   TurmasProvider() {
     // getTurmas();
   }
 
-  set changeTurma(Turma newTurma) {
+  changeTurma(Turma newTurma) {
     turmaAtual = newTurma;
+    // turmaAtual!.getAtividades();
     notifyListeners();
   }
 
-  initTurma(String code) async {
-    var response = await http.put(Uri.parse(url + "/class"), headers: {
-      "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-    }, body: {
-      "nome": code
-    });
+  refreshTurma(String id) async {
+    print(id);
+    var response = await http.get(
+      Uri.parse(url + "/class?id=$id"),
+      headers: {
+        "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+      },
+    );
 
-    // var doc = firestoreTurma.doc(code);
-    // await doc.set(Turma(id: code, nome: code));
-    // await doc
-    //     .collection("admins")
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .set({});
-    // firestoreUsers
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .collection("turmas")
-    //     .doc(code)
-    //     .set({});
-    getTurmas();
-    // await doc.collection("deveres").doc()
+    Turma newTurma = Turma.fromJson(jsonDecode(response.body));
+    var index = turmas.indexWhere((element) => element.id == id);
+    turmas[index] = newTurma;
+    notifyListeners();
+    // turmas.(, turmas.indexWhere((element) => element.id == id), newTurma) ;
   }
 
-  getTurmas() async {
+  initTurma(String code) async {
+    var response = await http.put(Uri.parse(url + "/class"),
+        headers: {
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid,
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "idTurma": code,
+          "data": {"nome": code}
+        }));
+  }
+
+  Future getTurmas() async {
+    // print("Chamou");
+    print("Pega turma;");
     loading = true;
     // notifyListeners();
-    var response = await http.get(Uri.parse(url + "/users/turmas"), headers: {
-      "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-    });
-    var turmasJson = json.decode(response.body)["turmas"];
-    for (Map<String, dynamic> turma in turmasJson) {
-      var turmaAdd = Turma.fromJson(turma);
-      if (turma["admin"] == true) {
-        turmaAdd.setAdmin();
+    var response = await http.get(
+      Uri.parse(url + "/users/turmas"),
+      headers: {
+        "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+      },
+    );
+    print("OK");
+    var turmasJson = json.decode(response.body)["turmas"] as List;
+    // print(turmasJson);
+    if (turmasJson.isNotEmpty) {
+      turmas.clear();
+      for (Map<String, dynamic> turma in turmasJson) {
+        var turmaAdd = Turma.fromJson(turma);
+        if (turma["admin"] == true) {
+          turmaAdd.setAdmin();
+        }
+        List materias = turma["materias"];
+        List<Materia> listMat = materias.map((mat) {
+          // print(mat);
+          return Materia.fromJson(mat);
+        }).toList();
+        // print(listMat[0].contato);
+
+        turmaAdd.setMaterias = listMat;
+
+        turmas.add(turmaAdd);
       }
-
-      turmaAdd.setMaterias = turma["materias"];
-
-      turmas.add(turmaAdd);
     }
     turmaAtual = turmas[0];
     loading = false;
-
-    // print(turmasJson);
-    // var value = await firestoreUsers
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .collection("turmas")
-    //     // .withConverter(
-    //     //     fromFirestore: (snap, _) => Turma.fromJson(snap),
-    //     //     toFirestore: (Turma turma, _) => turma.toJson())
-    //     .get();
-
-    // for (var turmaId in value.docs) {
-    //   print(turmaId.id);
-    //   var turma = await firestoreTurma.doc(turmaId.id).get();
-    //   print(turma.data());
-    //   if (turma.data() != null) {
-    //     Turma? turmaData = turma.data();
-    //     var isAdmin = await firestoreTurma
-    //         .doc(turmaId.id)
-    //         .collection("admins")
-    //         .doc(FirebaseAuth.instance.currentUser!.uid)
-    //         .get();
-    //     print(isAdmin.data());
-    //     if (isAdmin.exists) {
-    //       turmaData!.setAdmin();
-    //     }
-    //     turmas.add(turmaData!);
-    //   }
-    // }
-
-    // for (var element in turmas) {
-    //   await element.getMaterias();
-    // }
-    // ;
-    // value.docs.forEach((element) {
-    //   print(element.id);
-    //   // turmas.add(element.)
-    // );
-    // if (turmas.length > 0) {
-    //   // print(turmas[0].isAdmin);
-    //   turmaAtual = turmas[0];
-    // }
+    print(turmas);
     notifyListeners();
   }
 }

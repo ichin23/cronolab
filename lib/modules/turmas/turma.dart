@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+
+import '../materia/materia.dart';
 
 class Turma {
   final String _url = "https://cronolab-server.herokuapp.com";
@@ -10,7 +13,7 @@ class Turma {
   String id;
   bool isAdmin;
   List? deveres;
-  List<dynamic> materias = [];
+  List<Materia> materias = [];
 
   Turma(
       {required this.nome,
@@ -34,7 +37,7 @@ class Turma {
     return {'nome': nome, 'deveres': deveres};
   }
 
-  set setMaterias(List<dynamic> materiasList) => {materias = materiasList};
+  set setMaterias(List<Materia> materiasList) => {materias = materiasList};
 
   getMaterias() async {
     //TODO: GetMaterias var data = await _firestoreTurma.doc(id).collection("materias").get();
@@ -42,6 +45,17 @@ class Turma {
     // data.docs.forEach((element) {
     //   materias.add(element.data()["nome"]);
     // });
+  }
+
+  deleteTurma() async {
+    var response = await http.delete(Uri.parse(_url + "/class"),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+        },
+        body: jsonEncode({"turmaID": id}));
+    print(response.body);
+    print(response.statusCode);
   }
 
   Future deleteDever(String idDever) async {
@@ -52,7 +66,10 @@ class Turma {
 
   addDever(Dever dever) async {
     await http.put(Uri.parse(_url + "/class/deveres/dever"),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+        },
         body: jsonEncode({"turmaID": id, "data": dever.toJson()}));
 
     // Dever await _firestoreTurma
@@ -82,11 +99,28 @@ class Turma {
   // }
 
   Future addMateria(String nome) async {
-    //TODO:ADD Materia await _firestoreTurma
-    //     .doc(id)
-    //     .collection("materias")
-    //     .doc()
-    //     .set({"nome": nome});
+    await http.put(
+      Uri.parse(_url + "/class/materia"),
+      body: jsonEncode({
+        "turmaID": id,
+        "data": {"nome": nome}
+      }),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    await getMaterias();
+  }
+
+  Future deleteMateria(String nome) async {
+    await http.delete(
+      Uri.parse(_url + "/class/materia"),
+      body: jsonEncode({
+        "turmaID": id,
+        "materiaID": id,
+      }),
+      headers: {"Content-Type": "application/json"},
+    );
+
     await getMaterias();
   }
 
@@ -95,8 +129,14 @@ class Turma {
   }
 
   Future<List?> getAtividades() async {
-    var response = await http
-        .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
+    late http.Response response;
+    try {
+      response = await http
+          .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
+    } catch (e) {
+      print(e);
+      print(response.body);
+    }
     // print(response.body);
     var deveresJson = jsonDecode(response.body);
     deveres = [];

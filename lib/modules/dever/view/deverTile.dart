@@ -32,15 +32,14 @@ class _DeverTileState extends State<DeverTile> {
             ? const Color(0xFF817938)
             : const Color(0xff3A8138);
     DateFormat dateStr = DateFormat("dd/MM");
+    DateFormat dataStr = DateFormat("dd/MM - HH:mm");
     DateFormat hourStr = DateFormat("Hm");
     return GestureDetector(
       onTapDown: (tapDetail) {
         tapDetails = tapDetail;
-        print(DateTime.now().year);
-        print(DateTime.now().month);
-        print(data.day == DateTime.now().day);
-
-        print(data.difference(DateTime.now()).inDays);
+      },
+      onTap: () {
+        Navigator.pushNamed(context, "/dever", arguments: widget.dever);
       },
       onLongPress: () {
         showMenu(
@@ -102,23 +101,27 @@ class _DeverTileState extends State<DeverTile> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(dateStr.format(widget.dever.data),
-                    style: TextStyle(color: corText)),
-                Text(hourStr.format(DateTime(0, 0, 0, data.hour, data.minute)),
-                    style: TextStyle(color: corText))
+                Text(widget.dever.title,
+                    style: TextStyle(color: corText, fontSize: 17)),
               ]),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  Text(widget.dever.materia!.nome,
+                      style: TextStyle(color: corText, fontSize: 17)),
                   Text(
-                    widget.dever.title,
-                    style: TextStyle(fontSize: 20, color: corText),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(widget.dever.materia, style: TextStyle(color: corText))
+                      (int.parse(widget.dever.pontos
+                                      .toString()
+                                      .split(".")[1]) ==
+                                  0
+                              ? widget.dever.pontos!.toStringAsFixed(0)
+                              : widget.dever.pontos.toString()) +
+                          " pontos",
+                      style: TextStyle(color: corText)),
                 ],
               ),
-
-              Text(" - " + widget.dever.pontos.toString() + " pts",
+              Container(),
+              Text(dataStr.format(widget.dever.data),
                   style: TextStyle(color: corText)),
 
               // Container(
@@ -158,7 +161,7 @@ class Original extends StatelessWidget {
     var data = dever.data;
     return ListTile(
       title: Text(dever.title),
-      subtitle: Text(dever.materia),
+      subtitle: Text(dever.materia!.nome),
       trailing: Text(dever.pontos.toString() + " pts"),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -7,4 +7,6 @@ TextStyle label = GoogleFonts.inter(
     color: colors.white, fontSize: 16, fontWeight: FontWeight.w800);
 TextStyle input = GoogleFonts.inter(
     color: colors.white, fontSize: 14, fontWeight: FontWeight.w600);
+TextStyle inputDever = GoogleFonts.inter(
+    color: colors.white, fontSize: 18, fontWeight: FontWeight.w800);
 TextStyle buttonText = GoogleFonts.inter(color: colors.black);
