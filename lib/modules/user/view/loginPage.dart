@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,14 +52,12 @@ class _LoginPageState extends State<LoginPage> {
 
                     // Once signed in, return the UserCredential
 
-                    await FirebaseAuth.instance
-                        .signInWithCredential(credential);
-                    FirebaseFirestore.instance
-                        .collection("users-test")
-                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                        .update({
-                      "email": FirebaseAuth.instance.currentUser!.email
-                    });
+                  await FirebaseAuth.instance.signInWithCredential(credential);
+                  //TODO: Update Email FirebaseFirestore.instance
+                  //     .collection("users-test")
+                  //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                  //     .update(
+                  //         {"email": FirebaseAuth.instance.currentUser!.email});
 
                     OneSignal().setExternalUserId(
                         FirebaseAuth.instance.currentUser!.uid);

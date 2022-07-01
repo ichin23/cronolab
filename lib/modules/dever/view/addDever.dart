@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+
+import '../../materia/materia.dart';
 
 DateFormat dateStr = DateFormat("dd/MM");
 cadastra(BuildContext context, var turmas, Function() setState) async {
@@ -11,6 +12,7 @@ cadastra(BuildContext context, var turmas, Function() setState) async {
   TextEditingController materia = TextEditingController();
   TextEditingController pontos = TextEditingController();
   // String? senhaField;
+  Materia? materiaSelecionada;
   FocusNode tituloFoc = FocusNode();
   FocusNode materiaFoc = FocusNode();
   FocusNode pontosFoc = FocusNode();
@@ -182,13 +184,13 @@ cadastra(BuildContext context, var turmas, Function() setState) async {
                                       //     .id);
                                       await turmas.turmaAtual!.addDever(
                                           Dever(
-                                              data: Timestamp.fromDate(DateTime(
+                                              data: DateTime(
                                                   dia!.year,
                                                   dia!.month,
                                                   dia!.day,
                                                   hora!.hour,
-                                                  hora!.minute)),
-                                              materia: materia.text,
+                                                  hora!.minute),
+                                              // materiaID: ,
                                               title: titulo.text,
                                               pontos:
                                                   double.parse(pontos.text)),

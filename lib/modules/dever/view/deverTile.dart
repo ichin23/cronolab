@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProvider.dart';
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +23,7 @@ class _DeverTileState extends State<DeverTile> {
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
     // final width = MediaQuery.of(context).size.width;
-    var data = widget.dever.data.toDate();
+    var data = widget.dever.data;
     Color corText = data.day == DateTime.now().day &&
             data.month == DateTime.now().month &&
             data.year == DateTime.now().year
@@ -33,15 +32,14 @@ class _DeverTileState extends State<DeverTile> {
             ? const Color(0xFF817938)
             : const Color(0xff3A8138);
     DateFormat dateStr = DateFormat("dd/MM");
+    DateFormat dataStr = DateFormat("dd/MM - HH:mm");
     DateFormat hourStr = DateFormat("Hm");
     return GestureDetector(
       onTapDown: (tapDetail) {
         tapDetails = tapDetail;
-        print(DateTime.now().year);
-        print(DateTime.now().month);
-        print(data.day == DateTime.now().day);
-
-        print(data.difference(DateTime.now()).inDays);
+      },
+      onTap: () {
+        Navigator.pushNamed(context, "/dever", arguments: widget.dever);
       },
       onLongPress: () {
         showMenu(
@@ -60,13 +58,16 @@ class _DeverTileState extends State<DeverTile> {
                     style: TextStyle(color: white),
                     textAlign: TextAlign.center),
                 onTap: () async {
-                  await FirebaseFirestore.instance
-                      .collection("turmas-test")
-                      .doc(turmas.turmaAtual!.id)
-                      .collection("deveres")
-                      .doc(widget.dever.id)
-                      .delete()
+                  turmas.turmaAtual!
+                      .deleteDever(widget.dever.id!)
                       .then((value) => widget.notifyParent());
+                  // Delete Dever await FirebaseFirestore.instance
+                  //     .collection("turmas-test")
+                  //     .doc(turmas.turmaAtual!.id)
+                  //     .collection("deveres")
+                  //     .doc(widget.dever.id)
+                  //     .delete()
+                  //     .then((value) => widget.notifyParent());
                 },
               ),
               PopupMenuItem(
@@ -100,23 +101,27 @@ class _DeverTileState extends State<DeverTile> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(dateStr.format(widget.dever.data.toDate()),
-                    style: TextStyle(color: corText)),
-                Text(hourStr.format(DateTime(0, 0, 0, data.hour, data.minute)),
-                    style: TextStyle(color: corText))
+                Text(widget.dever.title,
+                    style: TextStyle(color: corText, fontSize: 17)),
               ]),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  Text(widget.dever.materia!.nome,
+                      style: TextStyle(color: corText, fontSize: 17)),
                   Text(
-                    widget.dever.title,
-                    style: TextStyle(fontSize: 20, color: corText),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(widget.dever.materia, style: TextStyle(color: corText))
+                      (int.parse(widget.dever.pontos
+                                      .toString()
+                                      .split(".")[1]) ==
+                                  0
+                              ? widget.dever.pontos!.toStringAsFixed(0)
+                              : widget.dever.pontos.toString()) +
+                          " pontos",
+                      style: TextStyle(color: corText)),
                 ],
               ),
-
-              Text(" - " + widget.dever.pontos.toString() + " pts",
+              Container(),
+              Text(dataStr.format(widget.dever.data),
                   style: TextStyle(color: corText)),
 
               // Container(
@@ -153,10 +158,10 @@ class Original extends StatelessWidget {
   final Dever dever;
   @override
   Widget build(BuildContext context) {
-    var data = dever.data.toDate();
+    var data = dever.data;
     return ListTile(
       title: Text(dever.title),
-      subtitle: Text(dever.materia),
+      subtitle: Text(dever.materia!.nome),
       trailing: Text(dever.pontos.toString() + " pts"),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
