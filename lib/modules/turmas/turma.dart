@@ -40,7 +40,7 @@ class Turma {
   set setMaterias(List<Materia> materiasList) => {materias = materiasList};
 
   getMaterias() async {
-    //TODO: GetMaterias var data = await _firestoreTurma.doc(id).collection("materias").get();
+    // GetMaterias var data = await _firestoreTurma.doc(id).collection("materias").get();
     // materias.clear();
     // data.docs.forEach((element) {
     //   materias.add(element.data()["nome"]);
@@ -133,21 +133,22 @@ class Turma {
     try {
       response = await http
           .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
+      // print(response.body);
+      var deveresJson = jsonDecode(response.body);
+      deveres = [];
+      for (var dever in deveresJson) {
+        if (deveres != null) {
+          deveres!.add(Dever.fromJson(dever));
+        } else {
+          deveres = [Dever.fromJson(dever)];
+        }
+      }
+      return deveres;
     } catch (e) {
       print(e);
       print(response.body);
+      return null;
     }
-    // print(response.body);
-    var deveresJson = jsonDecode(response.body);
-    deveres = [];
-    for (var dever in deveresJson) {
-      if (deveres != null) {
-        deveres!.add(Dever.fromJson(dever));
-      } else {
-        deveres = [Dever.fromJson(dever)];
-      }
-    }
-    return deveres;
     // var deveres = await _firestoreTurma
     //     .doc(id)
     //     .collection("deveres")

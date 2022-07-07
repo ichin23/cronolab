@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_desktop/firebase_auth_desktop.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -51,13 +54,19 @@ class _LoginPageState extends State<LoginPage> {
                     );
 
                     // Once signed in, return the UserCredential
-
-                  await FirebaseAuth.instance.signInWithCredential(credential);
-                  //TODO: Update Email FirebaseFirestore.instance
-                  //     .collection("users-test")
-                  //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                  //     .update(
-                  //         {"email": FirebaseAuth.instance.currentUser!.email});
+                    if (Platform.operatingSystem.toLowerCase() == "linux" ||
+                        Platform.operatingSystem.toLowerCase() == "windows") {
+                      FirebaseAuthDesktop.instance
+                          .signInWithCredential(credential);
+                    } else {
+                      await FirebaseAuth.instance
+                          .signInWithCredential(credential);
+                    }
+                    //TODO: Update Email FirebaseFirestore.instance
+                    //     .collection("users-test")
+                    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                    //     .update(
+                    //         {"email": FirebaseAuth.instance.currentUser!.email});
 
                     OneSignal().setExternalUserId(
                         FirebaseAuth.instance.currentUser!.uid);

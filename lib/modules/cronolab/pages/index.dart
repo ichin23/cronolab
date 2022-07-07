@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/dever/view/deverTile.dart';
+import 'package:cronolab/modules/dever/view/deverTile2.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 
 import 'package:cronolab/shared/colors.dart';
@@ -53,8 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: primary,
-      systemNavigationBarColor: primary,
+      statusBarColor: primary2,
+      systemNavigationBarColor: primary2,
     ));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
                                     bottomRight: Radius.circular(10))),
-                            backgroundColor: primary,
+                            backgroundColor: primary2,
                             elevation: 0,
                             centerTitle: true,
                             toolbarHeight: 70,
@@ -162,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             sliver: SliverGrid(
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                        childAspectRatio: 1 / 1,
+                                        childAspectRatio: 1 / 1.4,
                                         crossAxisCount: width < 600
                                             ? 2
                                             : (width / 300).round(),
@@ -322,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         SliverList(
                             delegate: SliverChildListDelegate([
-                          const Center(child: Text("Ocorreu algum ERRO ")),
+                          const Center(child: Text("Ocorreu algum erro...")),
                           TextButton(
                               onPressed: () {
                                 getAtv = turmas.turmaAtual!.getAtividades();

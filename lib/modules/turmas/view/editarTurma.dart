@@ -114,12 +114,12 @@ class _EditarTurmaState extends State<EditarTurma>
                 children: [
                   widget.turma.materias.isNotEmpty
                       ? ListView.builder(
-                          itemCount: turmas.turmaAtual!.materias.length,
+                          itemCount: widget.turma.materias.length,
                           itemBuilder: (context, i) => ListTile(
                               onTap: () {
                                 editaMateria(
                                     context,
-                                    turmas.turmaAtual!.materias[i],
+                                    widget.turma.materias[i],
                                     widget.turma,
                                     turmas,
                                     () => setState(() {}));
@@ -132,7 +132,7 @@ class _EditarTurmaState extends State<EditarTurma>
                                     //     .remove(widget.turma.materias[i]);
                                     setState(() {});
                                   }),
-                              title: Text(turmas.turmaAtual!.materias[i].nome,
+                              title: Text(widget.turma.materias[i].nome,
                                   style: label)),
                         )
                       : Center(
