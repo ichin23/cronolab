@@ -101,15 +101,22 @@ class _DeverTileState extends State<DeverTile> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(widget.dever.title,
-                    style: TextStyle(color: corText, fontSize: 17)),
+                Text(dateStr.format(widget.dever.data),
+                    style: TextStyle(color: corText, fontSize: 15)),
+                Text(hourStr.format(widget.dever.data),
+                    style: TextStyle(color: corText, fontSize: 15)),
               ]),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Text(widget.dever.title,
+                      style: TextStyle(
+                          color: corText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800)),
                   Text(widget.dever.materia!.nome,
                       style: TextStyle(color: corText, fontSize: 17)),
-                  Text(
+                  /* Text(
                       (int.parse(widget.dever.pontos
                                       .toString()
                                       .split(".")[1]) ==
@@ -117,11 +124,15 @@ class _DeverTileState extends State<DeverTile> {
                               ? widget.dever.pontos!.toStringAsFixed(0)
                               : widget.dever.pontos.toString()) +
                           " pontos",
-                      style: TextStyle(color: corText)),
+                      sty le: TextStyle(color: corText)),*/
                 ],
               ),
               Container(),
-              Text(dataStr.format(widget.dever.data),
+              Text(
+                  (int.parse(widget.dever.pontos.toString().split(".")[1]) == 0
+                          ? widget.dever.pontos!.toStringAsFixed(0)
+                          : widget.dever.pontos.toString()) +
+                      " pontos",
                   style: TextStyle(color: corText)),
 
               // Container(

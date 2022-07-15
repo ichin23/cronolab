@@ -60,7 +60,10 @@ class Turma {
 
   Future deleteDever(String idDever) async {
     await http.delete(Uri.parse(_url + "/class/deveres/dever"),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+        },
         body: jsonEncode({"turmaID": id, "deverID": idDever}));
   }
 

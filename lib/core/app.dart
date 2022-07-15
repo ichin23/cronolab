@@ -25,12 +25,15 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
           title: "Cronolab",
           theme: ThemeData(
+            fontFamily: "Inter",
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
               seedColor: primary,
-              primary: primary,
+              primary: primary2,
             ),
-            primaryColor: primary,
+            primaryColor: primary2,
+
+            //brightness: Brightness.light
             // primarySwatch: Colors.blue,
             // primarySwatch:  primary,
           ),

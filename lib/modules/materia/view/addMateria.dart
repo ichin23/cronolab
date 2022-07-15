@@ -9,6 +9,7 @@ import '../../../shared/fonts.dart' as fonts;
 import '../materia.dart';
 
 addMateria(BuildContext context, String turmaID, Function() setstate) async {
+  bool loading = false;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FocusNode nomeFoc = FocusNode();
   FocusNode profFoc = FocusNode();
@@ -142,6 +143,9 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                                 "https://cronolab-server.herokuapp.com";
                                             if (_formKey.currentState!
                                                 .validate()) {
+                                              setState(() {
+                                                loading = true;
+                                              });
                                               print("OKOK");
                                               var response = await http.put(
                                                   Uri.parse(
@@ -164,7 +168,9 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                               setstate();
                                             }
                                           },
-                                          child: Text("Salvar"))
+                                          child: loading
+                                              ? CircularProgressIndicator()
+                                              : Text("Salvar"))
                                     ])))));
               });
         });

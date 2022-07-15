@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/dever/view/deverTile.dart';
-import 'package:cronolab/modules/dever/view/deverTile2.dart';
+
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 
 import 'package:cronolab/shared/colors.dart';
@@ -39,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  void refresh() {
+  refresh() {
+    getAtv = Provider.of<TurmasProvider>(context, listen: false)
+        .turmaAtual!
+        .getAtividades();
     setState(() {});
   }
 
@@ -52,11 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: primary2,
-      systemNavigationBarColor: primary2,
-    ));
+        systemNavigationBarColor: primary2,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: primary2,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         var turmas = Provider.of<TurmasProvider>(context, listen: false);
@@ -64,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           loading = true;
         });
         await turmas.getTurmas();
-        while (turmas.turmaAtual == null) {}
+
         getAtv = turmas.turmaAtual!.getAtividades();
       } catch (e) {
         setState(() {
@@ -118,9 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? FutureBuilder<List?>(
                   future: getAtv,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        !erro &&
-                        !loading) {
+                    if (snapshot.connectionState == ConnectionState.done) {
                       List? list = snapshot.data;
                       if (snapshot.hasData && list!.isNotEmpty) {
                         return CustomScrollView(slivers: [
@@ -155,7 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (turmas.turmaAtual != null
                                           ? " - ${turmas.turmaAtual!.nome.toString()}"
                                           : ""),
-                                  style: const TextStyle(color: Colors.black45),
+                                  style: const TextStyle(
+                                      color: Colors.black45,
+                                      fontWeight: FontWeight.w800),
                                 )),
                           ),
                           SliverPadding(
@@ -210,7 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       (turmas.turmaAtual != null
                                           ? " - ${turmas.turmaAtual!.nome.toString()}"
                                           : ""),
-                                  style: const TextStyle(color: Colors.black45),
+                                  style: const TextStyle(
+                                      color: Colors.black45,
+                                      fontWeight: FontWeight.w800),
                                 )),
                           ),
                           SliverList(
@@ -224,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(
-                                      "Não há tarefas Pendentes!!",
+                                      "Não há tarefas Pendentes!",
                                       style: fonts.white,
                                     ),
                                   ],
@@ -233,8 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]);
                       }
                     } else if (snapshot.connectionState ==
-                            ConnectionState.waiting ||
-                        loading) {
+                        ConnectionState.waiting) {
                       return CustomScrollView(slivers: [
                         SliverAppBar(
                           leading: IconButton(
@@ -268,7 +274,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     (turmas.turmaAtual != null
                                         ? " - ${turmas.turmaAtual!.nome.toString()}"
                                         : ""),
-                                style: const TextStyle(color: Colors.black45),
+                                style: const TextStyle(
+                                    color: Colors.black45,
+                                    fontWeight: FontWeight.w800),
                               )),
                         ),
                         SliverList(
@@ -280,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.max,
-                                children: [const CircularProgressIndicator()]),
+                                children: const [CircularProgressIndicator()]),
                           ),
                         ]))
                       ]);
@@ -318,17 +326,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     (turmas.turmaAtual != null
                                         ? " - ${turmas.turmaAtual!.nome.toString()}"
                                         : ""),
-                                style: const TextStyle(color: Colors.black45),
+                                style: const TextStyle(
+                                    color: Colors.black45,
+                                    fontWeight: FontWeight.w800),
                               )),
                         ),
                         SliverList(
                             delegate: SliverChildListDelegate([
-                          const Center(child: Text("Ocorreu algum erro...")),
+                          const Center(child: Text("Ocorreu algum erro")),
                           TextButton(
                               onPressed: () {
                                 getAtv = turmas.turmaAtual!.getAtividades();
                               },
-                              child: Text("Refresh"))
+                              child: const Text("Recarregar"))
                         ]))
                       ]);
                     }
@@ -365,19 +375,33 @@ class _HomeScreenState extends State<HomeScreen> {
                               (turmas.turmaAtual != null
                                   ? " - ${turmas.turmaAtual!.nome.toString()}"
                                   : ""),
-                          style: const TextStyle(color: Colors.black45),
+                          style: const TextStyle(
+                              color: Colors.black45,
+                              fontWeight: FontWeight.w800),
                         )),
                   ),
                   SliverList(
                       delegate: SliverChildListDelegate([
                     Container(
                       height: height - 70 - MediaQuery.of(context).padding.top,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: turmas.loading
+                      child: loading
+                          ? Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                CircularProgressIndicator(
+                                  color: darkPrimary,
+                                )
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children:
+                                  /*turmas.loading
                               ? [CircularProgressIndicator()]
-                              : [
+                              :*/
+                                  [
                                   Text("Cadastre turmas antes de usar",
                                       style: fonts.label),
                                   TextButton(
@@ -413,9 +437,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         //     "pontos": 10
                         //   }
                         // }));
-                        cadastra(context, turmas, () {
-                          getAtv = turmas.turmaAtual!.getAtividades();
-                        });
+                        await cadastra(context, turmas, () {});
+                        getAtv = turmas.turmaAtual!.getAtividades();
                       },
                       // shape: RoundedRectangleBorder(
                       //     borderRadius: BorderRadius.circular(15)),

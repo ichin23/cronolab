@@ -137,7 +137,7 @@ class _EditarTurmaState extends State<EditarTurma>
                         )
                       : Center(
                           child: Text(
-                            "Nada foi encontrado.......",
+                            "Nada foi encontrado",
                             style: label,
                           ),
                         ),
@@ -151,7 +151,9 @@ class _EditarTurmaState extends State<EditarTurma>
                             bool loading = false;
                             addMateria(context, widget.turma.id, () async {
                               await turmas.getTurmas();
-
+                              widget.turma =
+                                  await turmas.getByID(widget.turma.id);
+                              Navigator.pop(context);
                               setState(() {});
                             });
                             // showDialog(
@@ -237,7 +239,9 @@ class _EditarTurmaState extends State<EditarTurma>
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                         backgroundColor: MaterialStateProperty.all(primary)),
-                    onPressed: () async {},
+                    onPressed: () async {
+                      Navigator.pop(context);
+                    },
                     child: Text("Salvar", style: buttonText)),
               ],
             )

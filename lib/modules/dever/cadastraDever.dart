@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/materia/view/addMateria.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
@@ -138,17 +139,19 @@ cadastra(
                                               }))
                                           .toList(),
                                       turmas.turmaAtual!.materias
-                                                  .where((element) => element
-                                                      .nome
-                                                      .toLowerCase()
-                                                      .startsWith(materia.text
-                                                          .toLowerCase()))
-                                                  .length ==
-                                              0
+                                              .where((element) => element.nome
+                                                  .toLowerCase()
+                                                  .startsWith(materia.text
+                                                      .toLowerCase()))
+                                              .isEmpty
                                           ? TextButton(
                                               onPressed: () async {
-                                                await turmas.turmaAtual!
-                                                    .addMateria(materia.text);
+                                                addMateria(context,
+                                                    turmas.turmaAtual!.id, () {
+                                                  setState(() {});
+                                                });
+                                                /* await turmas.turmaAtual!
+                                                    .addMateria(materia.text); */
                                                 await turmas.refreshTurma(
                                                     turmas.turmaAtual!.id);
                                                 setState(() {});
@@ -335,7 +338,9 @@ cadastra(
                                   child: loading
                                       ? const Padding(
                                           padding: EdgeInsets.all(10),
-                                          child: CircularProgressIndicator(),
+                                          child: CircularProgressIndicator(
+                                            color: black,
+                                          ),
                                         )
                                       : const Text(
                                           "Salvar",

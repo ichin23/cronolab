@@ -24,7 +24,7 @@
             "name": "Flutter Web",
             "request": "launch",
             "type": "dart",
-            "args": ["-d", "edge","--web-port", "8000", "--web-renderer", "html"],
+            "args": ["-d", "chrome","--web-port", "8000", "--web-renderer", "html"],
         }
     ]
 }

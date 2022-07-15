@@ -15,6 +15,14 @@ class TurmasProvider extends ChangeNotifier {
     // getTurmas();
   }
 
+  getByID(String id) {
+    for (Turma turma in turmas) {
+      if (turma.id == id) {
+        return turma;
+      }
+    }
+  }
+
   changeTurma(Turma newTurma) {
     turmaAtual = newTurma;
     // turmaAtual!.getAtividades();
@@ -63,8 +71,8 @@ class TurmasProvider extends ChangeNotifier {
     print("OK");
     var turmasJson = json.decode(response.body)["turmas"] as List;
     // print(turmasJson);
+    turmas.clear();
     if (turmasJson.isNotEmpty) {
-      turmas.clear();
       for (Map<String, dynamic> turma in turmasJson) {
         var turmaAdd = Turma.fromJson(turma);
         if (turma["admin"] == true) {
@@ -82,7 +90,9 @@ class TurmasProvider extends ChangeNotifier {
         turmas.add(turmaAdd);
       }
     }
-    turmaAtual = turmas[0];
+    if (turmas.isNotEmpty) {
+      turmaAtual = turmas[0];
+    }
     loading = false;
     print(turmas);
     notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -90,6 +91,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                       style: TextStyle(color: white)),
                                   SizedBox(height: 15),
                                   TextField(
+                                    style: fonts.input,
                                     decoration: InputDecoration(
                                       disabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide(color: white),
