@@ -3,6 +3,7 @@ import 'package:cronolab/modules/dever/view/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
+import 'package:cronolab/modules/user/view/loginPage.dart';
 import 'package:cronolab/modules/user/view/perfil.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
