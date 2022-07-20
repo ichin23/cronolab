@@ -127,7 +127,7 @@ cadastra(BuildContext context, var turmas, Function() setState) async {
                                         //     dia!.year
                                         //         .toString()
                                         ,
-                                        style: TextStyle(color: white),
+                                        style: const TextStyle(color: white),
                                       )),
                                 ],
                               ),
@@ -150,7 +150,7 @@ cadastra(BuildContext context, var turmas, Function() setState) async {
                                             : hora!.hour.toString() +
                                                 ":" +
                                                 hora!.minute.toString(),
-                                        style: TextStyle(color: white),
+                                        style: const TextStyle(color: white),
                                       )),
                                 ],
                               ),

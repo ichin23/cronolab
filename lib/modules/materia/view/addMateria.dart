@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import '../../../shared/colors.dart';
 import '../../../shared/fonts.dart' as fonts;
-import '../materia.dart';
 
 addMateria(BuildContext context, String turmaID, Function() setstate) async {
   bool loading = false;
@@ -69,7 +68,7 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                         controller: nome,
                                         decoration: InputDecoration(
                                             label: const Text("Título"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -98,7 +97,7 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                         controller: prof,
                                         decoration: InputDecoration(
                                             label: const Text("Professor"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -127,7 +126,7 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                         controller: contato,
                                         decoration: InputDecoration(
                                             label: const Text("Contato"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -169,8 +168,8 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                             }
                                           },
                                           child: loading
-                                              ? CircularProgressIndicator()
-                                              : Text("Salvar"))
+                                              ? const CircularProgressIndicator()
+                                              : const Text("Salvar"))
                                     ])))));
               });
         });

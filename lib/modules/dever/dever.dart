@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../materia/materia.dart';
 
 class Dever {
@@ -10,6 +8,7 @@ class Dever {
   DateTime data;
   double? pontos;
   String? id;
+  String? local;
 
   Dever(
       {this.id,
@@ -17,7 +16,8 @@ class Dever {
       required this.data,
       this.materia,
       this.materiaID,
-      this.pontos});
+      this.pontos,
+      this.local});
   Dever.fromJson(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
@@ -25,14 +25,18 @@ class Dever {
             materia: Materia.fromJson(document['materia'] as Map),
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
-            pontos: double.tryParse(document['pontos'].toString()));
+            pontos: double.tryParse(document['pontos'].toString()),
+            local: document["local"] != null
+                ? document["local"].toString()
+                : null);
 
   Map<String, Object?> toJson() {
     return {
       'title': title,
       'materia': materiaID,
       'data': data.millisecondsSinceEpoch,
-      'pontos': pontos
+      'pontos': pontos,
+      "local": local
     };
   }
 

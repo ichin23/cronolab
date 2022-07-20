@@ -3,7 +3,7 @@ import 'package:cronolab/shared/colors.dart' as color;
 import 'package:flutter/material.dart';
 
 class MyField extends StatelessWidget {
-  MyField({Key? key, required this.nome, this.label}) : super(key: key);
+  const MyField({Key? key, required this.nome, this.label}) : super(key: key);
 
   final Widget? label;
   final TextEditingController nome;

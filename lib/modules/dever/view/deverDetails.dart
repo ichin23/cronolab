@@ -7,8 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class DeverDetails extends StatefulWidget {
-  DeverDetails(this.dever, {Key? key}) : super(key: key);
-  Dever dever;
+  const DeverDetails(this.dever, {Key? key}) : super(key: key);
+  final Dever dever;
 
   @override
   State<DeverDetails> createState() => _DeverDetailsState();
@@ -18,6 +18,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   TextEditingController title = TextEditingController();
   TextEditingController data = TextEditingController();
   TextEditingController hora = TextEditingController();
+  TextEditingController local = TextEditingController();
   // bool edit = false;
   bool editavel = false;
   InputDecoration fieldDecoration = InputDecoration(
@@ -37,6 +38,7 @@ class _DeverDetailsState extends State<DeverDetails> {
     title.text = widget.dever.title;
     data.text = dateStr.format(widget.dever.data);
     hora.text = horaStr.format(widget.dever.data);
+    local.text = widget.dever.local ?? "";
     editavel =
         Provider.of<TurmasProvider>(context, listen: false).turmaAtual!.isAdmin;
     // print(editavel);
@@ -50,7 +52,7 @@ class _DeverDetailsState extends State<DeverDetails> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: colors.primary,
-          title: Text("Dever"),
+          title: const Text("Dever"),
           centerTitle: true),
       backgroundColor: colors.black,
       body: SafeArea(
@@ -63,27 +65,34 @@ class _DeverDetailsState extends State<DeverDetails> {
                 readOnly: !editavel,
                 style: inputDever,
                 controller: title),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text("Data", style: label),
             TextFormField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
                 style: inputDever,
                 controller: data),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Text("Hora", style: label),
             TextFormField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
                 style: inputDever,
                 controller: hora),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
+            Text("Local", style: label),
+            TextFormField(
+                decoration: fieldDecoration,
+                readOnly: !editavel,
+                style: inputDever,
+                controller: local),
+            const SizedBox(height: 15),
             Text("Matéria", style: label),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
                 width: width - 30,
                 height: height * 0.25,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   color: colors.white.withOpacity(0.1),
@@ -96,16 +105,16 @@ class _DeverDetailsState extends State<DeverDetails> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Flexible(
-                            child: Container(
+                            child: SizedBox(
                               width: width * 0.7 - 50,
                               child: Text("Nome: ${widget.dever.materia!.prof}",
                                   style: label),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text("Matéria: ${widget.dever.materia!.nome}",
                               style: label),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text("Contato: ${widget.dever.materia!.contato}",
                               style: label)
                         ],
@@ -117,8 +126,8 @@ class _DeverDetailsState extends State<DeverDetails> {
                             borderRadius: BorderRadius.circular(15),
                             color: colors.black,
                           ),
-                          child:
-                              Icon(Icons.person, color: colors.white, size: 50))
+                          child: const Icon(Icons.person,
+                              color: colors.white, size: 50))
                     ]))
           ]),
         ),

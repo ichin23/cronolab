@@ -96,7 +96,7 @@ class _EditarTurmaState extends State<EditarTurma>
                     // opacity: privada ? 1 : 0,
                     // decoration: BoxDecoration(),
                     margin: EdgeInsets.only(right: animation.value),
-                    child: MyField(nome: senha, label: Text("Senha")))
+                    child: MyField(nome: senha, label: const Text("Senha")))
                 : Container(),
             const SizedBox(height: 15),
             Text(
@@ -202,21 +202,22 @@ class _EditarTurmaState extends State<EditarTurma>
                             //         ));
                             setState(() {});
                           },
-                          child: Icon(Icons.add)))
+                          child: const Icon(Icons.add)))
                 ],
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                        padding:
+                            MaterialStateProperty.all(const EdgeInsets.all(10)),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                         backgroundColor:
-                            MaterialStateProperty.all(Color(0xffF2A299))),
+                            MaterialStateProperty.all(const Color(0xffF2A299))),
                     onPressed: excluindo
                         ? null
                         : () async {
@@ -231,11 +232,12 @@ class _EditarTurmaState extends State<EditarTurma>
                             });
                           },
                     child: excluindo
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : Text("Excluir", style: buttonText)),
                 TextButton(
                     style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                        padding:
+                            MaterialStateProperty.all(const EdgeInsets.all(10)),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                         backgroundColor: MaterialStateProperty.all(primary)),

@@ -16,14 +16,15 @@ cadastra(
   TextEditingController titulo = TextEditingController();
   TextEditingController materia = TextEditingController();
   TextEditingController pontos = TextEditingController();
+  TextEditingController local = TextEditingController();
   bool loading = false;
 
-  bool mateiraFocus = false;
   // String? senhaField;
   Materia? materiaSelect;
   FocusNode tituloFoc = FocusNode();
   FocusNode materiaFoc = FocusNode();
   FocusNode pontosFoc = FocusNode();
+  FocusNode localFoc = FocusNode();
   DateTime? dia;
   TimeOfDay? hora;
 
@@ -74,8 +75,8 @@ cadastra(
                                 controller: titulo,
                                 decoration: InputDecoration(
                                     label: const Text("Título"),
-                                    icon:
-                                        Icon(Icons.border_color, color: white),
+                                    icon: const Icon(Icons.border_color,
+                                        color: white),
                                     labelStyle: GoogleFonts.inter(
                                         fontSize: 16, color: white),
                                     border: OutlineInputBorder(
@@ -103,14 +104,15 @@ cadastra(
                                 controller: materia,
                                 decoration: InputDecoration(
                                     label: const Text("Matéria"),
-                                    icon: Icon(Icons.menu_book, color: white),
+                                    icon: const Icon(Icons.menu_book,
+                                        color: white),
                                     labelStyle: GoogleFonts.inter(
                                         fontSize: 16, color: white),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     )),
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               // ListTile(
                               //     title:
                               //         Text(turmas.turmaAtual!.materias[0])),
@@ -179,20 +181,51 @@ cadastra(
                                   return null;
                                 },
                                 onFieldSubmitted: (value) {
-                                  pontosFoc.unfocus();
+                                  localFoc.requestFocus();
                                 },
                                 controller: pontos,
                                 decoration: InputDecoration(
                                   label: const Text("Valor/Pontuação"),
                                   labelStyle: GoogleFonts.inter(
                                       fontSize: 16, color: white),
-                                  icon: Icon(Icons.check_box, color: white),
+                                  icon:
+                                      const Icon(Icons.check_box, color: white),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 10),
+                              TextFormField(
+                                style: fonts.white,
+                                focusNode: localFoc,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                keyboardType: TextInputType.name,
+                                textInputAction: TextInputAction.next,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Digite algum valor";
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (value) {
+                                  localFoc.unfocus();
+                                },
+                                controller: local,
+                                decoration: InputDecoration(
+                                  label: const Text("Local"),
+                                  labelStyle: GoogleFonts.inter(
+                                      fontSize: 16, color: white),
+                                  hintText: "Ex: Moodle, Classroom",
+                                  hintStyle: const TextStyle(
+                                      fontSize: 16, color: white),
+                                  icon: const Icon(Icons.public, color: white),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
                               // DropdownButton<String>(
                               //     value: "Selecione",
                               //     items: [
@@ -204,10 +237,12 @@ cadastra(
                               //           .toList()
                               //     ],
                               //     onChanged: (value) {}),
+                              const SizedBox(height: 10),
                               Row(
                                 children: [
-                                  Icon(Icons.calendar_month, color: white),
-                                  SizedBox(width: 20),
+                                  const Icon(Icons.calendar_month,
+                                      color: white),
+                                  const SizedBox(width: 20),
                                   const Text(
                                     "Data",
                                     style: TextStyle(color: white),
@@ -235,14 +270,14 @@ cadastra(
                                         //     dia!.year
                                         //         .toString()
                                         ,
-                                        style: TextStyle(color: white),
+                                        style: const TextStyle(color: white),
                                       )),
                                 ],
                               ),
                               Row(
                                 children: [
-                                  Icon(Icons.access_time, color: white),
-                                  SizedBox(width: 20),
+                                  const Icon(Icons.access_time, color: white),
+                                  const SizedBox(width: 20),
                                   const Text(
                                     "Hora",
                                     style: TextStyle(color: white),
@@ -260,7 +295,7 @@ cadastra(
                                             : hora!.hour.toString() +
                                                 ":" +
                                                 hora!.minute.toString(),
-                                        style: TextStyle(color: white),
+                                        style: const TextStyle(color: white),
                                       )),
                                 ],
                               ),
@@ -311,8 +346,9 @@ cadastra(
                                                       hora!.minute),
                                                   materiaID: materiaSelect!.id,
                                                   title: titulo.text,
-                                                  pontos: double.parse(
-                                                      pontos.text)),
+                                                  pontos:
+                                                      double.parse(pontos.text),
+                                                  local: local.text),
                                             );
                                             // FirestoreApp().getData(Dever(
                                             //     data: Timestamp

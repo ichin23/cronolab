@@ -382,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SliverList(
                       delegate: SliverChildListDelegate([
-                    Container(
+                    SizedBox(
                       height: height - 70 - MediaQuery.of(context).padding.top,
                       child: loading
                           ? Column(

@@ -1,19 +1,22 @@
+import 'package:cronolab/modules/user/controller/loginController.dart';
+import 'package:cronolab/modules/user/view/cadastroPage.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:cronolab/shared/fonts.dart' as fonts;
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailCont = TextEditingController();
+  TextEditingController senhaCont = TextEditingController();
+  bool hidePassword = true;
+  bool loading = false;
+  final GlobalKey _form = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -25,10 +28,13 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: black,
       body: SafeArea(
         child: Form(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(40, 100, 40, 100),
+          key: _form,
+          child: SizedBox(
+            width: width,
+            height: height - padding,
             child: SingleChildScrollView(
               child: Container(
+                padding: const EdgeInsets.fromLTRB(40, 100, 40, 20),
                 height: height - padding,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,154 +42,170 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Column(
                       children: [
-                        Text(
+                        const Text(
                           "CRONOLAB",
                           style: TextStyle(
                               color: white,
                               fontSize: 24,
                               fontWeight: FontWeight.w800),
                         ),
-                        SizedBox(height: 25),
-                        TextFormField(
-                          style: TextStyle(fontSize: 16, color: white),
-                          decoration: InputDecoration(
-                              label: Text("Email"),
-                              labelStyle: TextStyle(color: white),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: white))),
+                        const SizedBox(height: 25),
+                        Hero(
+                          tag: "emailField",
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: TextFormField(
+                              controller: emailCont,
+                              style:
+                                  const TextStyle(fontSize: 16, color: white),
+                              decoration: InputDecoration(
+                                  label: const Text("Email"),
+                                  labelStyle: const TextStyle(color: white),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide:
+                                          const BorderSide(color: white))),
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 45),
-                        TextFormField(
-                          style: TextStyle(fontSize: 16, color: white),
-                          decoration: InputDecoration(
-                              label: Text("Senha"),
-                              labelStyle: TextStyle(color: white),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: white))),
+                        const SizedBox(height: 45),
+                        Hero(
+                          tag: "senhaField",
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: TextFormField(
+                              controller: senhaCont,
+                              style:
+                                  const TextStyle(fontSize: 16, color: white),
+                              obscureText: hidePassword,
+                              decoration: InputDecoration(
+                                  label: const Text("Senha"),
+                                  labelStyle: const TextStyle(color: white),
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          hidePassword = !hidePassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        hidePassword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: white,
+                                      )),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide:
+                                          const BorderSide(color: white))),
+                            ),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
                                 onPressed: () {},
-                                child: Text("Esqueci minha senha")),
+                                child: const Text("Esqueci minha senha")),
                           ],
                         ),
                       ],
                     ),
                     Column(
                       children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              minimumSize: Size(width - 50, 55),
-                              backgroundColor: primary2,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: Text("Login",
-                              style: TextStyle(
-                                  color: black,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800)),
-                          onPressed: () {},
-                        ),
-                        SizedBox(height: 25),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              minimumSize: Size(width - 50, 55),
-                              backgroundColor: white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/image/google.png",
-                                height: 30,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 15),
-                                child: Text("Entrar com Google",
-                                    style: TextStyle(
-                                        color: black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800)),
-                              ),
-                            ],
-                          ),
-                          onPressed: () async {
-                            try {
-                              final GoogleSignInAccount? account =
-                                  await GoogleSignIn().signIn();
-                              final GoogleSignInAuthentication? googleAuth =
-                                  await account?.authentication;
-                              // Create a new credential
-                              final credential = GoogleAuthProvider.credential(
-                                accessToken: googleAuth?.accessToken,
-                                idToken: googleAuth?.idToken,
-                              );
-
-                              // Once signed in, return the UserCredential
-                              //  if (Platform.operatingSystem.toLowerCase() == "linux" ||
-                              //Platform.operatingSystem.toLowerCase() == "windows") {
-                              //FirebaseAuthDesktop.instance
-                              //    .signInWithCredential(credential);
-                              //}
-                              //else {
-                              await FirebaseAuth.instance
-                                  .signInWithCredential(credential);
-                              //}
-                              //TODO: Update Email FirebaseFirestore.instance
-                              //     .collection("users-test")
-                              //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                              //     .update(
-                              //         {"email": FirebaseAuth.instance.currentUser!.email});
-                              if (!kIsWeb) {
-                                OneSignal().setExternalUserId(
-                                    FirebaseAuth.instance.currentUser!.uid);
-                              }
-                              // turmas.getTurmas();
-                            } catch (e) {
-                              print(e);
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: Text("Erro", style: fonts.label),
-                                        content: Text(
-                                            "Ocorreu um erro ao realizar o login"),
-                                        backgroundColor: darkPrimary,
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text("OK"))
-                                        ],
-                                      ));
-                            }
-                          },
-                        ),
-                        SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Não possui conta?",
-                              style: TextStyle(color: white, fontSize: 16),
+                        Hero(
+                          tag: "button",
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  minimumSize: Size(width - 50, 55),
+                                  backgroundColor: primary2,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15))),
+                              child: loading
+                                  ? const CircularProgressIndicator(
+                                      color: black, strokeWidth: 3)
+                                  : const Text("Login",
+                                      style: TextStyle(
+                                          color: black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800)),
+                              onPressed: loading
+                                  ? () {}
+                                  : () {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      LoginController().loginEmail(
+                                          emailCont.text,
+                                          senhaCont.text,
+                                          context);
+                                      setState(() {
+                                        loading = false;
+                                      });
+                                    },
                             ),
-                            TextButton(
-                                onPressed: () {},
-                                child: Text("Cadastre-se",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: primary2,
-                                        fontSize: 16)))
-                          ],
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        TextButton(
+                            style: TextButton.styleFrom(
+                                minimumSize: Size(width - 50, 55),
+                                backgroundColor: white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/image/google.png",
+                                  height: 30,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 15),
+                                  child: Text("Entrar com Google",
+                                      style: TextStyle(
+                                          color: black,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800)),
+                                ),
+                              ],
+                            ),
+                            onPressed: () async =>
+                                await LoginController().loginGoogle(context)),
+                        const SizedBox(height: 20),
+                        Hero(
+                          tag: "conta",
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Não possui conta?",
+                                  style: TextStyle(color: white, fontSize: 16),
+                                ),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          PageRouteBuilder(
+                                              pageBuilder:
+                                                  (context, anim1, anim2) =>
+                                                      const CadastroPage()));
+                                    },
+                                    child: const Text("Cadastre-se",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: primary2,
+                                            fontSize: 16)))
+                              ],
+                            ),
+                          ),
                         )
                       ],
                     ),

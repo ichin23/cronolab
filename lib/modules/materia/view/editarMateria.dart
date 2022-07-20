@@ -75,7 +75,7 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                         controller: nome,
                                         decoration: InputDecoration(
                                             label: const Text("Título"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -104,7 +104,7 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                         controller: prof,
                                         decoration: InputDecoration(
                                             label: const Text("Professor"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -133,7 +133,7 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                         controller: nome,
                                         decoration: InputDecoration(
                                             label: const Text("Contato"),
-                                            icon: Icon(Icons.border_color,
+                                            icon: const Icon(Icons.border_color,
                                                 color: white),
                                             labelStyle: GoogleFonts.inter(
                                                 fontSize: 16, color: white),
@@ -180,8 +180,8 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                                   turmas.getTurmas();
                                                 },
                                           child: loading
-                                              ? CircularProgressIndicator()
-                                              : Text("Salvar"))
+                                              ? const CircularProgressIndicator()
+                                              : const Text("Salvar"))
                                     ])))));
               });
         });

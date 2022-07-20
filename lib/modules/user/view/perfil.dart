@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({Key? key}) : super(key: key);
@@ -28,7 +27,7 @@ class _PerfilPageState extends State<PerfilPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: darkPrimary,
-        title: Text("Gerenciar Perfil"),
+        title: const Text("Gerenciar Perfil"),
       ),
       backgroundColor: black,
       body: SafeArea(
@@ -43,7 +42,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       child: Row(
                         children: [
                           FirebaseAuth.instance.currentUser!.photoURL != null
-                              ? Container(
+                              ? SizedBox(
                                   height: 90,
                                   width: 90,
                                   child: ClipRRect(
@@ -103,8 +102,8 @@ class _PerfilPageState extends State<PerfilPage> {
                         ],
                       ),
                     ),
-                    ListTile(
-                      title: const Text("Suas Informações",
+                    const ListTile(
+                      title: Text("Suas Informações",
                           style: TextStyle(color: white)),
                       trailing: Icon(Icons.arrow_forward_ios, color: white),
                     ),
@@ -117,9 +116,9 @@ class _PerfilPageState extends State<PerfilPage> {
                       trailing:
                           const Icon(Icons.arrow_forward_ios, color: white),
                     ),
-                    ListTile(
-                      title: const Text("Sobre o APP",
-                          style: TextStyle(color: white)),
+                    const ListTile(
+                      title:
+                          Text("Sobre o APP", style: TextStyle(color: white)),
                       trailing: Icon(Icons.arrow_forward_ios, color: white),
                     ),
                   ]),

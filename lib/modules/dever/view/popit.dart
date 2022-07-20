@@ -8,18 +8,18 @@ class PopIt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color verde = Color(0xff79FF52);
-    Color vermelho = Color(0xffFF4238);
-    Color amarelo = Color(0xffF2FF45);
-    LinearGradient verdeGr = LinearGradient(
+    Color verde = const Color(0xff79FF52);
+    Color vermelho = const Color(0xffFF4238);
+    Color amarelo = const Color(0xffF2FF45);
+    LinearGradient verdeGr = const LinearGradient(
         colors: [Color(0xff96F6A0), Color(0xff96F6A0)],
         end: Alignment.bottomLeft,
         begin: Alignment.topRight);
-    LinearGradient vermelhoGr = LinearGradient(
+    LinearGradient vermelhoGr = const LinearGradient(
         colors: [Color(0xffF2A299), Color(0xffF2A299)],
         end: Alignment.bottomLeft,
         begin: Alignment.topRight);
-    LinearGradient amareloGr = LinearGradient(
+    LinearGradient amareloGr = const LinearGradient(
         colors: [Color(0xffF5DA93), Color.fromARGB(255, 175, 155, 104)],
         end: Alignment.bottomLeft,
         begin: Alignment.topRight);

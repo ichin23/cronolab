@@ -145,6 +145,7 @@ class Turma {
         } else {
           deveres = [Dever.fromJson(dever)];
         }
+        print(dever);
       }
       return deveres;
     } catch (e) {

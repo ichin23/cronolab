@@ -3,7 +3,7 @@ import 'package:cronolab/modules/dever/view/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
-import 'package:cronolab/modules/user/view/loginPage.dart';
+
 import 'package:cronolab/modules/user/view/perfil.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,10 +43,11 @@ class MainApp extends StatelessWidget {
               // case "/":
               //   return MaterialPageRoute(builder: (context) => HomePage());
               case "/perfil":
-                return MaterialPageRoute(builder: (context) => PerfilPage());
+                return MaterialPageRoute(
+                    builder: (context) => const PerfilPage());
               case "/minhasTurmas":
                 return MaterialPageRoute(
-                    builder: (context) => GerenciarTurmas());
+                    builder: (context) => const GerenciarTurmas());
               case '/turma':
                 var arg = routeSettings.arguments as Turma;
                 return MaterialPageRoute(
@@ -61,15 +62,16 @@ class MainApp extends StatelessWidget {
               // default:
               //   return MaterialPageRoute(builder: (context) => MyHomePage());
             }
+            return null;
           },
           home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, stream) {
                 if (stream.connectionState != ConnectionState.waiting) {
                   if (stream.data != null) {
-                    return HomeScreen();
+                    return const HomeScreen();
                   } else {
-                    return LoginPage();
+                    return const LoginPage();
                   }
                 } else {
                   return Scaffold(

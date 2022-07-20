@@ -37,7 +37,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
         Scaffold(
       backgroundColor: black,
       appBar: AppBar(
-        title: Text("Gerenciar Turmas"),
+        title: const Text("Gerenciar Turmas"),
         backgroundColor: darkPrimary,
         // actions: [
         //   loading
@@ -57,7 +57,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                         Navigator.pushNamed(context, '/turma',
                             arguments: turmas.turmas[i]);
                       },
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.settings,
                         color: white,
                       ),
@@ -89,37 +89,39 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                 children: [
                                   const Text("Digite o código da turma",
                                       style: TextStyle(color: white)),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
                                   TextField(
                                     style: fonts.input,
                                     decoration: InputDecoration(
                                       disabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: white),
+                                          borderSide:
+                                              const BorderSide(color: white),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       focusedBorder: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: darkPrimary),
+                                          borderSide: const BorderSide(
+                                              color: darkPrimary),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       enabledBorder: OutlineInputBorder(
                                           borderSide:
-                                              BorderSide(color: primary),
+                                              const BorderSide(color: primary),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       border: OutlineInputBorder(
-                                          borderSide: BorderSide(color: white),
+                                          borderSide:
+                                              const BorderSide(color: white),
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                     ),
                                     controller: code,
                                     onSubmitted: (value) {},
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   TextButton(
                                       style: ButtonStyle(
                                           padding: MaterialStateProperty.all(
-                                              EdgeInsets.all(20)),
+                                              const EdgeInsets.all(20)),
                                           backgroundColor:
                                               MaterialStateProperty.all(
                                                   darkPrimary),
@@ -148,7 +150,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                               setState(() {});
                                             },
                                       child: loading
-                                          ? CircularProgressIndicator(
+                                          ? const CircularProgressIndicator(
                                               color: black)
                                           : const Text("Adicionar",
                                               style: TextStyle(color: white)))
@@ -158,7 +160,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                           ));
                 },
           child: loading
-              ? CircularProgressIndicator(
+              ? const CircularProgressIndicator(
                   color: black,
                 )
               : const Icon(
