@@ -92,43 +92,33 @@ class _DeverDetailsState extends State<DeverDetails> {
             Container(
                 width: width - 30,
                 height: height * 0.25,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   color: colors.white.withOpacity(0.1),
                 ),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: SizedBox(
-                              width: width * 0.7 - 50,
-                              child: Text("Nome: ${widget.dever.materia!.prof}",
-                                  style: label),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text("Matéria: ${widget.dever.materia!.nome}",
+                      Flexible(
+                        child: SizedBox(
+                          width: width * 0.7 - 50,
+                          child: Text("Nome: ${widget.dever.materia!.prof}",
                               style: label),
-                          const SizedBox(height: 10),
-                          Text("Contato: ${widget.dever.materia!.contato}",
-                              style: label)
-                        ],
+                        ),
                       ),
-                      Container(
-                          height: height * 0.2,
-                          width: width * 0.3,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: colors.black,
-                          ),
-                          child: const Icon(Icons.person,
-                              color: colors.white, size: 50))
-                    ]))
+                      const SizedBox(height: 10),
+                      Text("Matéria: ${widget.dever.materia!.nome}",
+                          style: label),
+                      const SizedBox(height: 10),
+                      Text("Contato: ${widget.dever.materia!.contato}",
+                          style: label)
+                    ],
+                  ),
+                ]))
           ]),
         ),
       ),

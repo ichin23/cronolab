@@ -102,10 +102,14 @@ class _PerfilPageState extends State<PerfilPage> {
                         ],
                       ),
                     ),
-                    const ListTile(
-                      title: Text("Suas Informações",
+                    ListTile(
+                      title: const Text("Suas Informações",
                           style: TextStyle(color: white)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: white),
+                      onTap: () {
+                        Navigator.of(context).pushNamed("/suasInfos");
+                      },
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios, color: white),
                     ),
                     ListTile(
                       title: const Text("Gerenciar Turmas",

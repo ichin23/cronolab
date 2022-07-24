@@ -16,6 +16,26 @@ class DeverTile extends StatefulWidget {
 }
 
 class _DeverTileState extends State<DeverTile> {
+  List<PopupMenuItem> popMenu = [];
+  @override
+  void initState() {
+    super.initState();
+    var turmas = Provider.of<TurmasProvider>(context, listen: false);
+    if (turmas.turmaAtual!.isAdmin) {
+      popMenu.add(
+        PopupMenuItem(
+          child: const Text("Excluir",
+              style: TextStyle(color: white), textAlign: TextAlign.center),
+          onTap: () async {
+            turmas.turmaAtual!
+                .deleteDever(widget.dever.id!)
+                .then((value) => widget.notifyParent());
+          },
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var turmas = Provider.of<TurmasProvider>(context, listen: false);
@@ -43,41 +63,17 @@ class _DeverTileState extends State<DeverTile> {
       },
       onLongPress: () {
         showMenu(
-            color: black,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            context: context,
-            position: RelativeRect.fromLTRB(
-                tapDetails.globalPosition.dx,
-                tapDetails.globalPosition.dy,
-                width - tapDetails.globalPosition.dx,
-                height - tapDetails.globalPosition.dy),
-            items: [
-              PopupMenuItem(
-                child: const Text("Excluir",
-                    style: TextStyle(color: white),
-                    textAlign: TextAlign.center),
-                onTap: () async {
-                  turmas.turmaAtual!
-                      .deleteDever(widget.dever.id!)
-                      .then((value) => widget.notifyParent());
-                  // Delete Dever await FirebaseFirestore.instance
-                  //     .collection("turmas-test")
-                  //     .doc(turmas.turmaAtual!.id)
-                  //     .collection("deveres")
-                  //     .doc(widget.dever.id)
-                  //     .delete()
-                  //     .then((value) => widget.notifyParent());
-                },
-              ),
-              PopupMenuItem(
-                enabled: false,
-                child: const Text("Concluída",
-                    style: TextStyle(color: white),
-                    textAlign: TextAlign.center),
-                onTap: () async {},
-              ),
-            ]);
+          color: black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          context: context,
+          position: RelativeRect.fromLTRB(
+              tapDetails.globalPosition.dx,
+              tapDetails.globalPosition.dy,
+              width - tapDetails.globalPosition.dx,
+              height - tapDetails.globalPosition.dy),
+          items: popMenu,
+        );
       },
       child: Container(
         margin: const EdgeInsets.all(0),

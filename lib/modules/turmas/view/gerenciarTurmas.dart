@@ -54,8 +54,24 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                   padding: const EdgeInsets.all(10),
                   child: ListTile(
                       onTap: () {
-                        Navigator.pushNamed(context, '/turma',
-                            arguments: turmas.turmas[i]);
+                        if (turmas.turmas[i].isAdmin) {
+                          Navigator.pushNamed(context, '/turma',
+                              arguments: turmas.turmas[i]);
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: ((context) => const AlertDialog(
+                                  backgroundColor: black,
+                                  title: Text(
+                                    "Erro ao acessar",
+                                    style: TextStyle(color: white),
+                                  ),
+                                  content: Text(
+                                      "Você não é administrador dessa turma",
+                                      style: TextStyle(color: white)),
+                                )),
+                          );
+                        }
                       },
                       trailing: const Icon(
                         Icons.settings,

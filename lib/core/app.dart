@@ -5,6 +5,7 @@ import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 
 import 'package:cronolab/modules/user/view/perfil.dart';
+import 'package:cronolab/modules/user/view/suasInfos.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,9 @@ class MainApp extends StatelessWidget {
               case "/minhasTurmas":
                 return MaterialPageRoute(
                     builder: (context) => const GerenciarTurmas());
+              case "/suasInfos":
+                return MaterialPageRoute(
+                    builder: (context) => const SuasInformacoes());
               case '/turma':
                 var arg = routeSettings.arguments as Turma;
                 return MaterialPageRoute(

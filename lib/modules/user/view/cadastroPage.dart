@@ -29,159 +29,169 @@ class _CadastroPageState extends State<CadastroPage> {
         body: SafeArea(
             child: Form(
                 key: _form,
-                child: SingleChildScrollView(
-                    child: Container(
-                  padding: const EdgeInsets.fromLTRB(40, 100, 40, 20),
-                  height: height - padding,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
+                child: SizedBox(
+                  width: width,
+                  height: height - MediaQuery.of(context).padding.bottom,
+                  child: Center(
+                    child: SingleChildScrollView(
+                        child: SizedBox(
+                      width: width * 0.8,
+                      height: MediaQuery.of(context).viewInsets.bottom == 0
+                          ? height * 0.8
+                          : height * 0.65,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
+                          Column(
+                            children: [
+                              const Text(
                                 "CRONOLAB",
                                 style: TextStyle(
                                     color: white,
                                     fontSize: 24,
                                     fontWeight: FontWeight.w800),
                               ),
+                              const SizedBox(height: 25),
+                              Hero(
+                                tag: "emailField",
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: TextFormField(
+                                    controller: emailCont,
+                                    style: const TextStyle(
+                                        fontSize: 16, color: white),
+                                    decoration: InputDecoration(
+                                        label: const Text("Email"),
+                                        labelStyle:
+                                            const TextStyle(color: white),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: white))),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 45),
+                              TextFormField(
+                                controller: nomeCont,
+                                style:
+                                    const TextStyle(fontSize: 16, color: white),
+                                decoration: InputDecoration(
+                                    label: const Text("Nome"),
+                                    labelStyle: const TextStyle(color: white),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide:
+                                            const BorderSide(color: white))),
+                              ),
+                              const SizedBox(height: 45),
+                              Hero(
+                                tag: "senhaField",
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: TextFormField(
+                                    controller: passwordCont,
+                                    style: const TextStyle(
+                                        fontSize: 16, color: white),
+                                    decoration: InputDecoration(
+                                        label: const Text("Senha"),
+                                        labelStyle:
+                                            const TextStyle(color: white),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            borderSide: const BorderSide(
+                                                color: white))),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 25),
-                          Hero(
-                            tag: "emailField",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextFormField(
-                                controller: emailCont,
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
-                                decoration: InputDecoration(
-                                    label: const Text("Email"),
-                                    labelStyle: const TextStyle(color: white),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 45),
-                          TextFormField(
-                            controller: nomeCont,
-                            style: const TextStyle(fontSize: 16, color: white),
-                            decoration: InputDecoration(
-                                label: const Text("Nome"),
-                                labelStyle: const TextStyle(color: white),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: white))),
-                          ),
-                          const SizedBox(height: 45),
-                          Hero(
-                            tag: "senhaField",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextFormField(
-                                controller: passwordCont,
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
-                                decoration: InputDecoration(
-                                    label: const Text("Senha"),
-                                    labelStyle: const TextStyle(color: white),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Hero(
-                            tag: "button",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    minimumSize: Size(width - 50, 55),
-                                    backgroundColor: primary2,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15))),
-                                child: loading
-                                    ? const CircularProgressIndicator(
-                                        color: black)
-                                    : const Text("Cadastrar",
-                                        style: TextStyle(
-                                            color: black,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w800)),
-                                onPressed: () {
-                                  if (_form.currentState!.validate()) {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    CadastroController().siginEmail(
-                                        emailCont.text,
-                                        passwordCont.text,
-                                        nomeCont.text,
-                                        context);
-                                    Navigator.pushReplacementNamed(
-                                        context, "/");
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                          Hero(
-                            tag: "conta",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    "Já possui conta?",
-                                    style:
-                                        TextStyle(color: white, fontSize: 16),
+                          Column(
+                            children: [
+                              Hero(
+                                tag: "button",
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                        minimumSize: Size(width - 50, 55),
+                                        backgroundColor: primary2,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                    child: loading
+                                        ? const CircularProgressIndicator(
+                                            color: black)
+                                        : const Text("Cadastrar",
+                                            style: TextStyle(
+                                                color: black,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w800)),
+                                    onPressed: () {
+                                      if (_form.currentState!.validate()) {
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        CadastroController().siginEmail(
+                                            emailCont.text,
+                                            passwordCont.text,
+                                            nomeCont.text,
+                                            context);
+                                        Navigator.pushReplacementNamed(
+                                            context, "/");
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      }
+                                    },
                                   ),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text("Login",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: primary2,
-                                              fontSize: 16)))
-                                ],
+                                ),
                               ),
-                            ),
-                          )
+                              const SizedBox(height: 25),
+                              Hero(
+                                tag: "conta",
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        "Já possui conta?",
+                                        style: TextStyle(
+                                            color: white, fontSize: 16),
+                                      ),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Login",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: primary2,
+                                                  fontSize: 16)))
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ],
                       ),
-                    ],
+                    )),
                   ),
-                )))));
+                ))));
   }
 }

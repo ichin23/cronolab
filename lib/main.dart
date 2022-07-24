@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cronolab/core/app.dart';
 import 'package:cronolab/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,10 +16,12 @@ void main() async {
 
   //if (!(Platform.isLinux || Platform.isWindows)) {
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: Platform.isLinux
+        ? DefaultFirebaseOptions.web
+        : DefaultFirebaseOptions.currentPlatform,
   );
   //}
-  if (!kIsWeb) {
+  if (!kIsWeb && !Platform.isLinux) {
     OneSignal.shared.setAppId("d9393c5e-61e9-4174-9d19-3d1e3eb7ad3f");
   }
   runApp(const MainApp());
