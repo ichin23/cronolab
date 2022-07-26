@@ -6,6 +6,7 @@ import 'package:cronolab/modules/user/view/esqueciSenha.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -55,12 +56,18 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Column(
                         children: [
-                          const Text(
-                            "CRONOLAB",
-                            style: TextStyle(
-                                color: white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800),
+                          const Hero(
+                            tag: 'title',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                "CRONOLAB",
+                                style: TextStyle(
+                                    color: white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 25),
                           Hero(
@@ -124,12 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                            pageBuilder:
-                                                (context, anim1, anim2) =>
-                                                    const EsqueciSenha()));
+                                    Get.to(const EsqueciSenha());
                                   },
                                   child: const Text("Esqueci minha senha")),
                             ],
@@ -221,12 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                                         print(MediaQuery.of(context)
                                             .viewInsets
                                             .bottom);
-                                        Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                                pageBuilder:
-                                                    (context, anim1, anim2) =>
-                                                        const CadastroPage()));
+                                        Get.to(const CadastroPage());
                                       },
                                       child: const Text("Cadastre-se",
                                           style: TextStyle(

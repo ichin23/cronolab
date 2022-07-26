@@ -3,17 +3,15 @@ import 'dart:convert';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class TurmasProvider extends ChangeNotifier {
+class TurmasState extends GetxController {
   String url = "https://cronolab-server.herokuapp.com";
-  List<Turma> turmas = [];
+  static TurmasState get to => Get.find();
+  var turmas = [].obs;
   Turma? turmaAtual;
   bool loading = false;
-  TurmasProvider() {
-    // getTurmas();
-  }
 
   getByID(String id) {
     for (Turma turma in turmas) {
@@ -26,7 +24,7 @@ class TurmasProvider extends ChangeNotifier {
   changeTurma(Turma newTurma) {
     turmaAtual = newTurma;
     // turmaAtual!.getAtividades();
-    notifyListeners();
+    update();
   }
 
   refreshTurma(String id) async {
@@ -41,7 +39,7 @@ class TurmasProvider extends ChangeNotifier {
     Turma newTurma = Turma.fromJson(jsonDecode(response.body));
     var index = turmas.indexWhere((element) => element.id == id);
     turmas[index] = newTurma;
-    notifyListeners();
+    update();
     // turmas.(, turmas.indexWhere((element) => element.id == id), newTurma) ;
   }
 
@@ -61,7 +59,7 @@ class TurmasProvider extends ChangeNotifier {
     // print("Chamou");
     print("Pega turma;");
     loading = true;
-    // notifyListeners();
+    // update();
     var response = await http.get(
       Uri.parse(url + "/users/turmas"),
       headers: {
@@ -70,7 +68,7 @@ class TurmasProvider extends ChangeNotifier {
     );
     print("OK");
     var turmasJson = json.decode(response.body)["turmas"] as List;
-    // print(turmasJson);
+    print(turmasJson);
     turmas.clear();
     if (turmasJson.isNotEmpty) {
       for (Map<String, dynamic> turma in turmasJson) {
@@ -95,6 +93,6 @@ class TurmasProvider extends ChangeNotifier {
     }
     loading = false;
     print(turmas);
-    notifyListeners();
+    update();
   }
 }

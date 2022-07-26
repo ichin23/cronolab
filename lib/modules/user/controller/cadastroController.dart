@@ -1,6 +1,7 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CadastroController {
   Future siginEmail(
@@ -12,30 +13,28 @@ class CadastroController {
     } catch (e) {
       print(e.toString());
       if (e.toString().contains("email-already-in-use")) {
-        showDialog(
-          context: context,
-          builder: ((context) => const AlertDialog(
-                backgroundColor: black,
-                title: Text(
-                  "Erro no cadastro",
-                  style: TextStyle(color: white),
-                ),
-                content: Text("Esse email já é usado por outra conta",
-                    style: TextStyle(color: white)),
-              )),
+        Get.dialog(
+          const AlertDialog(
+            backgroundColor: black,
+            title: Text(
+              "Erro no cadastro",
+              style: TextStyle(color: white),
+            ),
+            content: Text("Esse email já é usado por outra conta",
+                style: TextStyle(color: white)),
+          ),
         );
       } else {
-        showDialog(
-          context: context,
-          builder: ((context) => const AlertDialog(
-                backgroundColor: black,
-                title: Text(
-                  "Erro no cadastro",
-                  style: TextStyle(color: white),
-                ),
-                content: Text("Ocorreu um erro ao cadastrar sua conta",
-                    style: TextStyle(color: white)),
-              )),
+        Get.dialog(
+          const AlertDialog(
+            backgroundColor: black,
+            title: Text(
+              "Erro no cadastro",
+              style: TextStyle(color: white),
+            ),
+            content: Text("Ocorreu um erro ao cadastrar sua conta",
+                style: TextStyle(color: white)),
+          ),
         );
       }
     }

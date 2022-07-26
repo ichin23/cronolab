@@ -3,6 +3,7 @@ import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -24,20 +25,18 @@ class LoginController {
       }
     } catch (e) {
       print(e);
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text("Erro", style: fonts.label),
-                content: const Text("Ocorreu um erro ao realizar o login"),
-                backgroundColor: darkPrimary,
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("OK"))
-                ],
-              ));
+      Get.dialog(AlertDialog(
+        title: const Text("Erro", style: fonts.label),
+        content: const Text("Ocorreu um erro ao realizar o login"),
+        backgroundColor: darkPrimary,
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("OK"))
+        ],
+      ));
     }
   }
 
@@ -47,18 +46,17 @@ class LoginController {
           .signInWithEmailAndPassword(email: email, password: senha);
     } catch (e) {
       print(e.runtimeType);
-      showDialog(
-        context: context,
-        builder: ((context) => const AlertDialog(
-              backgroundColor: black,
-              title: Text(
-                "Erro no login",
-                style: TextStyle(color: white),
-              ),
-              content: Text(
-                  "Email ou senha incorretos. Certeza que já possui sua conta?",
-                  style: TextStyle(color: white)),
-            )),
+      Get.dialog(
+        const AlertDialog(
+          backgroundColor: black,
+          title: Text(
+            "Erro no login",
+            style: TextStyle(color: white),
+          ),
+          content: Text(
+              "Email ou senha incorretos. Certeza que já possui sua conta?",
+              style: TextStyle(color: white)),
+        ),
       );
       print(e);
     }

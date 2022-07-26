@@ -1,7 +1,9 @@
+import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class PerfilPage extends StatefulWidget {
@@ -26,7 +28,14 @@ class _PerfilPageState extends State<PerfilPage> {
     // var turmas = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: darkPrimary,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black45,
+            )),
         title: const Text("Gerenciar Perfil"),
       ),
       backgroundColor: black,
@@ -75,7 +84,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             onPressed: () {
                               FirebaseAuth.instance.signOut();
                               // turmas.clear();
-                              Navigator.pop(context);
+                              Get.back();
                             },
                             child: const Text(
                               "Sair",
@@ -106,7 +115,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       title: const Text("Suas Informações",
                           style: TextStyle(color: white)),
                       onTap: () {
-                        Navigator.of(context).pushNamed("/suasInfos");
+                        Get.toNamed("/suasInfos");
                       },
                       trailing:
                           const Icon(Icons.arrow_forward_ios, color: white),
@@ -115,15 +124,19 @@ class _PerfilPageState extends State<PerfilPage> {
                       title: const Text("Gerenciar Turmas",
                           style: TextStyle(color: white)),
                       onTap: () {
-                        Navigator.of(context).pushNamed("/minhasTurmas");
+                        Get.toNamed("/minhasTurmas");
                       },
                       trailing:
                           const Icon(Icons.arrow_forward_ios, color: white),
                     ),
-                    const ListTile(
-                      title:
-                          Text("Sobre o APP", style: TextStyle(color: white)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: white),
+                    ListTile(
+                      onTap: () {
+                        print(TurmasState.to.turmaAtual);
+                      },
+                      title: const Text("Sobre o APP",
+                          style: TextStyle(color: white)),
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios, color: white),
                     ),
                   ]),
                 );

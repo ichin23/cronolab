@@ -3,7 +3,7 @@ import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class GerenciarTurmas extends StatefulWidget {
   const GerenciarTurmas({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
 
   @override
   Widget build(BuildContext context) {
-    TurmasProvider turmas = Provider.of<TurmasProvider>(context);
+    TurmasState turmas = TurmasState.to;
     TextEditingController code = TextEditingController();
     // var auth = Provider.of<Auth>(context);
     return
@@ -38,7 +38,14 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
       backgroundColor: black,
       appBar: AppBar(
         title: const Text("Gerenciar Turmas"),
-        backgroundColor: darkPrimary,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black45,
+            )),
         // actions: [
         //   loading
         //       ? Container(
@@ -47,29 +54,28 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
         // ],
       ),
       body: SafeArea(
-          child: Consumer<TurmasProvider>(
-        builder: (context, turmas, child) => ListView.builder(
+          child: GetBuilder<TurmasState>(
+        init: TurmasState.to,
+        builder: (turmas) => ListView.builder(
             itemCount: turmas.turmas.length,
             itemBuilder: (context, i) => Padding(
                   padding: const EdgeInsets.all(10),
                   child: ListTile(
                       onTap: () {
                         if (turmas.turmas[i].isAdmin) {
-                          Navigator.pushNamed(context, '/turma',
-                              arguments: turmas.turmas[i]);
+                          Get.toNamed('/turma', arguments: turmas.turmas[i]);
                         } else {
-                          showDialog(
-                            context: context,
-                            builder: ((context) => const AlertDialog(
-                                  backgroundColor: black,
-                                  title: Text(
-                                    "Erro ao acessar",
-                                    style: TextStyle(color: white),
-                                  ),
-                                  content: Text(
-                                      "Você não é administrador dessa turma",
-                                      style: TextStyle(color: white)),
-                                )),
+                          Get.dialog(
+                            const AlertDialog(
+                              backgroundColor: black,
+                              title: Text(
+                                "Erro ao acessar",
+                                style: TextStyle(color: white),
+                              ),
+                              content: Text(
+                                  "Você não é administrador dessa turma",
+                                  style: TextStyle(color: white)),
+                            ),
                           );
                         }
                       },
@@ -91,89 +97,78 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
           onPressed: loading
               ? null
               : () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => StatefulBuilder(
-                            builder: (context, setstate) => AlertDialog(
-                              backgroundColor: black,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              title: const Text("Adicionar Turma",
-                                  style: TextStyle(color: white)),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text("Digite o código da turma",
-                                      style: TextStyle(color: white)),
-                                  const SizedBox(height: 15),
-                                  TextField(
-                                    style: fonts.input,
-                                    decoration: InputDecoration(
-                                      disabledBorder: OutlineInputBorder(
-                                          borderSide:
-                                              const BorderSide(color: white),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: darkPrimary),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide:
-                                              const BorderSide(color: primary),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              const BorderSide(color: white),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                    ),
-                                    controller: code,
-                                    onSubmitted: (value) {},
-                                  ),
-                                  const SizedBox(height: 10),
-                                  TextButton(
-                                      style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(
-                                              const EdgeInsets.all(20)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  darkPrimary),
-                                          shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15)))),
-                                      onPressed: loading
-                                          ? null
-                                          : () async {
-                                              loading = true;
-                                              setstate(() {});
-
-                                              // print("AAAAAAAAAAAAAAAAAAAAA");
-                                              await turmas.initTurma(code.text);
-
-                                              // await turmas.enterTurma(code.text, context);
-                                              turmas
-                                                  .getTurmas()
-                                                  .then((value) => setState(() {
-                                                        loading = false;
-                                                      }));
-
-                                              Navigator.pop(context);
-                                              setState(() {});
-                                            },
-                                      child: loading
-                                          ? const CircularProgressIndicator(
-                                              color: black)
-                                          : const Text("Adicionar",
-                                              style: TextStyle(color: white)))
-                                ],
-                              ),
+                  Get.dialog(StatefulBuilder(
+                    builder: (context, setstate) => AlertDialog(
+                      backgroundColor: black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      title: const Text("Adicionar Turma",
+                          style: TextStyle(color: white)),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text("Digite o código da turma",
+                              style: TextStyle(color: white)),
+                          const SizedBox(height: 15),
+                          TextField(
+                            style: fonts.input,
+                            decoration: InputDecoration(
+                              disabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: white),
+                                  borderRadius: BorderRadius.circular(10)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: darkPrimary),
+                                  borderRadius: BorderRadius.circular(10)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: primary),
+                                  borderRadius: BorderRadius.circular(10)),
+                              border: OutlineInputBorder(
+                                  borderSide: const BorderSide(color: white),
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
-                          ));
+                            controller: code,
+                            onSubmitted: (value) {},
+                          ),
+                          const SizedBox(height: 10),
+                          TextButton(
+                              style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                      const EdgeInsets.all(20)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all(darkPrimary),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)))),
+                              onPressed: loading
+                                  ? null
+                                  : () async {
+                                      loading = true;
+                                      setstate(() {});
+
+                                      // print("AAAAAAAAAAAAAAAAAAAAA");
+                                      await turmas.initTurma(code.text);
+
+                                      // await turmas.enterTurma(code.text, context);
+                                      turmas
+                                          .getTurmas()
+                                          .then((value) => setState(() {
+                                                loading = false;
+                                              }));
+
+                                      Get.back();
+                                      setState(() {});
+                                    },
+                              child: loading
+                                  ? const CircularProgressIndicator(
+                                      color: black)
+                                  : const Text("Adicionar",
+                                      style: TextStyle(color: white)))
+                        ],
+                      ),
+                    ),
+                  ));
                 },
           child: loading
               ? const CircularProgressIndicator(

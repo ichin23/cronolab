@@ -9,80 +9,71 @@ import 'package:cronolab/modules/user/view/suasInfos.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
-import '../modules/dever/dever.dart';
-import '../modules/turmas/turma.dart';
 import '../modules/turmas/view/gerenciarTurmas.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => TurmasProvider())
-      ],
-      child: MaterialApp(
-          title: "Cronolab",
-          theme: ThemeData(
-            fontFamily: "Inter",
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: primary,
-              primary: primary2,
-            ),
-            primaryColor: primary2,
+    Get.put(TurmasState());
 
-            //brightness: Brightness.light
-            // primarySwatch: Colors.blue,
-            // primarySwatch:  primary,
+    return GetMaterialApp(
+      defaultTransition: Transition.rightToLeftWithFade,
+      title: "Cronolab",
+      theme: ThemeData(
+          fontFamily: "Inter",
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: primary,
+            primary: primary2,
           ),
-          onGenerateRoute: (RouteSettings routeSettings) {
-            switch (routeSettings.name) {
-              // case "/":
-              //   return MaterialPageRoute(builder: (context) => HomePage());
-              case "/perfil":
-                return MaterialPageRoute(
-                    builder: (context) => const PerfilPage());
-              case "/minhasTurmas":
-                return MaterialPageRoute(
-                    builder: (context) => const GerenciarTurmas());
-              case "/suasInfos":
-                return MaterialPageRoute(
-                    builder: (context) => const SuasInformacoes());
-              case '/turma':
-                var arg = routeSettings.arguments as Turma;
-                return MaterialPageRoute(
-                    builder: (context) => EditarTurma(
-                          turma: arg,
-                        ));
-
-              case '/dever':
-                var arg = routeSettings.arguments as Dever;
-                return MaterialPageRoute(
-                    builder: (context) => DeverDetails(arg));
-              // default:
-              //   return MaterialPageRoute(builder: (context) => MyHomePage());
-            }
-            return null;
-          },
-          home: StreamBuilder(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, stream) {
-                if (stream.connectionState != ConnectionState.waiting) {
-                  if (stream.data != null) {
-                    return const HomeScreen();
-                  } else {
-                    return const LoginPage();
-                  }
+          primaryColor: primary2,
+          appBarTheme: const AppBarTheme(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10))),
+              backgroundColor: primary2,
+              elevation: 0,
+              centerTitle: true,
+              toolbarHeight: 70,
+              titleTextStyle: TextStyle(
+                  color: Colors.black45,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800))
+          //brightness: Brightness.light
+          // primarySwatch: Colors.blue,
+          // primarySwatch:  primary,
+          ),
+      initialRoute: "/",
+      getPages: [
+        GetPage(
+          name: "/",
+          page: () => StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, stream) {
+              if (stream.connectionState != ConnectionState.waiting) {
+                if (stream.data != null) {
+                  return const HomeScreen();
                 } else {
-                  return Scaffold(
-                    body: Center(child: Image.asset("assets/image/logo.png")),
-                  );
+                  return const LoginPage();
                 }
-              })),
+              } else {
+                return Scaffold(
+                  body: Center(child: Image.asset("assets/image/logo.png")),
+                );
+              }
+            },
+          ),
+        ),
+        GetPage(name: "/perfil", page: () => const PerfilPage()),
+        GetPage(name: "/minhasTurmas", page: () => const GerenciarTurmas()),
+        GetPage(name: "/suasInfos", page: () => const SuasInformacoes()),
+        GetPage(name: "/turma", page: () => const EditarTurma()),
+        GetPage(name: "/dever", page: () => const DeverDetails()),
+      ],
     );
   }
 }

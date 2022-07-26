@@ -2,6 +2,7 @@ import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SuasInformacoes extends StatefulWidget {
   const SuasInformacoes({Key? key}) : super(key: key);
@@ -17,7 +18,14 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
     return Scaffold(
       backgroundColor: black,
       appBar: AppBar(
-        backgroundColor: primary2,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black45,
+            )),
         title: const Text("Suas Informações"),
       ),
       body: Container(
@@ -33,38 +41,40 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                     borderRadius: BorderRadius.circular(20)),
                 child: Text(
                   "Email: ${user.email}",
-                  style: const TextStyle(color: white, fontSize: 15),
+                  style: fonts.input,
                 )),
             const SizedBox(height: 10),
             InkWell(
               onTap: () {
                 TextEditingController newUser = TextEditingController();
-                showModalBottomSheet(
+                Get.bottomSheet(BottomSheet(
+                    onClosing: () {},
                     backgroundColor: black,
-                    context: context,
-                    builder: (context) => Container(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(children: [
-                            TextFormField(
-                              style: fonts.white,
-                              decoration: InputDecoration(
-                                  labelStyle: fonts.white,
-                                  label: const Text("Novo nome"),
-                                  icon: const Icon(Icons.person, color: white),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  )),
-                              controller: newUser,
-                            ),
-                            TextButton(
-                                onPressed: () async {
-                                  await user
-                                      .updateDisplayName(newUser.text)
-                                      .then((value) => Navigator.pop(context));
-                                },
-                                child: const Text("Mudar User"))
-                          ]),
-                        ));
+                    builder: (context) {
+                      return Container(
+                        padding: const EdgeInsets.all(15),
+                        child: Column(children: [
+                          TextFormField(
+                            style: fonts.white,
+                            decoration: InputDecoration(
+                                labelStyle: fonts.white,
+                                label: const Text("Novo nome"),
+                                icon: const Icon(Icons.person, color: white),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                )),
+                            controller: newUser,
+                          ),
+                          TextButton(
+                              onPressed: () async {
+                                await user
+                                    .updateDisplayName(newUser.text)
+                                    .then((value) => Get.back());
+                              },
+                              child: const Text("Mudar User"))
+                        ]),
+                      );
+                    }));
                 setState(() {});
               },
               child: Container(
@@ -79,7 +89,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                     children: [
                       Text(
                         "Nome: ${user.displayName}",
-                        style: const TextStyle(color: white, fontSize: 15),
+                        style: fonts.input,
                       ),
                       const Icon(
                         Icons.arrow_forward_ios,
@@ -92,32 +102,34 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
             InkWell(
               onTap: () {
                 TextEditingController newSenha = TextEditingController();
-                showModalBottomSheet(
+                Get.bottomSheet(BottomSheet(
+                    onClosing: () {},
                     backgroundColor: black,
-                    context: context,
-                    builder: (context) => Container(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(children: [
-                            TextFormField(
-                              style: fonts.white,
-                              decoration: InputDecoration(
-                                  labelStyle: fonts.white,
-                                  label: const Text("Nova senha"),
-                                  icon: const Icon(Icons.key, color: white),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  )),
-                              controller: newSenha,
-                            ),
-                            TextButton(
-                                onPressed: () async {
-                                  await user
-                                      .updatePassword(newSenha.text)
-                                      .then((value) => Navigator.pop(context));
-                                },
-                                child: const Text("Mudar Senha"))
-                          ]),
-                        ));
+                    builder: (context) {
+                      return Container(
+                        padding: const EdgeInsets.all(15),
+                        child: Column(children: [
+                          TextFormField(
+                            style: fonts.white,
+                            decoration: InputDecoration(
+                                labelStyle: fonts.white,
+                                label: const Text("Nova senha"),
+                                icon: const Icon(Icons.key, color: white),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                )),
+                            controller: newSenha,
+                          ),
+                          TextButton(
+                              onPressed: () async {
+                                await user
+                                    .updatePassword(newSenha.text)
+                                    .then((value) => Get.back());
+                              },
+                              child: const Text("Mudar Senha"))
+                        ]),
+                      );
+                    }));
               },
               child: Container(
                   padding: const EdgeInsets.all(10),
@@ -131,7 +143,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                     children: const [
                       Text(
                         "Senha",
-                        style: TextStyle(color: white, fontSize: 15),
+                        style: fonts.input,
                       ),
                       Icon(
                         Icons.arrow_forward_ios,
