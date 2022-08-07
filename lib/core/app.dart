@@ -1,6 +1,7 @@
-import 'package:cronolab/modules/cronolab/pages/index.dart';
+import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/view/deverDetails.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/modules/turmas/view/editarTurma.dart';
 import 'package:cronolab/modules/user/view/loginPage.dart';
 
@@ -18,6 +19,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(TurmasState());
+    Get.put(TurmasLocal());
 
     return GetMaterialApp(
       defaultTransition: Transition.rightToLeftWithFade,

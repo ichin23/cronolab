@@ -1,6 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/view/addMateria.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:get/get.dart';
@@ -9,9 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 import '../materia/materia.dart';
+import '../turmas/turmasLocal.dart';
 
 DateFormat dateStr = DateFormat("dd/MM");
-cadastra(BuildContext context, TurmasState turmas, Function() setState) async {
+cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController titulo = TextEditingController();
   TextEditingController materia = TextEditingController();
@@ -140,8 +140,8 @@ cadastra(BuildContext context, TurmasState turmas, Function() setState) async {
                                           });
                                           /* await turmas.turmaAtual!
                                                     .addMateria(materia.text); */
-                                          await turmas.refreshTurma(
-                                              turmas.turmaAtual!.id);
+                                          //TODO: Refresjh await turmas.refreshTurma(
+                                          //turmas.turmaAtual!.id);
                                           setState(() {});
                                         },
                                         child: Text(

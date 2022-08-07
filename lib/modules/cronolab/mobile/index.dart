@@ -1,15 +1,17 @@
 import 'package:cronolab/core/updater.dart';
 import 'package:cronolab/modules/dever/view/deverTile.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 
 import '../../dever/cadastraDever.dart';
+import '../../turmas/turmasLocal.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -37,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   refresh() {
-    getAtv = TurmasState.to.turmaAtual!.getAtividades();
+    getAtv = TurmasLocal.to.turmaAtual!.getAtvDB();
     setState(() {});
   }
 
@@ -57,16 +59,25 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarColor: primary2,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark));
-    Updater().init();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         var turmas = TurmasState.to;
         setState(() {
           loading = true;
         });
-        await turmas.getTurmas();
+        bool internet = await InternetConnectionChecker().hasConnection;
+        if (internet) {
+          Updater().init();
+        }
+        await TurmasLocal.to.init();
+        if (internet) {
+          await turmas.getTurmas();
+        }
 
-        getAtv = turmas.turmaAtual!.getAtividades();
+        await TurmasLocal.to.getTurmas();
+
+        //await turmas.turmaAtual!.getAtividades();
+        getAtv = TurmasLocal.to.turmaAtual!.getAtvDB();
       } catch (e) {
         setState(() {
           erro = true;
@@ -84,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     //TurmasState turmas = TurmasState.to;
-    return GetBuilder<TurmasState>(
-        init: TurmasState.to,
+    return GetBuilder<TurmasLocal>(
+        init: TurmasLocal.to,
         builder: (turmas) {
           return Scaffold(
               drawer: Drawer(
@@ -102,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           turmas.changeTurma(turmas.turmas[index]);
                           // value.changeTurma(value.turmas[index]);
-                          getAtv = turmas.turmaAtual!.getAtividades();
+                          getAtv = turmas.turmaAtual!.getAtvDB();
                           // setState(() {});
                           scaffoldKey.currentState!.openEndDrawer();
                         },
@@ -119,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           List? list = snapshot.data;
+
                           if (snapshot.hasData && list!.isNotEmpty) {
                             return CustomScrollView(slivers: [
                               SliverAppBar(

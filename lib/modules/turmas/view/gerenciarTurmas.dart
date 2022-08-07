@@ -1,4 +1,5 @@
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
@@ -54,8 +55,8 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
         // ],
       ),
       body: SafeArea(
-          child: GetBuilder<TurmasState>(
-        init: TurmasState.to,
+          child: GetBuilder<TurmasLocal>(
+        init: TurmasLocal.to,
         builder: (turmas) => ListView.builder(
             itemCount: turmas.turmas.length,
             itemBuilder: (context, i) => Padding(

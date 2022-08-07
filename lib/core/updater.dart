@@ -11,7 +11,7 @@ import '../shared/colors.dart';
 
 class Updater {
   init() async {
-    double appVersion = 2.11;
+    double appVersion = 2.35;
     // await GetVersion.projectVersion;
 
     var response = await http.get(

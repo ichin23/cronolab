@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart' as colors;
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,7 @@ class _DeverDetailsState extends State<DeverDetails> {
     data.text = dateStr.format(dever.data);
     hora.text = horaStr.format(dever.data);
     local.text = dever.local ?? "";
-    editavel = TurmasState.to.turmaAtual!.isAdmin;
+    editavel = TurmasLocal.to.turmaAtual!.isAdmin;
     // print(editavel);
   }
 

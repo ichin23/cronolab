@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +131,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     ListTile(
                       onTap: () {
-                        print(TurmasState.to.turmaAtual);
+                        print(TurmasLocal.to.turmaAtual);
                       },
                       title: const Text("Sobre o APP",
                           style: TextStyle(color: white)),

@@ -220,9 +220,6 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        print(MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom);
                                         Get.to(const CadastroPage());
                                       },
                                       child: const Text("Cadastre-se",

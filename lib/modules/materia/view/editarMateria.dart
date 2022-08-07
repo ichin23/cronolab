@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../../shared/colors.dart';
 import '../../../shared/fonts.dart' as fonts;
 import '../../turmas/turma.dart';
-import '../../turmas/turmasProviderServer.dart';
+import '../../turmas/turmasServer.dart';
 import '../materia.dart';
 
 String url = "https://cronolab-server.herokuapp.com";

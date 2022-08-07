@@ -45,7 +45,6 @@ class LoginController {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: senha);
     } catch (e) {
-      print(e.runtimeType);
       Get.dialog(
         const AlertDialog(
           backgroundColor: black,

@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class _DeverTileState extends State<DeverTile> {
   @override
   void initState() {
     super.initState();
-    var turmas = TurmasState.to;
+    var turmas = TurmasLocal.to;
     if (turmas.turmaAtual!.isAdmin) {
       popMenu.add(
         PopupMenuItem(

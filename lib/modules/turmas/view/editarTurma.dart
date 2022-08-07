@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/materia/view/addMateria.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
@@ -35,7 +35,6 @@ class _EditarTurmaState extends State<EditarTurma>
         duration: const Duration(milliseconds: 200), vsync: this);
     animation = Tween<double>(begin: 100, end: 0).animate(controller)
       ..addStatusListener((status) {
-        print(status);
         setState(() {});
       })
       ..addListener(() {
@@ -54,7 +53,7 @@ class _EditarTurmaState extends State<EditarTurma>
 
   @override
   Widget build(BuildContext context) {
-    var turmas = TurmasState.to;
+    var turmas = TurmasLocal.to;
     // widget.turma.materias.add("");
     return Scaffold(
       appBar: AppBar(

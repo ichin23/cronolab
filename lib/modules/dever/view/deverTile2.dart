@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,7 +21,7 @@ class DeverTile2 extends StatefulWidget {
 class _DeverTile2State extends State<DeverTile2> {
   @override
   Widget build(BuildContext context) {
-    var turmas = TurmasState.to;
+    var turmas = TurmasLocal.to;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
