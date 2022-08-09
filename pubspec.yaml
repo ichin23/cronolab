@@ -33,6 +33,7 @@ dependencies:
 
   path_provider:
   open_file: ^3.2.1
+  desktop_webview_auth: ^0.0.9
 
 dev_dependencies:
   flutter_test:
