@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
@@ -148,8 +149,9 @@ class Turma {
       for (var dever in deveresJson) {
         if (deveres != null) {
           var deverData = Dever.fromJson(dever);
-
-          TurmasLocal.to.addDever(deverData, id);
+          if (Platform.isAndroid || Platform.isIOS) {
+            TurmasLocal.to.addDever(deverData, id);
+          }
           deveres!.add(deverData);
         } else {
           deveres = [Dever.fromJson(dever)];

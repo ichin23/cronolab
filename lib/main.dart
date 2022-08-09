@@ -8,19 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 void main() async {
-  //debugPrint(Platform.operatingSystem);
   WidgetsFlutterBinding.ensureInitialized();
-  //print(Platform.isLinux);
-  //kIsWeb
-  //print(Firebase.app().name);
 
-  //if (!(Platform.isLinux || Platform.isWindows)) {
   await Firebase.initializeApp(
-    options: Platform.isLinux
-        ? DefaultFirebaseOptions.web
-        : DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
-  //}
+
   if (!kIsWeb && !Platform.isLinux) {
     OneSignal.shared.setAppId("d9393c5e-61e9-4174-9d19-3d1e3eb7ad3f");
   }

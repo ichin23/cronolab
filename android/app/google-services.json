@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "286245196387-dpo6dlbcnd46hk3ibuffit5jrolrross.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cronolab.cronolab",
+            "certificate_hash": "8337b5c7c4a756678673b8ce412c243b3a1464a1"
+          }
+        },
+        {
           "client_id": "286245196387-dpnqdg22vidq6a00qddulmudr30t5dr1.apps.googleusercontent.com",
           "client_type": 3
         }

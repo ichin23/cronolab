@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
@@ -10,6 +11,8 @@ import 'package:http/http.dart' as http;
 class TurmasState extends GetxController {
   String url = "https://cronolab-server.herokuapp.com";
   static TurmasState get to => Get.find();
+  List<Turma> turmas = [];
+  Turma? turmaAtual;
 
   bool loading = false;
 
@@ -25,6 +28,11 @@ class TurmasState extends GetxController {
     Turma newTurma = Turma.fromJson(jsonDecode(response.body));
 
     return newTurma;
+  }
+
+  changeTurmaAtual(Turma turma) {
+    turmaAtual = turma;
+    update();
   }
 
   initTurma(String code) async {
@@ -54,12 +62,15 @@ class TurmasState extends GetxController {
     var turmasJson = json.decode(response.body)["turmas"] as List;
 
     if (turmasJson.isNotEmpty) {
+      turmas.clear();
       for (Map<String, dynamic> turma in turmasJson) {
         var turmaAdd = Turma.fromJson(turma);
         if (turma["admin"] == true) {
           turmaAdd.setAdmin();
         }
-        TurmasLocal.to.addTurma(turmaAdd);
+        if (Platform.isAndroid || Platform.isIOS) {
+          TurmasLocal.to.addTurma(turmaAdd);
+        }
         List materias = turma["materias"];
         List<Materia> listMat = materias.map((mat) {
           var materia = Materia.fromJson(mat);
@@ -67,14 +78,19 @@ class TurmasState extends GetxController {
           return materia;
         }).toList();
         for (var materia in listMat) {
-          await TurmasLocal.to.addMateria(materia, turmaAdd.id);
+          if (Platform.isAndroid || Platform.isIOS) {
+            await TurmasLocal.to.addMateria(materia, turmaAdd.id);
+          }
         }
 
         // print(listMat[0].contato);
 
         turmaAdd.setMaterias = listMat;
         await turmaAdd.getAtividades();
+        turmas.add(turmaAdd);
       }
+      turmaAtual = turmas[0];
+      return;
     }
 
     loading = false;

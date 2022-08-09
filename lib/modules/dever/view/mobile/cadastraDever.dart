@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/materia/view/addMateria.dart';
+import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:get/get.dart';
@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-import '../materia/materia.dart';
-import '../turmas/turmasLocal.dart';
+import '../../../materia/materia.dart';
+import '../../../turmas/turmasLocal.dart';
 
 DateFormat dateStr = DateFormat("dd/MM");
 cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {

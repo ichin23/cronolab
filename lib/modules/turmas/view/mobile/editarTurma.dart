@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/materia/view/addMateria.dart';
+import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
@@ -7,8 +7,8 @@ import 'package:cronolab/shared/myInput.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../materia/view/editarMateria.dart';
-import '../turma.dart';
+import '../../../materia/view/mobile/editarMateria.dart';
+import '../../turma.dart';
 
 class EditarTurma extends StatefulWidget {
   const EditarTurma({Key? key}) : super(key: key);

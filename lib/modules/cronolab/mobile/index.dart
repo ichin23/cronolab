@@ -1,5 +1,6 @@
 import 'package:cronolab/core/updater.dart';
-import 'package:cronolab/modules/dever/view/deverTile.dart';
+import 'package:cronolab/modules/dever/view/mobile/deverTile.dart';
+
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
@@ -10,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 
-import '../../dever/cadastraDever.dart';
+import '../../dever/view/mobile/cadastraDever.dart';
 import '../../turmas/turmasLocal.dart';
 
 class HomeScreen extends StatefulWidget {

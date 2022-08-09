@@ -4,18 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../../shared/colors.dart';
-import '../../../shared/fonts.dart' as fonts;
-import '../../turmas/turma.dart';
-import '../../turmas/turmasServer.dart';
-import '../materia.dart';
+import '../../../../shared/colors.dart';
+import '../../../../shared/fonts.dart' as fonts;
 
-String url = "https://cronolab-server.herokuapp.com";
-
-editaMateria(BuildContext context, Materia materia, Turma turma,
-    Function() setState) async {
+addMateria(BuildContext context, String turmaID, Function() setstate) async {
   bool loading = false;
-
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FocusNode nomeFoc = FocusNode();
   FocusNode profFoc = FocusNode();
@@ -23,10 +16,10 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
   TextEditingController nome = TextEditingController();
   TextEditingController prof = TextEditingController();
   TextEditingController contato = TextEditingController();
-  var turmas = TurmasState.to;
-  nome.text = materia.nome;
-  prof.text = materia.prof.toString();
-  contato.text = materia.contato.toString();
+
+  // nome.text = materia.nome;
+  // prof.text = materia.prof.toString();
+  // contato.text = materia.contato.toString();
   await Get.bottomSheet(StatefulBuilder(builder: (context, setState) {
     return BottomSheet(
         backgroundColor: black,
@@ -67,8 +60,7 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                   label: const Text("Título"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: const TextStyle(
-                                      fontSize: 16, color: white),
+                                  labelStyle: fonts.input,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
@@ -94,8 +86,7 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                   label: const Text("Professor"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: const TextStyle(
-                                      fontSize: 16, color: white),
+                                  labelStyle: fonts.input,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
@@ -121,44 +112,40 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                   label: const Text("Contato"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: const TextStyle(
-                                      fontSize: 16, color: white),
+                                  labelStyle: fonts.input,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
                             ),
                             TextButton(
-                                onPressed: loading
-                                    ? null
-                                    : () async {
-                                        setState(() {
-                                          loading = true;
-                                        });
-                                        await http.put(
-                                            Uri.parse(
-                                                url + "/class/edit/materia"),
-                                            headers: {
-                                              "authorization": "Bearer " +
-                                                  FirebaseAuth.instance
-                                                      .currentUser!.uid,
-                                              "Content-Type": "application/json"
-                                            },
-                                            body: jsonEncode({
-                                              "turmaID": turma.id,
-                                              "materiaID": materia.id,
-                                              "data": {
-                                                "professor": prof.text,
-                                                "nome": nome.text,
-                                                "contato": contato.text,
-                                              }
-                                            }));
-
-                                        setState(() {
-                                          loading = false;
-                                        });
-                                        Get.back();
-                                        turmas.getTurmas();
-                                      },
+                                onPressed: () async {
+                                  print("OKOK");
+                                  String url =
+                                      "https://cronolab-server.herokuapp.com";
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    print("OKOK");
+                                    var response = await http.put(
+                                        Uri.parse(url + "/class/materia"),
+                                        headers: {
+                                          "Content-Type": "application/json",
+                                          "authorization": "Bearer " +
+                                              FirebaseAuth
+                                                  .instance.currentUser!.uid
+                                        },
+                                        body: jsonEncode({
+                                          "turmaID": turmaID,
+                                          "data": {
+                                            "nome": nome.text,
+                                            "professor": prof.text,
+                                            "contato": contato.text
+                                          }
+                                        }));
+                                    setstate();
+                                  }
+                                },
                                 child: loading
                                     ? const CircularProgressIndicator()
                                     : const Text("Salvar"))

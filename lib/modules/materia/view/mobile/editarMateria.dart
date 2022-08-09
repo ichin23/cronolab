@@ -4,11 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../../../shared/colors.dart';
-import '../../../shared/fonts.dart' as fonts;
+import '../../../../shared/colors.dart';
+import '../../../../shared/fonts.dart' as fonts;
+import '../../../turmas/turma.dart';
+import '../../../turmas/turmasServer.dart';
+import '../../materia.dart';
 
-addMateria(BuildContext context, String turmaID, Function() setstate) async {
+String url = "https://cronolab-server.herokuapp.com";
+
+editaMateria(BuildContext context, Materia materia, Turma turma,
+    Function() setState) async {
   bool loading = false;
+
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FocusNode nomeFoc = FocusNode();
   FocusNode profFoc = FocusNode();
@@ -16,10 +23,10 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
   TextEditingController nome = TextEditingController();
   TextEditingController prof = TextEditingController();
   TextEditingController contato = TextEditingController();
-
-  // nome.text = materia.nome;
-  // prof.text = materia.prof.toString();
-  // contato.text = materia.contato.toString();
+  var turmas = TurmasState.to;
+  nome.text = materia.nome;
+  prof.text = materia.prof.toString();
+  contato.text = materia.contato.toString();
   await Get.bottomSheet(StatefulBuilder(builder: (context, setState) {
     return BottomSheet(
         backgroundColor: black,
@@ -60,7 +67,8 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                   label: const Text("Título"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: fonts.input,
+                                  labelStyle: const TextStyle(
+                                      fontSize: 16, color: white),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
@@ -86,7 +94,8 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                   label: const Text("Professor"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: fonts.input,
+                                  labelStyle: const TextStyle(
+                                      fontSize: 16, color: white),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
@@ -112,40 +121,44 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                   label: const Text("Contato"),
                                   icon: const Icon(Icons.border_color,
                                       color: white),
-                                  labelStyle: fonts.input,
+                                  labelStyle: const TextStyle(
+                                      fontSize: 16, color: white),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   )),
                             ),
                             TextButton(
-                                onPressed: () async {
-                                  print("OKOK");
-                                  String url =
-                                      "https://cronolab-server.herokuapp.com";
-                                  if (_formKey.currentState!.validate()) {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    print("OKOK");
-                                    var response = await http.put(
-                                        Uri.parse(url + "/class/materia"),
-                                        headers: {
-                                          "Content-Type": "application/json",
-                                          "authorization": "Bearer " +
-                                              FirebaseAuth
-                                                  .instance.currentUser!.uid
-                                        },
-                                        body: jsonEncode({
-                                          "turmaID": turmaID,
-                                          "data": {
-                                            "nome": nome.text,
-                                            "professor": prof.text,
-                                            "contato": contato.text
-                                          }
-                                        }));
-                                    setstate();
-                                  }
-                                },
+                                onPressed: loading
+                                    ? null
+                                    : () async {
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        await http.put(
+                                            Uri.parse(
+                                                url + "/class/edit/materia"),
+                                            headers: {
+                                              "authorization": "Bearer " +
+                                                  FirebaseAuth.instance
+                                                      .currentUser!.uid,
+                                              "Content-Type": "application/json"
+                                            },
+                                            body: jsonEncode({
+                                              "turmaID": turma.id,
+                                              "materiaID": materia.id,
+                                              "data": {
+                                                "professor": prof.text,
+                                                "nome": nome.text,
+                                                "contato": contato.text,
+                                              }
+                                            }));
+
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                        Get.back();
+                                        turmas.getTurmas();
+                                      },
                                 child: loading
                                     ? const CircularProgressIndicator()
                                     : const Text("Salvar"))

@@ -1,18 +1,21 @@
+import 'dart:io';
+
+import 'package:cronolab/modules/cronolab/desktop/index.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
-import 'package:cronolab/modules/dever/view/deverDetails.dart';
+import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
-import 'package:cronolab/modules/turmas/view/editarTurma.dart';
-import 'package:cronolab/modules/user/view/loginPage.dart';
-
-import 'package:cronolab/modules/user/view/perfil.dart';
-import 'package:cronolab/modules/user/view/suasInfos.dart';
+import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
+import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
+import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../modules/turmas/view/gerenciarTurmas.dart';
+import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
+import '../modules/user/view/mobile/perfil.dart';
+import '../modules/user/view/mobile/suasInfos.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({Key? key}) : super(key: key);
@@ -53,14 +56,19 @@ class MainApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: "/",
-          page: () => StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
+          page: () => StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.userChanges(),
             builder: (context, stream) {
               if (stream.connectionState != ConnectionState.waiting) {
                 if (stream.data != null) {
-                  return const HomeScreen();
+                  print(stream.data!.uid);
+                  return Platform.isLinux || Platform.isWindows
+                      ? const HomePageDesktop()
+                      : const HomeScreen();
                 } else {
-                  return const LoginPage();
+                  return Platform.isLinux || Platform.isWindows
+                      ? const LoginPageDesktop()
+                      : const LoginPage();
                 }
               } else {
                 return Scaffold(
