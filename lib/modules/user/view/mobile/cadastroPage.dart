@@ -2,6 +2,7 @@ import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({Key? key}) : super(key: key);
@@ -46,12 +47,18 @@ class _CadastroPageState extends State<CadastroPage> {
                         children: [
                           Column(
                             children: [
-                              const Text(
-                                "CRONOLAB",
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800),
+                              const Hero(
+                                tag: 'title',
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: Text(
+                                    "CRONOLAB",
+                                    style: TextStyle(
+                                        color: white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 25),
                               Hero(
@@ -150,8 +157,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                             passwordCont.text,
                                             nomeCont.text,
                                             context);
-                                        Navigator.pushReplacementNamed(
-                                            context, "/");
+                                        Get.offAndToNamed("/");
                                         setState(() {
                                           loading = false;
                                         });
@@ -175,7 +181,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                       ),
                                       TextButton(
                                           onPressed: () {
-                                            Navigator.pop(context);
+                                            Get.back();
                                           },
                                           child: const Text("Login",
                                               style: TextStyle(

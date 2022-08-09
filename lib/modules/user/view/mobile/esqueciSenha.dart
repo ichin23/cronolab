@@ -1,6 +1,7 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EsqueciSenha extends StatefulWidget {
   const EsqueciSenha({Key? key}) : super(key: key);
@@ -43,12 +44,18 @@ class _EsqueciSenhaState extends State<EsqueciSenha> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                "CRONOLAB",
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w800),
+                              const Hero(
+                                tag: 'title',
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: Text(
+                                    "CRONOLAB",
+                                    style: TextStyle(
+                                        color: white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 25),
                               Hero(
@@ -103,8 +110,7 @@ class _EsqueciSenhaState extends State<EsqueciSenha> {
                                         await FirebaseAuth.instance
                                             .sendPasswordResetEmail(
                                                 email: emailCont.text)
-                                            .then((value) =>
-                                                Navigator.pop(context));
+                                            .then((value) => Get.back());
                                       }
                                     },
                                   ),

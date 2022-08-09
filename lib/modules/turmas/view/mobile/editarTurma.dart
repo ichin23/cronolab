@@ -1,18 +1,17 @@
-import 'package:cronolab/modules/materia/view/addMateria.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/myInput.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
-import '../../materia/view/editarMateria.dart';
-import '../turma.dart';
+import '../../../materia/view/mobile/editarMateria.dart';
+import '../../turma.dart';
 
 class EditarTurma extends StatefulWidget {
-  EditarTurma({Key? key, required this.turma}) : super(key: key);
-  Turma turma;
+  const EditarTurma({Key? key}) : super(key: key);
 
   @override
   State<EditarTurma> createState() => _EditarTurmaState();
@@ -26,7 +25,7 @@ class _EditarTurmaState extends State<EditarTurma>
   late Animation animation;
   late AnimationController controller;
   bool excluindo = false;
-
+  var turma = Get.arguments as Turma;
   bool privada = false;
 
   @override
@@ -36,14 +35,13 @@ class _EditarTurmaState extends State<EditarTurma>
         duration: const Duration(milliseconds: 200), vsync: this);
     animation = Tween<double>(begin: 100, end: 0).animate(controller)
       ..addStatusListener((status) {
-        print(status);
         setState(() {});
       })
       ..addListener(() {
         setState(() {});
       });
-    nome.text = widget.turma.nome;
-    codigo.text = widget.turma.id;
+    nome.text = turma.nome;
+    codigo.text = turma.id;
     // controller.forward();
   }
 
@@ -55,14 +53,21 @@ class _EditarTurmaState extends State<EditarTurma>
 
   @override
   Widget build(BuildContext context) {
-    var turmas = Provider.of<TurmasProvider>(context);
+    var turmas = TurmasLocal.to;
     // widget.turma.materias.add("");
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Gerenciar ${widget.turma.nome}",
+          "Gerenciar ${turma.nome}",
         ),
-        backgroundColor: darkPrimary,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black45,
+            )),
       ),
       backgroundColor: color.black,
       body: SafeArea(
@@ -73,7 +78,7 @@ class _EditarTurmaState extends State<EditarTurma>
             const SizedBox(height: 15),
             MyField(nome: codigo, label: const Text("Código")),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text("Privada", style: label),
+              const Text("Privada", style: label),
               Switch(
                   activeColor: color.primary,
                   value: privada,
@@ -99,7 +104,7 @@ class _EditarTurmaState extends State<EditarTurma>
                     child: MyField(nome: senha, label: const Text("Senha")))
                 : Container(),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               "Matérias",
               style: label,
             ),
@@ -112,16 +117,12 @@ class _EditarTurmaState extends State<EditarTurma>
               ),
               child: Stack(
                 children: [
-                  widget.turma.materias.isNotEmpty
+                  turma.materias.isNotEmpty
                       ? ListView.builder(
-                          itemCount: widget.turma.materias.length,
+                          itemCount: turma.materias.length,
                           itemBuilder: (context, i) => ListTile(
                               onTap: () {
-                                editaMateria(
-                                    context,
-                                    widget.turma.materias[i],
-                                    widget.turma,
-                                    turmas,
+                                editaMateria(context, turma.materias[i], turma,
                                     () => setState(() {}));
                               },
                               leading: IconButton(
@@ -132,10 +133,10 @@ class _EditarTurmaState extends State<EditarTurma>
                                     //     .remove(widget.turma.materias[i]);
                                     setState(() {});
                                   }),
-                              title: Text(widget.turma.materias[i].nome,
-                                  style: label)),
+                              title:
+                                  Text(turma.materias[i].nome, style: label)),
                         )
-                      : Center(
+                      : const Center(
                           child: Text(
                             "Nada foi encontrado",
                             style: label,
@@ -149,11 +150,10 @@ class _EditarTurmaState extends State<EditarTurma>
                             TextEditingController materia =
                                 TextEditingController();
                             bool loading = false;
-                            addMateria(context, widget.turma.id, () async {
+                            addMateria(context, turma.id, () async {
                               await turmas.getTurmas();
-                              widget.turma =
-                                  await turmas.getByID(widget.turma.id);
-                              Navigator.pop(context);
+                              turma = await turmas.getByID(turma.id);
+                              Get.back();
                               setState(() {});
                             });
                             // showDialog(
@@ -191,8 +191,8 @@ class _EditarTurmaState extends State<EditarTurma>
                             //                               setState(() {
                             //                                 loading = false;
                             //                               });
-                            //                               Navigator.pop(
-                            //                                   context);
+                            //                               Get.back(
+                            //                                   );
                             //                             }
                             //                           },
                             //                           child: Text("Adicionar"))
@@ -224,8 +224,8 @@ class _EditarTurmaState extends State<EditarTurma>
                             setState(() {
                               excluindo = true;
                             });
-                            await widget.turma.deleteTurma();
-                            Navigator.pop(context);
+                            await turma.deleteTurma();
+                            Get.back();
                             await turmas.getTurmas();
                             setState(() {
                               excluindo = false;
@@ -233,7 +233,7 @@ class _EditarTurmaState extends State<EditarTurma>
                           },
                     child: excluindo
                         ? const CircularProgressIndicator()
-                        : Text("Excluir", style: buttonText)),
+                        : const Text("Excluir", style: buttonText)),
                 TextButton(
                     style: ButtonStyle(
                         padding:
@@ -242,9 +242,9 @@ class _EditarTurmaState extends State<EditarTurma>
                             borderRadius: BorderRadius.circular(10))),
                         backgroundColor: MaterialStateProperty.all(primary)),
                     onPressed: () async {
-                      Navigator.pop(context);
+                      Get.back();
                     },
-                    child: Text("Salvar", style: buttonText)),
+                    child: const Text("Salvar", style: buttonText)),
               ],
             )
             // : Container()

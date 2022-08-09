@@ -1,12 +1,11 @@
 import 'package:cronolab/shared/colors.dart' as colors;
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-TextStyle white = GoogleFonts.inter(color: colors.white);
-TextStyle label = GoogleFonts.inter(
-    color: colors.white, fontSize: 16, fontWeight: FontWeight.w800);
-TextStyle input = GoogleFonts.inter(
-    color: colors.white, fontSize: 14, fontWeight: FontWeight.w600);
-TextStyle inputDever = GoogleFonts.inter(
-    color: colors.white, fontSize: 18, fontWeight: FontWeight.w800);
-TextStyle buttonText = GoogleFonts.inter(color: colors.black);
+const TextStyle white = TextStyle(color: colors.white);
+const TextStyle label =
+    TextStyle(color: colors.white, fontSize: 16, fontWeight: FontWeight.w800);
+const TextStyle input =
+    TextStyle(color: colors.white, fontSize: 14, fontWeight: FontWeight.w600);
+const TextStyle inputDever =
+    TextStyle(color: colors.white, fontSize: 18, fontWeight: FontWeight.w800);
+const TextStyle buttonText = TextStyle(color: colors.black);

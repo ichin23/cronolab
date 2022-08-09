@@ -1,10 +1,10 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasProviderServer.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import 'popit.dart';
 
@@ -21,7 +21,7 @@ class DeverTile2 extends StatefulWidget {
 class _DeverTile2State extends State<DeverTile2> {
   @override
   Widget build(BuildContext context) {
-    var turmas = Provider.of<TurmasProvider>(context, listen: false);
+    var turmas = TurmasLocal.to;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
@@ -51,7 +51,7 @@ class _DeverTile2State extends State<DeverTile2> {
           tapDetails = tapDetail;
         },
         onTap: () {
-          Navigator.pushNamed(context, "/dever", arguments: widget.dever);
+          Get.toNamed("/dever", arguments: widget.dever);
         },
         onLongPress: () {
           showMenu(
@@ -104,8 +104,8 @@ class _DeverTile2State extends State<DeverTile2> {
                     children: [
                       Text(
                         widget.dever.title,
-                        style: GoogleFonts.indieFlower(
-                            fontSize: 26, color: Colors.black.withOpacity(0.7)),
+                        //  style: GoogleFonts.indieFlower(
+                        //    fontSize: 26, color: Colors.black.withOpacity(0.7)),
                       ),
                     ],
                   ),
@@ -114,8 +114,8 @@ class _DeverTile2State extends State<DeverTile2> {
                     children: [
                       Text(
                         widget.dever.materia!.nome,
-                        style: GoogleFonts.indieFlower(
-                            fontSize: 20, color: Colors.black.withOpacity(0.7)),
+                        // style: GoogleFonts.indieFlower(
+                        //   fontSize: 20, color: Colors.black.withOpacity(0.7)),
                       ),
                     ],
                   ),
@@ -124,8 +124,8 @@ class _DeverTile2State extends State<DeverTile2> {
                     children: [
                       Text(
                         widget.dever.pontos.toString() + "pts",
-                        style: GoogleFonts.indieFlower(
-                            fontSize: 18, color: Colors.black.withOpacity(0.7)),
+                        //  style: GoogleFonts.indieFlower(
+                        //    fontSize: 18, color: Colors.black.withOpacity(0.7)),
                       ),
                     ],
                   ),
@@ -134,8 +134,8 @@ class _DeverTile2State extends State<DeverTile2> {
                     dateStr.format(widget.dever.data) +
                         " - " +
                         hourStr.format(widget.dever.data),
-                    style: GoogleFonts.indieFlower(
-                        fontSize: 25, color: Colors.black.withOpacity(0.7)),
+                    // style: GoogleFonts.indieFlower(
+                    //   fontSize: 25, color: Colors.black.withOpacity(0.7)),
                   )
                 ],
               ),

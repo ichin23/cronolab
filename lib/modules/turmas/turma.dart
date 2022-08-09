@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,7 +36,7 @@ class Turma {
   }
 
   Map<String, Object?> toJson() {
-    return {'nome': nome, 'deveres': deveres};
+    return {'nome': nome, 'id': id, "admin": isAdmin ? 1 : 0};
   }
 
   set setMaterias(List<Materia> materiasList) => {materias = materiasList};
@@ -54,8 +56,8 @@ class Turma {
           "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
         },
         body: jsonEncode({"turmaID": id}));
-    print(response.body);
-    print(response.statusCode);
+    /* print(response.body);
+    print(response.statusCode); */
   }
 
   Future deleteDever(String idDever) async {
@@ -131,8 +133,13 @@ class Turma {
     //TODO:Update Materia await _firestoreTurma.doc(id).update({'nome': nome});
   }
 
+  Future<List?> getAtvDB() async {
+    return TurmasLocal.to.getDeveres(id);
+  }
+
   Future<List?> getAtividades() async {
     late http.Response response;
+    print("PEGANDO DEVERES DE $id");
     try {
       response = await http
           .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
@@ -141,46 +148,21 @@ class Turma {
       deveres = [];
       for (var dever in deveresJson) {
         if (deveres != null) {
-          deveres!.add(Dever.fromJson(dever));
+          var deverData = Dever.fromJson(dever);
+          if (Platform.isAndroid || Platform.isIOS) {
+            TurmasLocal.to.addDever(deverData, id);
+          }
+          deveres!.add(deverData);
         } else {
           deveres = [Dever.fromJson(dever)];
         }
-        print(dever);
       }
+
       return deveres;
     } catch (e) {
       print(e);
-      print(response.body);
+
       return null;
     }
-    // var deveres = await _firestoreTurma
-    //     .doc(id)
-    //     .collection("deveres")
-    //     .withConverter<Dever>(
-    //         fromFirestore: (json, _) => Dever.fromJson(json),
-    //         toFirestore: (dev, _) => dev.toJson())
-    //     .orderBy("data")
-    //     .get();
-    // print(deveres.docs[0].data().data);
-    // return deveres.docs;
-    // print("AAAAAAAAAAA" +
-    //     (await FirebaseFirestore.instance
-    //             .collection("turmas-test")
-    //             .doc(id)
-    //             .collection("deveres")
-    //             .get())
-    //         .docs
-    //         .toString());
-    // return (await FirebaseFirestore.instance
-    //         .collection("turmas-test")
-    //         .doc(id)
-    //         .collection("deveres")
-    //         .withConverter<Dever>(
-    //             fromFirestore: (json, _) => Dever.fromJson(json),
-    //             toFirestore: (dev, _) => dev.toJson())
-    //         .orderBy("data")
-    //         .where("data", isGreaterThanOrEqualTo: Timestamp.now())
-    //         .get())
-    //     .docs;
   }
 }

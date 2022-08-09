@@ -23,6 +23,19 @@ class Dever {
             id: document["id"] as String,
             title: document['title'].toString(),
             materia: Materia.fromJson(document['materia'] as Map),
+            materiaID: (document["materia"]! as Map)["id"] as String,
+            data:
+                DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
+            pontos: double.tryParse(document['pontos'].toString()),
+            local: document["local"] != null
+                ? document["local"].toString()
+                : null);
+
+  Dever.fromJsonDB(Map<String, Object?> document)
+      : this(
+            id: document["id"] as String,
+            title: document['title'].toString(),
+            materia: Materia.fromJsonDB(document),
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
             pontos: double.tryParse(document['pontos'].toString()),
@@ -37,6 +50,17 @@ class Dever {
       'data': data.millisecondsSinceEpoch,
       'pontos': pontos,
       "local": local
+    };
+  }
+
+  Map<String, Object?> toJsonDB() {
+    return {
+      "id": id,
+      'title': title,
+      'data': data.millisecondsSinceEpoch,
+      'materiaID': materiaID,
+      "local": local,
+      'pontos': pontos,
     };
   }
 

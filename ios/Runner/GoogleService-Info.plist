@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>286245196387-8kg2q07e1l4vbjf4h91o19du5i5bdi2m.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCW8aewNV-kw-tkV2NoYN2Ivr68DY4qqiU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>286245196387</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cronolab.cronolab</string>
+	<key>PROJECT_ID</key>
+	<string>deveres-faa4f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>deveres-faa4f.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:286245196387:ios:c0dac02923068efa60de56</string>
+</dict>
+</plist>

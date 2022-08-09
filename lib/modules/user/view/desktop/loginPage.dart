@@ -1,22 +1,20 @@
-import 'dart:io';
-
 import 'package:cronolab/modules/user/controller/loginController.dart';
-import 'package:cronolab/modules/user/view/cadastroPage.dart';
-import 'package:cronolab/modules/user/view/esqueciSenha.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPageDesktop extends StatefulWidget {
+  const LoginPageDesktop({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPageDesktop> createState() => _LoginPageDesktopState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageDesktopState extends State<LoginPageDesktop> {
   TextEditingController emailCont = TextEditingController();
   TextEditingController senhaCont = TextEditingController();
+  FocusNode emailFoc = FocusNode();
+  FocusNode senhaFoc = FocusNode();
   bool hidePassword = true;
   bool loading = false;
   @override
@@ -44,23 +42,29 @@ class _LoginPageState extends State<LoginPage> {
               child: SingleChildScrollView(
                 child: SizedBox(
                   /* padding: const EdgeInsets.fromLTRB(40, 100, 40, 20), */
-                  width: width * 0.8,
+                  width: width * 0.4,
                   height: MediaQuery.of(context).viewInsets.bottom == 0
                       ? height * 0.8
                       : height * 0.65,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Column(
                         children: [
-                          const Text(
-                            "CRONOLAB",
-                            style: TextStyle(
-                                color: white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800),
+                          const Hero(
+                            tag: 'title',
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Text(
+                                "CRONOLAB",
+                                style: TextStyle(
+                                    color: white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 25),
                           Hero(
@@ -69,6 +73,12 @@ class _LoginPageState extends State<LoginPage> {
                               type: MaterialType.transparency,
                               child: TextFormField(
                                 controller: emailCont,
+                                autofocus: true,
+                                focusNode: emailFoc,
+                                onFieldSubmitted: (email) {
+                                  emailFoc.unfocus();
+                                  senhaFoc.requestFocus();
+                                },
                                 style:
                                     const TextStyle(fontSize: 16, color: white),
                                 decoration: InputDecoration(
@@ -91,6 +101,17 @@ class _LoginPageState extends State<LoginPage> {
                               type: MaterialType.transparency,
                               child: TextFormField(
                                 controller: senhaCont,
+                                focusNode: senhaFoc,
+                                onFieldSubmitted: (sen) {
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                  LoginController().loginEmail(
+                                      emailCont.text, senhaCont.text, context);
+                                  setState(() {
+                                    loading = false;
+                                  });
+                                },
                                 style:
                                     const TextStyle(fontSize: 16, color: white),
                                 obscureText: hidePassword,
@@ -124,20 +145,12 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                            pageBuilder:
-                                                (context, anim1, anim2) =>
-                                                    const EsqueciSenha()));
+                                    //TODO: Get.to(const EsqueciSenha());
                                   },
                                   child: const Text("Esqueci minha senha")),
                             ],
                           ),
-                        ],
-                      ),
-                      Column(
-                        children: [
+                          const SizedBox(height: 20),
                           Hero(
                             tag: "button",
                             child: Material(
@@ -174,36 +187,11 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 25),
-                          (Platform.isLinux
-                              ? Container()
-                              : TextButton(
-                                  style: TextButton.styleFrom(
-                                      minimumSize: Size(width - 50, 55),
-                                      backgroundColor: white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/image/google.png",
-                                        height: 30,
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 15),
-                                        child: Text("Entrar com Google",
-                                            style: TextStyle(
-                                                color: black,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w800)),
-                                      ),
-                                    ],
-                                  ),
-                                  onPressed: () async => await LoginController()
-                                      .loginGoogle(context))),
-                          const SizedBox(height: 20),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const SizedBox(height: 85),
                           Hero(
                             tag: "conta",
                             child: Material(
@@ -218,15 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        print(MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom);
-                                        Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                                pageBuilder:
-                                                    (context, anim1, anim2) =>
-                                                        const CadastroPage()));
+                                        //TODO: Get.to(const CadastroPage());
                                       },
                                       child: const Text("Cadastre-se",
                                           style: TextStyle(
