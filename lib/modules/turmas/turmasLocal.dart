@@ -15,6 +15,7 @@ class TurmasLocal extends GetxController {
   late Database db;
   static TurmasLocal get to => Get.find();
   init() async {
+    print(await getDatabasesPath());
     db = await openDatabase(join(await getDatabasesPath(), "mydatabase.db"),
         version: 1, onCreate: _onCreate, onConfigure: _onConfigure);
 
