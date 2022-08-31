@@ -39,12 +39,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCban6xMGmPa9vwKk653MZShmBvl7jYznU',
-    appId: '1:286245196387:web:9ebd2d4479589c0660de56',
+    appId: '1:286245196387:web:438113f5ee6ba4c560de56',
     messagingSenderId: '286245196387',
     projectId: 'deveres-faa4f',
     authDomain: 'deveres-faa4f.firebaseapp.com',
     storageBucket: 'deveres-faa4f.appspot.com',
-    measurementId: 'G-M0WNDTESJS',
+    measurementId: 'G-7DESB1W6BQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -61,7 +61,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '286245196387',
     projectId: 'deveres-faa4f',
     storageBucket: 'deveres-faa4f.appspot.com',
-    androidClientId: '286245196387-8kg2q07e1l4vbjf4h91o19du5i5bdi2m.apps.googleusercontent.com',
+    androidClientId: '286245196387-dpo6dlbcnd46hk3ibuffit5jrolrross.apps.googleusercontent.com',
     iosClientId: '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
     iosBundleId: 'com.cronolab.cronolab',
   );
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '286245196387',
     projectId: 'deveres-faa4f',
     storageBucket: 'deveres-faa4f.appspot.com',
-    androidClientId: '286245196387-8kg2q07e1l4vbjf4h91o19du5i5bdi2m.apps.googleusercontent.com',
+    androidClientId: '286245196387-dpo6dlbcnd46hk3ibuffit5jrolrross.apps.googleusercontent.com',
     iosClientId: '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
     iosBundleId: 'com.cronolab.cronolab',
   );

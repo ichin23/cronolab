@@ -10,11 +10,11 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.2
-  firebase_auth: ^3.3.14
-  firebase_auth_desktop: ^1.0.1
-  firebase_auth_platform_interface: 6.3.1
-  firebase_core: ^1.11.0
-  firebase_core_desktop: ^1.0.1
+  firebase_auth: ^3.7.0
+  firebase_auth_desktop: ^1.0.2
+  firebase_auth_platform_interface: 6.6.0
+  firebase_core: ^1.21.1
+  firebase_core_desktop: ^1.0.2
   flutter:
     sdk: flutter
   get: ^4.6.5

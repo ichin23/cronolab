@@ -10,12 +10,16 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
   if (!kIsWeb && !Platform.isLinux) {
     OneSignal.shared.setAppId("d9393c5e-61e9-4174-9d19-3d1e3eb7ad3f");
   }
-  runApp(const MainApp());
+  runApp(FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
+      builder: (context, snap) {
+        return snap.connectionState == ConnectionState.done
+            ? const MainApp()
+            : Container();
+      }));
 }

@@ -11,6 +11,7 @@ import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -31,15 +32,19 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     Get.put(TurmasState());
     Get.put(TurmasLocal());
-    if (Platform.isAndroid || Platform.isIOS) TurmasLocal.to.init();
+    if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) {
+      TurmasLocal.to.init();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      defaultTransition: Platform.isLinux || Platform.isWindows
-          ? Transition.fadeIn
-          : Transition.rightToLeftWithFade,
+      defaultTransition: kIsWeb
+          ? Transition.native
+          : Platform.isLinux || Platform.isWindows
+              ? Transition.fadeIn
+              : Transition.rightToLeftWithFade,
       title: "Cronolab",
       theme: ThemeData(
           fontFamily: "Inter",
@@ -71,18 +76,22 @@ class _MainAppState extends State<MainApp> {
         GetPage(
           name: "/",
           page: () => StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.userChanges(),
+            stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, stream) {
               if (stream.connectionState != ConnectionState.waiting) {
                 if (stream.data != null) {
                   print(stream.data!.uid);
-                  return Platform.isLinux || Platform.isWindows
+                  return kIsWeb
                       ? const HomePageDesktop()
-                      : const HomeScreen();
+                      : Platform.isLinux || Platform.isWindows
+                          ? const HomePageDesktop()
+                          : const HomeScreen();
                 } else {
-                  return Platform.isLinux || Platform.isWindows
+                  return kIsWeb
                       ? const LoginPageDesktop()
-                      : const LoginPage();
+                      : Platform.isLinux || Platform.isWindows
+                          ? const LoginPageDesktop()
+                          : const LoginPage();
                 }
               } else {
                 return Scaffold(
@@ -94,9 +103,11 @@ class _MainAppState extends State<MainApp> {
         ),
         GetPage(
             name: "/perfil",
-            page: () => Platform.isLinux || Platform.isWindows
+            page: () => kIsWeb
                 ? const PerfilPageDesktop()
-                : const PerfilPage()),
+                : Platform.isLinux || Platform.isWindows
+                    ? const PerfilPageDesktop()
+                    : const PerfilPage()),
         GetPage(name: "/minhasTurmas", page: () => const GerenciarTurmas()),
         GetPage(name: "/suasInfos", page: () => const SuasInformacoes()),
         GetPage(name: "/turma", page: () => const EditarTurma()),
