@@ -77,11 +77,11 @@ class _DeverTileState extends State<DeverTile> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.all(0),
+        margin: const EdgeInsets.all(5),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             // gradient: LinearGradient(
             //     colors: [Colors.red[300]!, Colors.red[700]!],
             //     begin: Alignment.topLeft,

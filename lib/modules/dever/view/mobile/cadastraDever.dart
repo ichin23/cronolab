@@ -55,12 +55,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         textCapitalization: TextCapitalization.sentences,
                         textInputAction: TextInputAction.next,
                         focusNode: tituloFoc,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Digite algum valor";
-                          }
-                          return null;
-                        },
+                       
                         onFieldSubmitted: (value) {
                           materiaFoc.requestFocus();
                         },
@@ -70,7 +65,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                             icon: const Icon(Icons.border_color, color: white),
                             labelStyle: fonts.input,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             )),
                       ),
                       const SizedBox(height: 10),
@@ -96,7 +91,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                             icon: const Icon(Icons.menu_book, color: white),
                             labelStyle: fonts.input,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                             )),
                       ),
                       const SizedBox(height: 5),
@@ -104,7 +99,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                       //     title:
                       //         Text(turmas.turmaAtual!.materias[0])),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(5),
                         child: Container(
                           height: 100,
                           decoration: BoxDecoration(
@@ -171,7 +166,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                           labelStyle: fonts.input,
                           icon: const Icon(Icons.check_box, color: white),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -182,12 +177,6 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         textCapitalization: TextCapitalization.sentences,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Digite algum valor";
-                          }
-                          return null;
-                        },
                         onFieldSubmitted: (value) {
                           localFoc.unfocus();
                         },
@@ -200,7 +189,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                               const TextStyle(fontSize: 16, color: white),
                           icon: const Icon(Icons.public, color: white),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),

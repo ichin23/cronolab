@@ -55,7 +55,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                     "CRONOLAB",
                                     style: TextStyle(
                                         color: white,
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w800),
                                   ),
                                 ),

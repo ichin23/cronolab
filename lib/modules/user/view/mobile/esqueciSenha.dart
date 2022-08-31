@@ -52,7 +52,7 @@ class _EsqueciSenhaState extends State<EsqueciSenha> {
                                     "CRONOLAB",
                                     style: TextStyle(
                                         color: white,
-                                        fontSize: 24,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.w800),
                                   ),
                                 ),

@@ -134,79 +134,88 @@ class _HomeScreenState extends State<HomeScreen> {
                           List? list = snapshot.data;
 
                           if (snapshot.hasData && list!.isNotEmpty) {
-                            return CustomScrollView(slivers: [
-                              SliverAppBar(
-                                leading: IconButton(
-                                    onPressed: () {
-                                      scaffoldKey.currentState!.openDrawer();
-                                    },
-                                    icon: const Icon(Icons.menu,
-                                        color: Colors.black45)),
-                                toolbarHeight: 70,
-                                actions: [
-                                  IconButton(
-                                      onPressed: () async {
-                                        var espera =
-                                            await Get.toNamed("/perfil");
-                                        if (turmas.turmaAtual != null) {
-                                          getAtv = turmas.turmaAtual!
-                                              .getAtividades();
-                                          setState(() {});
-                                        }
+                            return RefreshIndicator(
+                              onRefresh: () async{
+                                 if (turmas.turmaAtual != null) {
+                                            getAtv = turmas.turmaAtual!
+                                                .getAtividades();
+                                            setState(() {});
+                                          }
+                              },
+                              child: CustomScrollView(slivers: [
+                                SliverAppBar(
+                                  leading: IconButton(
+                                      onPressed: () {
+                                        scaffoldKey.currentState!.openDrawer();
                                       },
-                                      icon: const Icon(Icons.person,
+                                      icon: const Icon(Icons.menu,
                                           color: Colors.black45)),
-                                ],
-                                title: GestureDetector(
-                                    onDoubleTap: _incrementCounter,
-                                    onLongPress: () async {},
-                                    child: Text(
-                                      frases[_counter] +
-                                          (turmas.turmaAtual != null
-                                              ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                              : ""),
-                                      style: const TextStyle(
-                                          color: Colors.black45,
-                                          fontWeight: FontWeight.w800),
-                                    )),
-                              ),
-                              /*  SliverPadding(
-                                padding: const EdgeInsets.all(10),
-                                sliver: SliverList(
-                                    delegate: SliverChildListDelegate(
-                                  [
-                                    TextButton(
-                                        onPressed: () {},
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          //mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.filter_list),
-                                            Text("Filtro"),
-                                          ],
-                                        ))
+                                  toolbarHeight: 55,
+                                  actions: [
+                                    IconButton(
+                                        onPressed: () async {
+                                          var espera =
+                                              await Get.toNamed("/perfil");
+                                          if (turmas.turmaAtual != null) {
+                                            getAtv = turmas.turmaAtual!
+                                                .getAtividades();
+                                            setState(() {});
+                                          }
+                                        },
+                                        icon: const Icon(Icons.person,
+                                            color: Colors.black45)),
                                   ],
-                                )),
-                              ), */
-                              SliverPadding(
-                                padding: const EdgeInsets.all(10),
-                                sliver: SliverGrid(
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                            childAspectRatio: 1 / 1.4,
-                                            crossAxisCount: width < 600
-                                                ? 2
-                                                : (width / 300).round(),
-                                            crossAxisSpacing: 5,
-                                            mainAxisSpacing: 5),
-                                    delegate: SliverChildBuilderDelegate(
-                                      (context, i) => DeverTile(list[i],
-                                          notifyParent: refresh),
-                                      childCount: list.length,
-                                    )),
-                              )
-                            ]);
+                                  title: GestureDetector(
+                                      onDoubleTap: _incrementCounter,
+                                      onLongPress: () async {},
+                                      child: Text(
+                                        frases[_counter] +
+                                            (turmas.turmaAtual != null
+                                                ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                                : ""),
+                                        style: const TextStyle(
+                                            color: Colors.black45,
+                                            fontWeight: FontWeight.w800),
+                                      )),
+                                ),
+                                /*  SliverPadding(
+                                  padding: const EdgeInsets.all(10),
+                                  sliver: SliverList(
+                                      delegate: SliverChildListDelegate(
+                                    [
+                                      TextButton(
+                                          onPressed: () {},
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            //mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Icon(Icons.filter_list),
+                                              Text("Filtro"),
+                                            ],
+                                          ))
+                                    ],
+                                  )),
+                                ), */
+                                SliverPadding(
+                                  padding: const EdgeInsets.all(10),
+                                  sliver: SliverGrid(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                              childAspectRatio: 1 / 1.4,
+                                              crossAxisCount: width < 600
+                                                  ? 2
+                                                  : (width / 300).round(),
+                                              crossAxisSpacing: 5,
+                                              mainAxisSpacing: 5),
+                                      delegate: SliverChildBuilderDelegate(
+                                        (context, i) => DeverTile(list[i],
+                                            notifyParent: refresh),
+                                        childCount: list.length,
+                                      )),
+                                )
+                              ]),
+                            );
                           } else {
                             return CustomScrollView(slivers: [
                               SliverAppBar(
@@ -216,14 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                     icon: const Icon(Icons.menu,
                                         color: Colors.black45)),
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10))),
                                 backgroundColor: primary,
                                 elevation: 0,
                                 centerTitle: true,
-                                toolbarHeight: 70,
+                                toolbarHeight: 55,
                                 actions: [
                                   IconButton(
                                       onPressed: () async {
@@ -281,14 +286,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   icon: const Icon(Icons.menu,
                                       color: Colors.black45)),
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10))),
                               backgroundColor: primary,
                               elevation: 0,
                               centerTitle: true,
-                              toolbarHeight: 70,
+                              toolbarHeight: 55,
                               actions: [
                                 IconButton(
                                     onPressed: () async {
@@ -340,14 +341,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                   icon: const Icon(Icons.menu,
                                       color: Colors.black45)),
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10))),
                               backgroundColor: primary,
                               elevation: 0,
                               centerTitle: true,
-                              toolbarHeight: 70,
+                              toolbarHeight: 55,
                               actions: [
                                 IconButton(
                                     onPressed: () async {
@@ -396,14 +393,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             icon:
                                 const Icon(Icons.menu, color: Colors.black45)),
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10))),
                         backgroundColor: primary,
                         elevation: 0,
                         centerTitle: true,
-                        toolbarHeight: 70,
+                        toolbarHeight: 55,
                         actions: [
                           IconButton(
                               onPressed: () async {

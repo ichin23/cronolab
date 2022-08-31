@@ -61,7 +61,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                 "CRONOLAB",
                                 style: TextStyle(
                                     color: white,
-                                    fontSize: 24,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.w800),
                               ),
                             ),

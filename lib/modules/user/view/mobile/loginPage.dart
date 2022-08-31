@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                                 "CRONOLAB",
                                 style: TextStyle(
                                     color: white,
-                                    fontSize: 24,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.w800),
                               ),
                             ),

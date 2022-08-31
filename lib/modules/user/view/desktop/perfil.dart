@@ -28,7 +28,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
     return Scaffold(
       backgroundColor: black,
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: 55,
       ),
       body: Row(
         children: [

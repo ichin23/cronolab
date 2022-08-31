@@ -64,7 +64,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                   padding: const EdgeInsets.all(15),
                                   decoration: BoxDecoration(
                                       boxShadow: const [
-                                        BoxShadow(blurRadius: 20),
+                                        BoxShadow(blurRadius: 10),
                                         BoxShadow()
                                       ],
                                       color: primary,

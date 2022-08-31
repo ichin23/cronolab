@@ -19,7 +19,7 @@ class MyField extends StatelessWidget {
         labelStyle: fonts.label,
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
       ),

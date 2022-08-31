@@ -31,7 +31,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
       body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.userChanges(),
           builder: (context, snap) {
-            return Container(
+            return snap.data!=null? Container(
               padding: const EdgeInsets.all(10),
               child: ListView(
                 children: [
@@ -158,7 +158,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                   ),
                 ],
               ),
-            );
+            ):Container();
           }),
     );
   }

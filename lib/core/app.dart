@@ -40,6 +40,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       defaultTransition: kIsWeb
           ? Transition.native
           : Platform.isLinux || Platform.isWindows
@@ -55,17 +56,13 @@ class _MainAppState extends State<MainApp> {
           ),
           primaryColor: primary2,
           appBarTheme: const AppBarTheme(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                      bottomRight: Radius.circular(10))),
               backgroundColor: primary2,
               elevation: 0,
               centerTitle: true,
-              toolbarHeight: 70,
+              toolbarHeight: 55,
               titleTextStyle: TextStyle(
                   color: Colors.black45,
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.w800))
           //brightness: Brightness.light
           // primarySwatch: Colors.blue,
