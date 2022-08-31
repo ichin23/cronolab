@@ -42,6 +42,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+
     }
 
     defaultConfig {
@@ -70,6 +71,6 @@ flutter {
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-
+    implementation group: 'com.google.android.material', name: 'material', version: '1.6.0-alpha01'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

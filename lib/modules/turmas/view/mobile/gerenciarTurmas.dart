@@ -152,7 +152,10 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                       await turmas.initTurma(code.text);
 
                                       // await turmas.enterTurma(code.text, context);
-                                      turmas
+
+                                      await turmas.getTurmas();
+
+                                      TurmasLocal.to
                                           .getTurmas()
                                           .then((value) => setState(() {
                                                 loading = false;

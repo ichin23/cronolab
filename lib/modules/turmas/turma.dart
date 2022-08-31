@@ -139,7 +139,7 @@ class Turma {
 
   Future<List?> getAtividades() async {
     late http.Response response;
-    print("PEGANDO DEVERES DE $id");
+
     try {
       response = await http
           .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));

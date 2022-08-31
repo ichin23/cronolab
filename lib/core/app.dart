@@ -7,6 +7,7 @@ import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
+import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,15 +18,28 @@ import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
 import '../modules/user/view/mobile/perfil.dart';
 import '../modules/user/view/mobile/suasInfos.dart';
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
     Get.put(TurmasState());
     Get.put(TurmasLocal());
+    if (Platform.isAndroid || Platform.isIOS) TurmasLocal.to.init();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return GetMaterialApp(
-      defaultTransition: Transition.rightToLeftWithFade,
+      defaultTransition: Platform.isLinux || Platform.isWindows
+          ? Transition.fadeIn
+          : Transition.rightToLeftWithFade,
       title: "Cronolab",
       theme: ThemeData(
           fontFamily: "Inter",
@@ -78,7 +92,11 @@ class MainApp extends StatelessWidget {
             },
           ),
         ),
-        GetPage(name: "/perfil", page: () => const PerfilPage()),
+        GetPage(
+            name: "/perfil",
+            page: () => Platform.isLinux || Platform.isWindows
+                ? const PerfilPageDesktop()
+                : const PerfilPage()),
         GetPage(name: "/minhasTurmas", page: () => const GerenciarTurmas()),
         GetPage(name: "/suasInfos", page: () => const SuasInformacoes()),
         GetPage(name: "/turma", page: () => const EditarTurma()),

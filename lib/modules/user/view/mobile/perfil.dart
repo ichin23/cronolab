@@ -83,6 +83,7 @@ class _PerfilPageState extends State<PerfilPage> {
                           TextButton(
                             onPressed: () {
                               FirebaseAuth.instance.signOut();
+                              TurmasLocal.to.deleteAll();
                               // turmas.clear();
                               Get.back();
                             },

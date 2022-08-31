@@ -47,6 +47,17 @@ class TurmasState extends GetxController {
         }));
   }
 
+  deleteTurma(String code) async {
+    var response = await http.delete(Uri.parse(url + "/class"),
+        headers: {
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid,
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "turmaID": code,
+        }));
+  }
+
   Future getTurmas() async {
     // print("Chamou");
 
@@ -90,6 +101,7 @@ class TurmasState extends GetxController {
         turmas.add(turmaAdd);
       }
       turmaAtual = turmas[0];
+      print(turmas);
       return;
     }
 

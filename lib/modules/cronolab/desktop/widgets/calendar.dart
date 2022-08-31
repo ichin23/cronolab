@@ -56,46 +56,74 @@ class CalendarState extends State<Calendar> {
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     var turmas = TurmasState.to.turmaAtual;
-    while (diaI.day <= ultimoDia.day) {
+
+    while (diaI.isBefore(ultimoDia)) {
+      print(diaI);
       weeks.add(List.generate(7, (index) {
-        if (!dia1Pronto) {
-          if (index == diaI.weekday) {
-            dia1Pronto = true;
+        if (turmas != null) {
+          if (!dia1Pronto) {
+            if (index == diaI.weekday) {
+              dia1Pronto = true;
+
+              return Dia(
+                  diaI,
+                  turmas.deveres!
+                      .where((dever) =>
+                          dever.data.day == diaI.day &&
+                          dever.data.month == diaI.month &&
+                          dever.data.year == diaI.year)
+                      .toList());
+            } else {
+              return Dia(
+                  diaI.subtract(
+                      Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
+                  turmas.deveres!
+                      .where((dever) =>
+                          dever.data.day == diaI.day &&
+                          dever.data.month == diaI.month &&
+                          dever.data.year == diaI.year)
+                      .toList());
+            }
+          } else {
+            diaI = diaI.add(const Duration(days: 1));
+
             return Dia(
                 diaI,
-                turmas!.deveres!
-                    .where((dever) =>
-                        dever.data.day == diaI.day &&
-                        dever.data.month == diaI.month &&
-                        dever.data.year == diaI.year)
-                    .toList());
-          } else {
-            return Dia(
-                diaI.subtract(
-                    Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
-                turmas!.deveres!
+                turmas.deveres!
                     .where((dever) =>
                         dever.data.day == diaI.day &&
                         dever.data.month == diaI.month &&
                         dever.data.year == diaI.year)
                     .toList());
           }
+        }
+        if (!dia1Pronto) {
+          if (index == diaI.weekday) {
+            dia1Pronto = true;
+
+            return Dia(
+              diaI,
+            );
+          } else {
+            return Dia(
+              diaI.subtract(
+                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
+            );
+          }
         } else {
           diaI = diaI.add(const Duration(days: 1));
+
           return Dia(
-              diaI,
-              turmas!.deveres!
-                  .where((dever) =>
-                      dever.data.day == diaI.day &&
-                      dever.data.month == diaI.month &&
-                      dever.data.year == diaI.year)
-                  .toList());
+            diaI,
+          );
         }
       }));
+
       if (diaI.isAfter(ultimoDia) || diaI.isAtSameMomentAs(ultimoDia)) {
         break;
       }
     }
+    print(weeks);
   }
 
   @override
@@ -190,6 +218,7 @@ class CalendarState extends State<Calendar> {
                                                           .click,
                                                       onEnter: (ev) {
                                                         if (f != null) {
+                                                          print(f.deveres);
                                                           if (f.deveres
                                                               .isNotEmpty) {
                                                             setState(() {
@@ -307,7 +336,7 @@ class CalendarState extends State<Calendar> {
                                                                             .day
                                                                             .toString(),
                                                                         style: TextStyle(
-                                                                            color: f.data.isAfter(ultimoDia) || f.data.isBefore(primeiroDia) || (f.data.month==hoje.month && f.data.isBefore(hoje.subtract(const Duration(days:1))))
+                                                                            color: f.data.isAfter(ultimoDia) || f.data.isBefore(primeiroDia) || (f.data.month == hoje.month && f.data.isBefore(hoje.subtract(const Duration(days: 1))))
                                                                                 // || f.data.isBefore(diaI)
                                                                                 ? Colors.white24
                                                                                 : Colors.white,

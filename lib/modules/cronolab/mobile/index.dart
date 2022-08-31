@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (internet) {
           Updater().init();
         }
-        await TurmasLocal.to.init();
+
         if (internet) {
           await turmas.getTurmas();
         }
@@ -129,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? FutureBuilder<List?>(
                       future: getAtv,
                       builder: (context, snapshot) {
+                        debugPrint(snapshot.data.toString());
                         if (snapshot.connectionState == ConnectionState.done) {
                           List? list = snapshot.data;
 
@@ -147,7 +148,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onPressed: () async {
                                         var espera =
                                             await Get.toNamed("/perfil");
-                                        refresh();
+                                        if (turmas.turmaAtual != null) {
+                                          getAtv = turmas.turmaAtual!
+                                              .getAtividades();
+                                          setState(() {});
+                                        }
                                       },
                                       icon: const Icon(Icons.person,
                                           color: Colors.black45)),
@@ -165,6 +170,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontWeight: FontWeight.w800),
                                     )),
                               ),
+                              /*  SliverPadding(
+                                padding: const EdgeInsets.all(10),
+                                sliver: SliverList(
+                                    delegate: SliverChildListDelegate(
+                                  [
+                                    TextButton(
+                                        onPressed: () {},
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          //mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.filter_list),
+                                            Text("Filtro"),
+                                          ],
+                                        ))
+                                  ],
+                                )),
+                              ), */
                               SliverPadding(
                                 padding: const EdgeInsets.all(10),
                                 sliver: SliverGrid(
@@ -202,8 +226,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 toolbarHeight: 70,
                                 actions: [
                                   IconButton(
-                                      onPressed: () {
-                                        Get.toNamed("/perfil");
+                                      onPressed: () async {
+                                        await Get.toNamed("/perfil");
+                                        if (turmas.turmaAtual != null) {
+                                          getAtv = turmas.turmaAtual!
+                                              .getAtividades();
+                                          setState(() {});
+                                        }
                                       },
                                       icon: const Icon(Icons.person,
                                           color: Colors.black45))
@@ -262,8 +291,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               toolbarHeight: 70,
                               actions: [
                                 IconButton(
-                                    onPressed: () {
-                                      Get.toNamed("/perfil");
+                                    onPressed: () async {
+                                      await Get.toNamed("/perfil");
+                                      if (turmas.turmaAtual != null) {
+                                        getAtv =
+                                            turmas.turmaAtual!.getAtividades();
+                                        setState(() {});
+                                      }
                                     },
                                     icon: const Icon(Icons.person,
                                         color: Colors.black45))
@@ -316,8 +350,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               toolbarHeight: 70,
                               actions: [
                                 IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       Get.toNamed("/perfil");
+                                      if (turmas.turmaAtual != null) {
+                                        getAtv =
+                                            turmas.turmaAtual!.getAtividades();
+                                        setState(() {});
+                                      }
                                     },
                                     icon: const Icon(Icons.person,
                                         color: Colors.black45))
@@ -367,8 +406,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         toolbarHeight: 70,
                         actions: [
                           IconButton(
-                              onPressed: () {
-                                Get.toNamed("/perfil");
+                              onPressed: () async {
+                                await Get.toNamed("/perfil");
+                                if (turmas.turmaAtual != null) {
+                                  getAtv = turmas.turmaAtual!.getAtividades();
+                                  setState(() {});
+                                }
                               },
                               icon: const Icon(Icons.person,
                                   color: Colors.black45))
@@ -420,6 +463,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       darkPrimary)),
                                           onPressed: () {
                                             Get.toNamed("/minhasTurmas");
+                                            if (turmas.turmaAtual != null) {
+                                              getAtv = turmas.turmaAtual!
+                                                  .getAtividades();
+                                              setState(() {});
+                                            }
                                           },
                                           child: const Text("Adionar Turmas",
                                               style: fonts.buttonText)),
@@ -433,6 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () async {
                             await cadastra(context, turmas, () {});
                             getAtv = turmas.turmaAtual!.getAtividades();
+                            setState(() {});
                           },
                           child: const Icon(
                             Icons.add,
