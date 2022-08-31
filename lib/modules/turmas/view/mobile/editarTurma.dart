@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
@@ -54,6 +55,7 @@ class _EditarTurmaState extends State<EditarTurma>
   @override
   Widget build(BuildContext context) {
     var turmas = TurmasLocal.to;
+    var turmasState = TurmasState.to;
     // widget.turma.materias.add("");
     return Scaffold(
       appBar: AppBar(
@@ -151,8 +153,10 @@ class _EditarTurmaState extends State<EditarTurma>
                                 TextEditingController();
                             bool loading = false;
                             addMateria(context, turma.id, () async {
+                              await turmasState.getTurmas();
                               await turmas.getTurmas();
                               turma = await turmas.getByID(turma.id);
+
                               Get.back();
                               setState(() {});
                             });
@@ -224,9 +228,13 @@ class _EditarTurmaState extends State<EditarTurma>
                             setState(() {
                               excluindo = true;
                             });
+                            await turmas.deleteTurma(turma.id);
                             await turma.deleteTurma();
                             Get.back();
                             await turmas.getTurmas();
+                            /* turmas.newTurma = turmas.turmas.isNotEmpty
+                                ? turmas.turmas[0]
+                                : null; */
                             setState(() {
                               excluindo = false;
                             });

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
 
@@ -178,34 +176,39 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 25),
-                          (Platform.isLinux
-                              ? Container()
-                              : TextButton(
-                                  style: TextButton.styleFrom(
-                                      minimumSize: Size(width - 50, 55),
-                                      backgroundColor: white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/image/google.png",
-                                        height: 30,
+                          (
+                              //Platform.isLinux
+                              true
+                                  ? Container()
+                                  : TextButton(
+                                      style: TextButton.styleFrom(
+                                          minimumSize: Size(width - 50, 55),
+                                          backgroundColor: white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15))),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/image/google.png",
+                                            height: 30,
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Text("Entrar com Google",
+                                                style: TextStyle(
+                                                    color: black,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.w800)),
+                                          ),
+                                        ],
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 15),
-                                        child: Text("Entrar com Google",
-                                            style: TextStyle(
-                                                color: black,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w800)),
-                                      ),
-                                    ],
-                                  ),
-                                  onPressed: () async => await LoginController()
-                                      .loginGoogle(context))),
+                                      onPressed: () async =>
+                                          await LoginController()
+                                              .loginGoogle(context))),
                           const SizedBox(height: 20),
                           Hero(
                             tag: "conta",

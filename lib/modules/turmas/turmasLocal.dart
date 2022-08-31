@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,10 +12,12 @@ class TurmasLocal extends GetxController {
   List<Dever> lista = [];
   List<Turma> turmas = [];
   Turma? turmaAtual;
+  final _method = const MethodChannel("cronolab.cronolab/widget");
 
   late Database db;
   static TurmasLocal get to => Get.find();
   init() async {
+    print(await getDatabasesPath());
     db = await openDatabase(join(await getDatabasesPath(), "mydatabase.db"),
         version: 1, onCreate: _onCreate, onConfigure: _onConfigure);
 
@@ -45,6 +48,11 @@ class TurmasLocal extends GetxController {
     }
   }
 
+  set newTurma(Turma? turma) {
+    turmaAtual = turma;
+    update();
+  }
+
   refreshTurma(String id) async {
     var newTurma = await TurmasState.to.refreshTurma(id);
     var index = turmas.indexWhere((element) => element.id == id);
@@ -61,6 +69,7 @@ class TurmasLocal extends GetxController {
   Future addTurma(Turma turma) async {
     await db.insert("turma", turma.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+    _method.invokeMethod("update");
   }
 
   Future<Materia> getMateria(String id, String turmaID) async {
@@ -72,6 +81,7 @@ class TurmasLocal extends GetxController {
 
   Future getTurmas() async {
     var query = await db.query("turma");
+    turmas.clear();
 
     for (var item in query) {
       String id = item["id"] as String;
@@ -93,6 +103,8 @@ class TurmasLocal extends GetxController {
 
     if (turmas.isNotEmpty) {
       turmaAtual = turmas[0];
+    } else {
+      turmaAtual = null;
     }
 
     update();
@@ -103,6 +115,7 @@ class TurmasLocal extends GetxController {
     data["turmaID"] = turmaID;
     print(data);
     await db.insert("materia", data);
+    _method.invokeMethod("update");
   }
 
   Future getMaterias(String turmaID) async {
@@ -123,6 +136,7 @@ class TurmasLocal extends GetxController {
     data["turmaID"] = turmaID;
     await db.insert("dever", data,
         conflictAlgorithm: ConflictAlgorithm.replace);
+    _method.invokeMethod("update");
   }
 
   Future seeTables() async {
@@ -144,5 +158,19 @@ class TurmasLocal extends GetxController {
       lista.add(Dever.fromJsonDB(item));
     }
     return lista;
+  }
+
+  deleteTurma(String turmaID) async {
+    await db.delete("turma", where: "id==?", whereArgs: [turmaID]);
+    await db.delete("dever", where: "turmaID==?", whereArgs: [turmaID]);
+    await db.delete("materia", where: "turmaID==?", whereArgs: [turmaID]);
+  }
+
+  Future deleteAll() async {
+    await db.delete("dever");
+    await db.delete("turma");
+    await db.delete("materia");
+    print("All deleted");
+    _method.invokeMethod("update");
   }
 }
