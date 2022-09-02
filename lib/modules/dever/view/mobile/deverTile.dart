@@ -60,6 +60,8 @@ class _DeverTileState extends State<DeverTile> {
         tapDetails = tapDetail;
       },
       onTap: () {
+        debugPrint(
+            "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
         Get.toNamed("/dever", arguments: widget.dever);
       },
       onLongPress: () {

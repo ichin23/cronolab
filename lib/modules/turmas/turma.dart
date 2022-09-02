@@ -136,8 +136,8 @@ class Turma {
     //TODO:Update Materia await _firestoreTurma.doc(id).update({'nome': nome});
   }
 
-  Future<List?> getAtvDB() async {
-    return TurmasLocal.to.getDeveres(id);
+  Future<List?> getAtvDB({List? filters}) async {
+    return TurmasLocal.to.getDeveres(id, filter: filters);
   }
 
   Future<List?> getAtividades() async {

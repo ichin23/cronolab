@@ -126,10 +126,42 @@ class TurmasLocal extends GetxController {
     print(await db.query("dever"));
   }
 
-  Future<List> getDeveres(String turmaID) async {
-    var query = await db.rawQuery(
-        "SELECT dever.id, dever.title, dever.data, dever.local, dever.pontos, materia.id as materiaID, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?",
-        [turmaID]);
+  Future<List> getDeveres(String turmaID, {List? filter}) async {
+    List listWhere = [turmaID];
+    String queryStr =
+        "SELECT dever.id, dever.title, dever.data, dever.local, dever.pontos, materia.id as materiaID, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?";
+    if (filter != null) {
+      if (filter[0] != null) {
+        switch (filter[0] as int) {
+          case (0):
+            queryStr += " AND dever.data < ?";
+            listWhere.add(DateTime.now()
+                .add(const Duration(days: 1))
+                .millisecondsSinceEpoch);
+            break;
+          case (1):
+            queryStr += " AND dever.data > ? AND dever.data < ?";
+            listWhere.add(DateTime.now()
+                .add(const Duration(days: 1))
+                .millisecondsSinceEpoch);
+            listWhere.add(DateTime.now()
+                .add(const Duration(days: 5))
+                .millisecondsSinceEpoch);
+            break;
+          case (2):
+            queryStr += " AND dever.data > ?";
+            listWhere.add(DateTime.now()
+                .add(const Duration(days: 5))
+                .millisecondsSinceEpoch);
+        }
+      }
+      if (filter[1] != null) {
+        queryStr += " AND dever.materiaID = ?";
+        listWhere.add(filter[1]);
+      }
+    }
+
+    var query = await db.rawQuery(queryStr, listWhere);
     lista.clear();
 
     for (var item in query) {

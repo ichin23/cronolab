@@ -1,6 +1,6 @@
 import 'package:cronolab/core/updater.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverTile.dart';
-
+import 'package:cronolab/modules/dever/view/mobile/filterDever.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   refresh() {
-    getAtv = TurmasLocal.to.turmaAtual!.getAtvDB();
+    getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
     setState(() {});
   }
 
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List?> getAtv = Future(() => []);
   bool erro = false;
   bool loading = true;
+  List? listFilter;
 
   @override
   void initState() {
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await TurmasLocal.to.getTurmas();
 
         //await turmas.turmaAtual!.getAtividades();
-        getAtv = TurmasLocal.to.turmaAtual!.getAtvDB();
+        getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
       } catch (e) {
         setState(() {
           erro = true;
@@ -95,28 +96,34 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (turmas) {
           return Scaffold(
               drawer: Drawer(
-                backgroundColor: black,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                child: ListView.builder(
-                    itemCount: turmas.turmas.length,
-                    itemBuilder: ((context, index) => ListTile(
-                        tileColor:
-                            (turmas.turmaAtual!.id == turmas.turmas[index].id)
+                  backgroundColor: black,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  child: ListView(children: [
+                    const ListTile(
+                        title: Text(
+                      "Turmas",
+                      style: fonts.label,
+                    )),
+                    ...turmas.turmas
+                        .map((turma) => ListTile(
+                            tileColor: (turmas.turmaAtual!.id == turma.id)
                                 ? pretoClaro
                                 : black,
-                        onTap: () {
-                          turmas.changeTurma(turmas.turmas[index]);
-                          // value.changeTurma(value.turmas[index]);
-                          getAtv = turmas.turmaAtual!.getAtvDB();
-                          // setState(() {});
-                          scaffoldKey.currentState!.openEndDrawer();
-                        },
-                        title: Text(
-                          turmas.turmas[index].nome,
-                          style: const TextStyle(color: white),
-                        )))),
-              ),
+                            onTap: () {
+                              turmas.changeTurma(turma);
+                              // value.changeTurma(value.turmas[index]);
+                              getAtv = turmas.turmaAtual!
+                                  .getAtvDB(filters: listFilter);
+                              // setState(() {});
+                              scaffoldKey.currentState!.openEndDrawer();
+                            },
+                            title: Text(
+                              turma.nome,
+                              style: const TextStyle(color: white),
+                            )))
+                        .toList(),
+                  ])),
               key: scaffoldKey,
               backgroundColor: black,
               body: turmas.turmaAtual != null
@@ -171,27 +178,87 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontWeight: FontWeight.w800),
                                       )),
                                 ),
-                                /*  SliverPadding(
-                                  padding: const EdgeInsets.all(10),
+                                SliverPadding(
+                                  padding: const EdgeInsets.only(right: 10),
                                   sliver: SliverList(
                                       delegate: SliverChildListDelegate(
                                     [
-                                      TextButton(
-                                          onPressed: () {},
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            //mainAxisSize: MainAxisSize.min,
-                                            children: const [
-                                              Icon(Icons.filter_list),
-                                              Text("Filtro"),
-                                            ],
-                                          ))
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                              onPressed: () async {
+                                                listFilter = await filterDever(
+                                                    oldList: listFilter);
+                                                if (turmas.turmaAtual != null) {
+                                                  getAtv = turmas.turmaAtual!
+                                                      .getAtvDB(
+                                                          filters: listFilter);
+                                                  setState(() {});
+                                                }
+                                                debugPrint(
+                                                    listFilter.toString());
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(3),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    color: listFilter != null
+                                                        ? listFilter![0] !=
+                                                                    null &&
+                                                                listFilter![
+                                                                        1] !=
+                                                                    null
+                                                            ? primary2
+                                                            : Colors.transparent
+                                                        : Colors.transparent),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.filter_list,
+                                                      color: listFilter != null
+                                                          ? listFilter![0] !=
+                                                                      null &&
+                                                                  listFilter![
+                                                                          1] !=
+                                                                      null
+                                                              ? black
+                                                              : primary2
+                                                          : primary2,
+                                                    ),
+                                                    Text(
+                                                      "Filtro",
+                                                      style: TextStyle(
+                                                          color: listFilter !=
+                                                                  null
+                                                              ? listFilter![0] !=
+                                                                          null &&
+                                                                      listFilter![
+                                                                              1] !=
+                                                                          null
+                                                                  ? black
+                                                                  : primary2
+                                                              : primary2),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                        ],
+                                      )
                                     ],
                                   )),
-                                ), */
+                                ),
                                 SliverPadding(
-                                  padding: const EdgeInsets.all(10),
+                                  padding: const EdgeInsets.only(
+                                      left: 10, right: 10),
                                   sliver: SliverGrid(
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
@@ -228,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         await Get.toNamed("/perfil");
                                         if (turmas.turmaAtual != null) {
                                           getAtv = turmas.turmaAtual!
-                                              .getAtividades();
+                                              .getAtvDB(filters: listFilter);
                                           setState(() {});
                                         }
                                       },
@@ -248,6 +315,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                           color: Colors.black45,
                                           fontWeight: FontWeight.w800),
                                     )),
+                              ),
+                              SliverPadding(
+                                padding: const EdgeInsets.only(right: 10),
+                                sliver: SliverList(
+                                    delegate: SliverChildListDelegate(
+                                  [
+                                    TextButton(
+                                        onPressed: () async {
+                                          listFilter = await filterDever(
+                                              oldList: listFilter);
+                                          if (turmas.turmaAtual != null) {
+                                            getAtv = turmas.turmaAtual!
+                                                .getAtvDB(filters: listFilter);
+                                            setState(() {});
+                                          }
+                                          debugPrint(listFilter.toString());
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          //mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.filter_list),
+                                            Text("Filtro"),
+                                          ],
+                                        ))
+                                  ],
+                                )),
                               ),
                               SliverList(
                                   delegate: SliverChildListDelegate([
@@ -288,8 +383,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onPressed: () async {
                                       await Get.toNamed("/perfil");
                                       if (turmas.turmaAtual != null) {
-                                        getAtv =
-                                            turmas.turmaAtual!.getAtividades();
+                                        getAtv = turmas.turmaAtual!
+                                            .getAtvDB(filters: listFilter);
                                         setState(() {});
                                       }
                                     },
@@ -343,8 +438,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onPressed: () async {
                                       Get.toNamed("/perfil");
                                       if (turmas.turmaAtual != null) {
-                                        getAtv =
-                                            turmas.turmaAtual!.getAtividades();
+                                        getAtv = turmas.turmaAtual!
+                                            .getAtvDB(filters: listFilter);
                                         setState(() {});
                                       }
                                     },
@@ -370,7 +465,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               const Center(child: Text("Ocorreu algum erro")),
                               TextButton(
                                   onPressed: () {
-                                    getAtv = turmas.turmaAtual!.getAtividades();
+                                    getAtv = turmas.turmaAtual!
+                                        .getAtvDB(filters: listFilter);
                                   },
                                   child: const Text("Recarregar"))
                             ]))
@@ -395,7 +491,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               onPressed: () async {
                                 await Get.toNamed("/perfil");
                                 if (turmas.turmaAtual != null) {
-                                  getAtv = turmas.turmaAtual!.getAtividades();
+                                  getAtv = turmas.turmaAtual!
+                                      .getAtvDB(filters: listFilter);
                                   setState(() {});
                                 }
                               },
@@ -466,7 +563,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? FloatingActionButton(
                           onPressed: () async {
                             await cadastra(context, turmas, () {});
-                            getAtv = turmas.turmaAtual!.getAtividades();
+                            await turmas.turmaAtual!.getAtividades();
+                            getAtv = turmas.turmaAtual!
+                                .getAtvDB(filters: listFilter);
                             setState(() {});
                           },
                           child: const Icon(
