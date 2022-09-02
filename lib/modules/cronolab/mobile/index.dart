@@ -24,17 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _counter = 0;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<String> frases = [
-    "Deveres",
-    "Pra que abrir SIGAA?",
-    "Melhor que o gaTU",
-    "Entrou no CEFET, se fudeu"
-  ];
+  List<String> frases = ["Cronolab"];
   void _incrementCounter() {
-    if (_counter == 3) {
+    _counter++;
+    if (_counter == frases.length) {
       _counter = 0;
-    } else {
-      _counter++;
     }
     setState(() {});
   }
@@ -135,12 +129,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           if (snapshot.hasData && list!.isNotEmpty) {
                             return RefreshIndicator(
-                              onRefresh: () async{
-                                 if (turmas.turmaAtual != null) {
-                                            getAtv = turmas.turmaAtual!
-                                                .getAtividades();
-                                            setState(() {});
-                                          }
+                              onRefresh: () async {
+                                if (turmas.turmaAtual != null) {
+                                  getAtv = turmas.turmaAtual!.getAtividades();
+                                  setState(() {});
+                                }
                               },
                               child: CustomScrollView(slivers: [
                                 SliverAppBar(

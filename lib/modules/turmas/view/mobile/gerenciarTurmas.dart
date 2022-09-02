@@ -28,7 +28,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
   @override
   Widget build(BuildContext context) {
     TurmasState turmas = TurmasState.to;
-    TextEditingController code = TextEditingController();
+
     // var auth = Provider.of<Auth>(context);
     return
         // Consumer<TurmasProvider>(builder: (context, turmas, child) {
@@ -98,6 +98,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
           onPressed: loading
               ? null
               : () {
+                  TextEditingController code = TextEditingController();
                   Get.dialog(StatefulBuilder(
                     builder: (context, setstate) => AlertDialog(
                       backgroundColor: black,

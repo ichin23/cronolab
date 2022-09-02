@@ -5,6 +5,7 @@ import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,6 +46,36 @@ class TurmasState extends GetxController {
           "idTurma": code,
           "data": {"nome": code}
         }));
+    bool works = jsonDecode(response.body)["newTurma"] ?? false;
+    if (works) {
+      await Get.dialog(AlertDialog(
+        title: const Text("Turma não encontrada"),
+        content: const Text("Deseja criar uma nova turma?"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Não")),
+          TextButton(
+              onPressed: () async {
+                var response = await http.put(Uri.parse(url + "/class"),
+                    headers: {
+                      "authorization":
+                          "Bearer " + FirebaseAuth.instance.currentUser!.uid,
+                      "Content-Type": "application/json",
+                    },
+                    body: jsonEncode({
+                      "idTurma": code,
+                      "data": {"nome": code},
+                      "confirm": true
+                    }));
+                Get.back();
+              },
+              child: const Text("Sim"))
+        ],
+      ));
+    }
   }
 
   deleteTurma(String code) async {

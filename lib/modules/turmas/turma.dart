@@ -121,9 +121,12 @@ class Turma {
       Uri.parse(_url + "/class/materia"),
       body: jsonEncode({
         "turmaID": id,
-        "materiaID": id,
+        "materiaID": nome,
       }),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+      },
     );
 
     await getMaterias();

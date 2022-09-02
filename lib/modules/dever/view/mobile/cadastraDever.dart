@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:get/get.dart';
@@ -55,7 +56,6 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         textCapitalization: TextCapitalization.sentences,
                         textInputAction: TextInputAction.next,
                         focusNode: tituloFoc,
-                       
                         onFieldSubmitted: (value) {
                           materiaFoc.requestFocus();
                         },
@@ -127,15 +127,22 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                       .isEmpty
                                   ? TextButton(
                                       onPressed: () async {
-                                        addMateria(
-                                            context, turmas.turmaAtual!.id, () {
+                                        await addMateria(
+                                            context, turmas.turmaAtual!.id,
+                                            () async {
+                                          await TurmasState.to.getTurmas();
+                                          await turmas.getTurmas(
+                                              updateTurma: false);
+                                          Get.back();
+                                          setState(() {});
+                                        }).then((value) async {
+                                          print("acabou");
+                                          await turmas.changeTurmaAtualWithID(
+                                              turmas.turmaAtual!.id);
+
                                           setState(() {});
                                         });
-                                        /* await turmas.turmaAtual!
-                                                  .addMateria(materia.text); */
-                                        //TODO: Refresjh await turmas.refreshTurma(
-                                        //turmas.turmaAtual!.id);
-                                        setState(() {});
+                                        print("realmente acabou");
                                       },
                                       child: Text(
                                           "Adicionar ${materia.text} à turma"))

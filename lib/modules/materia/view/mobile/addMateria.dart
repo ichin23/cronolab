@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 import '../../../../shared/colors.dart';
 import '../../../../shared/fonts.dart' as fonts;
 
-addMateria(BuildContext context, String turmaID, Function() setstate) async {
+Future addMateria(
+    BuildContext context, String turmaID, Function() setstate) async {
   bool loading = false;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FocusNode nomeFoc = FocusNode();
@@ -143,7 +144,7 @@ addMateria(BuildContext context, String turmaID, Function() setstate) async {
                                             "contato": contato.text
                                           }
                                         }));
-                                    setstate();
+                                    await setstate();
                                   }
                                 },
                                 child: loading

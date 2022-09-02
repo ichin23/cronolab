@@ -28,6 +28,7 @@ class _EditarTurmaState extends State<EditarTurma>
   bool excluindo = false;
   var turma = Get.arguments as Turma;
   bool privada = false;
+  bool loading = false;
 
   @override
   void initState() {
@@ -130,11 +131,28 @@ class _EditarTurmaState extends State<EditarTurma>
                               leading: IconButton(
                                   icon: const Icon(Icons.delete,
                                       color: color.red),
-                                  onPressed: () {
-                                    // widget.turma.materias
-                                    //     .remove(widget.turma.materias[i]);
-                                    setState(() {});
-                                  }),
+                                  onPressed: loading
+                                      ? null
+                                      : () async {
+                                          setState(() {
+                                            loading = true;
+                                          });
+                                          await turma.deleteMateria(
+                                              turma.materias[i].id);
+                                          await TurmasLocal.to.deleteMateria(
+                                              turma.materias[i].id);
+                                          await TurmasLocal.to
+                                              .getTurmas(updateTurma: false);
+                                          TurmasLocal.to
+                                              .changeTurmaAtualWithID(turma.id);
+                                          turma = TurmasLocal.to.turmaAtual!;
+                                          print(turma.materias.length);
+                                          // widget.turma.materias
+                                          //     .remove(widget.turma.materias[i]);
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                        }),
                               title:
                                   Text(turma.materias[i].nome, style: label)),
                         )
@@ -148,65 +166,25 @@ class _EditarTurmaState extends State<EditarTurma>
                       bottom: 10,
                       right: 10,
                       child: FloatingActionButton(
-                          onPressed: () {
-                            TextEditingController materia =
-                                TextEditingController();
-                            bool loading = false;
-                            addMateria(context, turma.id, () async {
-                              await turmasState.getTurmas();
-                              await turmas.getTurmas();
-                              turma = await turmas.getByID(turma.id);
+                          onPressed: loading
+                              ? null
+                              : () {
+                                  TextEditingController materia =
+                                      TextEditingController();
 
-                              Get.back();
-                              setState(() {});
-                            });
-                            // showDialog(
-                            //     context: context,
-                            //     builder: (context) => StatefulBuilder(
-                            //           builder: (context, setState) =>
-                            //               AlertDialog(
-                            //             title: Text("Adicionar Matéria",
-                            //                 style: label),
-                            //             backgroundColor: darkPrimary,
-                            //             content: loading
-                            //                 ? const CircularProgressIndicator()
-                            //                 : Column(
-                            //                     mainAxisSize: MainAxisSize.min,
-                            //                     children: [
-                            //                       Text(
-                            //                           "Digite o nome da matéria",
-                            //                           style: label),
-                            //                       const SizedBox(height: 10),
-                            //                       MyField(
-                            //                         nome: materia,
-                            //                         label:
-                            //                             const Text("Matéria"),
-                            //                       ),
-                            //                       TextButton(
-                            //                           onPressed: () async {
-                            //                             if (controller.value !=
-                            //                                 null) {
-                            //                               setState(() {
-                            //                                 loading = true;
-                            //                               });
-                            //                               await widget.turma
-                            //                                   .addMateria(
-                            //                                       materia.text);
-                            //                               setState(() {
-                            //                                 loading = false;
-                            //                               });
-                            //                               Get.back(
-                            //                                   );
-                            //                             }
-                            //                           },
-                            //                           child: Text("Adicionar"))
-                            //                     ],
-                            //                   ),
-                            //           ),
-                            //         ));
-                            setState(() {});
-                          },
-                          child: const Icon(Icons.add)))
+                                  addMateria(context, turma.id, () async {
+                                    await turmasState.getTurmas();
+                                    await turmas.getTurmas();
+                                    turma = await turmas.getByID(turma.id);
+
+                                    Get.back();
+                                    setState(() {});
+                                  });
+                                  setState(() {});
+                                },
+                          child: loading
+                              ? const CircularProgressIndicator()
+                              : const Icon(Icons.add)))
                 ],
               ),
             ),

@@ -80,7 +80,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             snap.data!.displayName.toString(),
                             style: const TextStyle(color: white),
                           ),
-                          TextButton(
+                          /*  TextButton(
                             onPressed: () {
                               FirebaseAuth.instance.signOut();
                               TurmasLocal.to.deleteAll();
@@ -91,7 +91,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               "Sair",
                               style: TextStyle(color: primary),
                             ),
-                          ),
+                          ), */
                           // OutlinedButton(
                           //     style: ButtonStyle(
                           //         elevation: MaterialStateProperty.all(5),
@@ -131,13 +131,16 @@ class _PerfilPageState extends State<PerfilPage> {
                           const Icon(Icons.arrow_forward_ios, color: white),
                     ),
                     ListTile(
+                      title:
+                          const Text("Sair", style: TextStyle(color: primary2)),
                       onTap: () {
-                        print(TurmasLocal.to.turmaAtual);
+                        FirebaseAuth.instance.signOut();
+                        TurmasLocal.to.deleteAll();
+                        // turmas.clear();
+                        Get.back();
                       },
-                      title: const Text("Sobre o APP",
-                          style: TextStyle(color: white)),
-                      trailing:
-                          const Icon(Icons.arrow_forward_ios, color: white),
+                      trailing: const Icon(Icons.exit_to_app_rounded,
+                          color: primary2),
                     ),
                   ]),
                 );

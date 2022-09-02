@@ -24,7 +24,9 @@ class LoginController {
         OneSignal().setExternalUserId(FirebaseAuth.instance.currentUser!.uid);
       }
     } catch (e) {
-      print(e);
+      print(e.runtimeType);
+      e.printError();
+      e.printInfo();
       Get.dialog(AlertDialog(
         title: const Text("Erro", style: fonts.label),
         content: const Text("Ocorreu um erro ao realizar o login"),
