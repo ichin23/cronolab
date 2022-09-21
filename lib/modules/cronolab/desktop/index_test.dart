@@ -19,7 +19,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
   @override
   void initState() {
     super.initState();
-    TurmasState.to.getTurmas();
+    turmasFuture = TurmasState.to.getTurmas();
   }
 
   @override

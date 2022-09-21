@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
@@ -32,20 +33,24 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     Get.put(TurmasState());
     Get.put(TurmasLocal());
-    if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) {
-      TurmasLocal.to.init();
+    if (!kIsWeb) {
+      if (Platform.isAndroid || Platform.isIOS) {
+        TurmasLocal.to.init();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
       debugShowCheckedModeBanner: false,
       defaultTransition: kIsWeb
           ? Transition.native
           : Platform.isLinux || Platform.isWindows
               ? Transition.fadeIn
-              : Transition.rightToLeftWithFade,
+              : Transition.leftToRight,
       title: "Cronolab",
       theme: ThemeData(
           fontFamily: "Inter",

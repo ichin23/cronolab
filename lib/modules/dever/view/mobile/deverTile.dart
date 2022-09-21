@@ -22,6 +22,16 @@ class _DeverTileState extends State<DeverTile> {
   void initState() {
     super.initState();
     var turmas = TurmasLocal.to;
+    popMenu.add(
+      PopupMenuItem(
+        child: const Text("Concluída",
+            style: TextStyle(color: white), textAlign: TextAlign.center),
+        onTap: () async {
+          await turmas.setDeverStatus(widget.dever.id!, !widget.dever.status!);
+          widget.notifyParent();
+        },
+      ),
+    );
     if (turmas.turmaAtual!.isAdmin) {
       popMenu.add(
         PopupMenuItem(
@@ -45,18 +55,19 @@ class _DeverTileState extends State<DeverTile> {
     TapDownDetails tapDetails = TapDownDetails();
     // final width = MediaQuery.of(context).size.width;
     var data = widget.dever.data;
-    Color corText = data.day == DateTime.now().day &&
-            data.month == DateTime.now().month &&
-            data.year == DateTime.now().year
-        ? const Color(0xff813838)
-        : data.difference(DateTime.now()).inDays < 5
-            ? const Color(0xFF817938)
-            : const Color(0xff3A8138);
+    Color corText = widget.dever.status!
+        ? const Color.fromARGB(255, 109, 109, 109)
+        : data.difference(DateTime.now()).inDays < 1
+            ? const Color(0xff813838)
+            : data.difference(DateTime.now()).inDays < 5
+                ? const Color(0xFF817938)
+                : const Color(0xff3A8138);
     DateFormat dateStr = DateFormat("dd/MM");
     DateFormat dataStr = DateFormat("dd/MM - HH:mm");
     DateFormat hourStr = DateFormat("Hm");
     return GestureDetector(
       onTapDown: (tapDetail) {
+        print(widget.dever.status);
         tapDetails = tapDetail;
       },
       onTap: () {
@@ -88,13 +99,13 @@ class _DeverTileState extends State<DeverTile> {
             //     colors: [Colors.red[300]!, Colors.red[700]!],
             //     begin: Alignment.topLeft,
             //     end: Alignment.bottomRight),
-            color: data.day == DateTime.now().day &&
-                    data.month == DateTime.now().month &&
-                    data.year == DateTime.now().year
-                ? const Color(0xffFFD1D0)
-                : data.difference(DateTime.now()).inDays < 5
-                    ? const Color(0xFFFBF5C5)
-                    : const Color(0xffBDF6E3),
+            color: widget.dever.status!
+                ? const Color.fromRGBO(182, 181, 181, 1)
+                : data.difference(DateTime.now()).inDays < 1
+                    ? const Color(0xffFFD1D0)
+                    : data.difference(DateTime.now()).inDays < 5
+                        ? const Color(0xFFFBF5C5)
+                        : const Color(0xffBDF6E3),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

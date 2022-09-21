@@ -79,24 +79,33 @@ class _EditarTurmaState extends State<EditarTurma>
           child: ListView(children: [
             MyField(nome: nome, label: const Text("Nome")),
             const SizedBox(height: 15),
-            MyField(nome: codigo, label: const Text("Código")),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text("Privada", style: label),
-              Switch(
-                  activeColor: color.primary,
-                  value: privada,
-                  onChanged: (value) {
-                    // controller.dispose();
-                    if (value) {
-                      controller.forward();
-                    } else {
-                      controller.reverse();
-                    }
-                    setState(() {
-                      privada = value;
-                    });
-                  })
-            ]),
+            MyField(
+              nome: codigo,
+              label: const Text("Código"),
+              editable: false,
+            ),
+            Visibility(
+              visible: false,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Privada", style: label),
+                    Switch(
+                        activeColor: color.primary,
+                        value: privada,
+                        onChanged: (value) {
+                          // controller.dispose();
+                          if (value) {
+                            controller.forward();
+                          } else {
+                            controller.reverse();
+                          }
+                          setState(() {
+                            privada = value;
+                          });
+                        })
+                  ]),
+            ),
             privada &&
                     (animation.status != AnimationStatus.forward ||
                         animation.status != AnimationStatus.reverse)

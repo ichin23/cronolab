@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
 
@@ -158,20 +159,12 @@ class _LoginPageState extends State<LoginPage> {
                                             color: black,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800)),
-                                onPressed: loading
-                                    ? () {}
-                                    : () {
-                                        setState(() {
-                                          loading = true;
-                                        });
-                                        LoginController().loginEmail(
-                                            emailCont.text,
-                                            senhaCont.text,
-                                            context);
-                                        setState(() {
-                                          loading = false;
-                                        });
-                                      },
+                                onPressed: () async {
+                                  var cancel = BotToast.showLoading();
+                                  await LoginController().loginEmail(
+                                      emailCont.text, senhaCont.text, context);
+                                  cancel();
+                                },
                               ),
                             ),
                           ),
@@ -206,9 +199,12 @@ class _LoginPageState extends State<LoginPage> {
                                           ),
                                         ],
                                       ),
-                                      onPressed: () async =>
-                                          await LoginController()
-                                              .loginGoogle(context))),
+                                      onPressed: () async {
+                                        var cancel = BotToast.showLoading();
+                                        await LoginController()
+                                            .loginGoogle(context);
+                                        cancel();
+                                      })),
                           const SizedBox(height: 20),
                           Hero(
                             tag: "conta",

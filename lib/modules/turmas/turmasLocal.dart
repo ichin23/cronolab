@@ -29,7 +29,7 @@ class TurmasLocal extends GetxController {
     await db.execute(
         "CREATE TABLE turma(id VARCHAR(50) NOT NULL PRIMARY KEY, nome TEXT, admin INTEGER );");
     await db.execute(
-        "CREATE TABLE dever(id VARCHAR(50) NOT NULL PRIMARY KEY, title TEXT, data INTEGER, materiaID VARCHAR(50), turmaID VARCHAR(50), local TEXT, pontos REAL, FOREIGN KEY (materiaID) REFERENCES materia(id) ON DELETE CASCADE, FOREIGN KEY (turmaID) REFERENCES turma(id) ON DELETE CASCADE);");
+        "CREATE TABLE dever(id VARCHAR(50) NOT NULL PRIMARY KEY, title TEXT, data INTEGER, status INTEGER DEFAULT 0, materiaID VARCHAR(50), turmaID VARCHAR(50), local TEXT, pontos REAL, FOREIGN KEY (materiaID) REFERENCES materia(id) ON DELETE CASCADE, FOREIGN KEY (turmaID) REFERENCES turma(id) ON DELETE CASCADE);");
     await db.execute(
         "CREATE TABLE materia(id VARCHAR(50) NOT NULL PRIMARY KEY, nome TEXT, professor TEXT, contato TEXT, turmaID VARCHAR(50), FOREIGN KEY (turmaID) REFERENCES turma(id) ON DELETE CASCADE);");
   }
@@ -38,9 +38,18 @@ class TurmasLocal extends GetxController {
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
+  checkTurmaExist(String id) async {
+    var query = await db.query("turma", where: "turma.id=?", whereArgs: [id]);
+    var exist = query.isNotEmpty ? true : false;
+    print(exist);
+    return exist;
+  }
+
   Future addTurma(Turma turma) async {
-    await db.insert("turma", turma.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    if (!(await checkTurmaExist(turma.id))) {
+      await db.insert("turma", turma.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.abort);
+    }
     _method.invokeMethod("update");
   }
 
@@ -89,11 +98,21 @@ class TurmasLocal extends GetxController {
     update();
   }
 
+  checkMateriaExist(String id) async {
+    var query =
+        await db.query("materia", where: "materia.id=?", whereArgs: [id]);
+    var exist = query.isNotEmpty ? true : false;
+    print(exist);
+    return exist;
+  }
+
   Future addMateria(Materia materia, String turmaID) async {
     var data = materia.toJson();
     data["turmaID"] = turmaID;
-    print(data);
-    await db.insert("materia", data);
+    if (!(await checkMateriaExist(materia.id))) {
+      await db.insert("materia", data,
+          conflictAlgorithm: ConflictAlgorithm.abort);
+    }
     _method.invokeMethod("update");
   }
 
@@ -108,16 +127,30 @@ class TurmasLocal extends GetxController {
     return materias;
   }
 
+  Future<List> checkDeverExist(String id) async {
+    var query = await db.query("dever", where: "dever.id=?", whereArgs: [id]);
+    return query;
+  }
+
   Future addDever(Dever dever, String turmaID) async {
     try {
       var data = dever.toJsonDB();
       data["turmaID"] = turmaID;
-      await db.insert("dever", data,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      var deverExist = await checkDeverExist(dever.id!);
+      data["status"] = deverExist[0]["status"] ?? 0;
+      if (deverExist.isEmpty) {
+        await db.insert("dever", data,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     } catch (e) {
       e.printError();
     }
     _method.invokeMethod("update");
+  }
+
+  Future setDeverStatus(String deverID, bool status) async {
+    await db.update("dever", {"status": status ? 1 : 0},
+        where: "dever.id=?", whereArgs: [deverID]);
   }
 
   Future seeTables() async {
@@ -127,9 +160,10 @@ class TurmasLocal extends GetxController {
   }
 
   Future<List> getDeveres(String turmaID, {List? filter}) async {
+    print("Pegando deveres");
     List listWhere = [turmaID];
     String queryStr =
-        "SELECT dever.id, dever.title, dever.data, dever.local, dever.pontos, materia.id as materiaID, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?";
+        "SELECT dever.id, dever.title, dever.data, dever.local, dever.status, dever.pontos, materia.id as materiaID, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?";
     if (filter != null) {
       if (filter[0] != null) {
         switch (filter[0] as int) {
@@ -160,7 +194,8 @@ class TurmasLocal extends GetxController {
         listWhere.add(filter[1]);
       }
     }
-
+    queryStr += " ORDER BY status";
+    print(queryStr);
     var query = await db.rawQuery(queryStr, listWhere);
     lista.clear();
 

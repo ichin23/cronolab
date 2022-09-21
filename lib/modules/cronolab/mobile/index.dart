@@ -4,6 +4,7 @@ import 'package:cronolab/modules/dever/view/mobile/filterDever.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
+import 'package:cronolab/shared/refresh.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
@@ -44,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool erro = false;
   bool loading = true;
   List? listFilter;
+  var refreshVisible = false;
 
   @override
   void initState() {
@@ -56,25 +58,29 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("init");
       try {
         var turmas = TurmasState.to;
         setState(() {
           loading = true;
         });
         bool internet = await InternetConnectionChecker().hasConnection;
+        print(internet);
+
         if (internet) {
           Updater().init();
         }
-
         if (internet) {
           await turmas.getTurmas();
         }
 
+        print("Turmas Pronto");
         await TurmasLocal.to.getTurmas();
-
+        print("Pegando local");
         //await turmas.turmaAtual!.getAtividades();
         getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
       } catch (e) {
+        e.printError();
         setState(() {
           erro = true;
           loading = false;
@@ -90,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    var padding = MediaQuery.of(context).padding;
     //TurmasState turmas = TurmasState.to;
     return GetBuilder<TurmasLocal>(
         init: TurmasLocal.to,
@@ -135,10 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           List? list = snapshot.data;
 
                           if (snapshot.hasData && list!.isNotEmpty) {
-                            return RefreshIndicator(
+                            return Refresh(
                               onRefresh: () async {
                                 if (turmas.turmaAtual != null) {
-                                  getAtv = turmas.turmaAtual!.getAtividades();
+                                  await turmas.turmaAtual!.getAtividades();
+
+                                  getAtv = turmas.turmaAtual!.getAtvDB();
                                   setState(() {});
                                 }
                               },
@@ -277,7 +286,114 @@ class _HomeScreenState extends State<HomeScreen> {
                               ]),
                             );
                           } else {
-                            return CustomScrollView(slivers: [
+                            return SizedBox(
+                                width: width,
+                                height: height,
+                                child: Refresh(
+                                  onRefresh: () async {
+                                    if (turmas.turmaAtual != null) {
+                                      await turmas.turmaAtual!.getAtividades();
+
+                                      getAtv = turmas.turmaAtual!.getAtvDB();
+
+                                      setState(() {});
+                                    }
+                                  },
+                                  child: CustomScrollView(slivers: [
+                                    SliverAppBar(
+                                      leading: IconButton(
+                                          onPressed: () {
+                                            scaffoldKey.currentState!
+                                                .openDrawer();
+                                          },
+                                          icon: const Icon(Icons.menu,
+                                              color: Colors.black45)),
+                                      backgroundColor: primary,
+                                      elevation: 0,
+                                      centerTitle: true,
+                                      toolbarHeight: 55,
+                                      actions: [
+                                        IconButton(
+                                            onPressed: () async {
+                                              await Get.toNamed("/perfil");
+                                              if (turmas.turmaAtual != null) {
+                                                getAtv = turmas.turmaAtual!
+                                                    .getAtvDB(
+                                                        filters: listFilter);
+                                                setState(() {});
+                                              }
+                                            },
+                                            icon: const Icon(Icons.person,
+                                                color: Colors.black45))
+                                      ],
+                                      title: GestureDetector(
+                                          onDoubleTap: _incrementCounter,
+                                          onTap: () {},
+                                          onLongPress: () async {},
+                                          child: Text(
+                                            frases[_counter] +
+                                                (turmas.turmaAtual != null
+                                                    ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                                    : ""),
+                                            style: const TextStyle(
+                                                color: Colors.black45,
+                                                fontWeight: FontWeight.w800),
+                                          )),
+                                    ),
+                                    SliverList(
+                                        delegate: SliverChildListDelegate([
+                                      TextButton(
+                                          onPressed: () async {
+                                            listFilter = await filterDever(
+                                                oldList: listFilter);
+                                            if (turmas.turmaAtual != null) {
+                                              getAtv = turmas.turmaAtual!
+                                                  .getAtvDB(
+                                                      filters: listFilter);
+                                              setState(() {});
+                                            }
+                                            debugPrint(listFilter.toString());
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            //mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Icon(Icons.filter_list),
+                                              Text("Filtro"),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                          height: height -
+                                              70 -
+                                              MediaQuery.of(context)
+                                                  .padding
+                                                  .top,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: const [
+                                              Text(
+                                                "Não há tarefas Pendentes!",
+                                                style: fonts.white,
+                                              ),
+                                            ],
+                                          ))
+                                    ])),
+                                  ]),
+                                ));
+                          }
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Refresh(
+                            onRefresh: () async {
+                              await turmas.turmaAtual!.getAtividades();
+
+                              getAtv = turmas.turmaAtual!.getAtvDB();
+                              setState(() {});
+                            },
+                            child: CustomScrollView(slivers: [
                               SliverAppBar(
                                 leading: IconButton(
                                     onPressed: () {
@@ -316,248 +432,176 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontWeight: FontWeight.w800),
                                     )),
                               ),
-                              SliverPadding(
-                                padding: const EdgeInsets.only(right: 10),
-                                sliver: SliverList(
-                                    delegate: SliverChildListDelegate(
-                                  [
-                                    TextButton(
-                                        onPressed: () async {
-                                          listFilter = await filterDever(
-                                              oldList: listFilter);
-                                          if (turmas.turmaAtual != null) {
-                                            getAtv = turmas.turmaAtual!
-                                                .getAtvDB(filters: listFilter);
-                                            setState(() {});
-                                          }
-                                          debugPrint(listFilter.toString());
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          //mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.filter_list),
-                                            Text("Filtro"),
-                                          ],
-                                        ))
-                                  ],
-                                )),
-                              ),
                               SliverList(
                                   delegate: SliverChildListDelegate([
                                 SizedBox(
-                                    height: height -
-                                        70 -
-                                        MediaQuery.of(context).padding.top,
-                                    child: Column(
+                                  height: height -
+                                      70 -
+                                      MediaQuery.of(context).padding.top,
+                                  child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.max,
                                       children: const [
-                                        Text(
-                                          "Não há tarefas Pendentes!",
-                                          style: fonts.white,
-                                        ),
-                                      ],
-                                    ))
-                              ])),
-                            ]);
-                          }
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CustomScrollView(slivers: [
-                            SliverAppBar(
-                              leading: IconButton(
-                                  onPressed: () {
-                                    scaffoldKey.currentState!.openDrawer();
-                                  },
-                                  icon: const Icon(Icons.menu,
-                                      color: Colors.black45)),
-                              backgroundColor: primary,
-                              elevation: 0,
-                              centerTitle: true,
-                              toolbarHeight: 55,
-                              actions: [
-                                IconButton(
-                                    onPressed: () async {
-                                      await Get.toNamed("/perfil");
-                                      if (turmas.turmaAtual != null) {
-                                        getAtv = turmas.turmaAtual!
-                                            .getAtvDB(filters: listFilter);
-                                        setState(() {});
-                                      }
-                                    },
-                                    icon: const Icon(Icons.person,
-                                        color: Colors.black45))
-                              ],
-                              title: GestureDetector(
-                                  onDoubleTap: _incrementCounter,
-                                  onTap: () {},
-                                  onLongPress: () async {},
-                                  child: Text(
-                                    frases[_counter] +
-                                        (turmas.turmaAtual != null
-                                            ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                            : ""),
-                                    style: const TextStyle(
-                                        color: Colors.black45,
-                                        fontWeight: FontWeight.w800),
-                                  )),
-                            ),
-                            SliverList(
-                                delegate: SliverChildListDelegate([
-                              SizedBox(
-                                height: height -
-                                    70 -
-                                    MediaQuery.of(context).padding.top,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: const [
-                                      CircularProgressIndicator()
-                                    ]),
-                              ),
-                            ]))
-                          ]);
+                                        CircularProgressIndicator()
+                                      ]),
+                                ),
+                              ]))
+                            ]),
+                          );
                         } else {
-                          return CustomScrollView(slivers: [
-                            SliverAppBar(
-                              leading: IconButton(
-                                  onPressed: () {
-                                    scaffoldKey.currentState!.openDrawer();
-                                  },
-                                  icon: const Icon(Icons.menu,
-                                      color: Colors.black45)),
-                              backgroundColor: primary,
-                              elevation: 0,
-                              centerTitle: true,
-                              toolbarHeight: 55,
-                              actions: [
-                                IconButton(
-                                    onPressed: () async {
-                                      Get.toNamed("/perfil");
-                                      if (turmas.turmaAtual != null) {
-                                        getAtv = turmas.turmaAtual!
-                                            .getAtvDB(filters: listFilter);
-                                        setState(() {});
-                                      }
+                          return Refresh(
+                            onRefresh: () async {
+                              await turmas.turmaAtual!.getAtividades();
+
+                              getAtv = turmas.turmaAtual!.getAtvDB();
+                              setState(() {});
+                            },
+                            child: CustomScrollView(slivers: [
+                              SliverAppBar(
+                                leading: IconButton(
+                                    onPressed: () {
+                                      scaffoldKey.currentState!.openDrawer();
                                     },
-                                    icon: const Icon(Icons.person,
-                                        color: Colors.black45))
-                              ],
-                              title: GestureDetector(
-                                  onDoubleTap: _incrementCounter,
-                                  onTap: () {},
-                                  onLongPress: () async {},
-                                  child: Text(
-                                    frases[_counter] +
-                                        (turmas.turmaAtual != null
-                                            ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                            : ""),
-                                    style: const TextStyle(
-                                        color: Colors.black45,
-                                        fontWeight: FontWeight.w800),
-                                  )),
-                            ),
-                            SliverList(
-                                delegate: SliverChildListDelegate([
-                              const Center(child: Text("Ocorreu algum erro")),
-                              TextButton(
-                                  onPressed: () {
-                                    getAtv = turmas.turmaAtual!
-                                        .getAtvDB(filters: listFilter);
-                                  },
-                                  child: const Text("Recarregar"))
-                            ]))
-                          ]);
+                                    icon: const Icon(Icons.menu,
+                                        color: Colors.black45)),
+                                backgroundColor: primary,
+                                elevation: 0,
+                                centerTitle: true,
+                                toolbarHeight: 55,
+                                actions: [
+                                  IconButton(
+                                      onPressed: () async {
+                                        Get.toNamed("/perfil");
+                                        if (turmas.turmaAtual != null) {
+                                          getAtv = turmas.turmaAtual!
+                                              .getAtvDB(filters: listFilter);
+                                          setState(() {});
+                                        }
+                                      },
+                                      icon: const Icon(Icons.person,
+                                          color: Colors.black45))
+                                ],
+                                title: GestureDetector(
+                                    onDoubleTap: _incrementCounter,
+                                    onTap: () {},
+                                    onLongPress: () async {},
+                                    child: Text(
+                                      frases[_counter] +
+                                          (turmas.turmaAtual != null
+                                              ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                              : ""),
+                                      style: const TextStyle(
+                                          color: Colors.black45,
+                                          fontWeight: FontWeight.w800),
+                                    )),
+                              ),
+                              SliverList(
+                                  delegate: SliverChildListDelegate([
+                                const Center(child: Text("Ocorreu algum erro")),
+                                TextButton(
+                                    onPressed: () {
+                                      getAtv = turmas.turmaAtual!
+                                          .getAtvDB(filters: listFilter);
+                                    },
+                                    child: const Text("Recarregar"))
+                              ]))
+                            ]),
+                          );
                         }
                       },
                     )
-                  : CustomScrollView(slivers: [
-                      SliverAppBar(
-                        leading: IconButton(
-                            onPressed: () {
-                              scaffoldKey.currentState!.openDrawer();
-                            },
-                            icon:
-                                const Icon(Icons.menu, color: Colors.black45)),
-                        backgroundColor: primary,
-                        elevation: 0,
-                        centerTitle: true,
-                        toolbarHeight: 55,
-                        actions: [
-                          IconButton(
-                              onPressed: () async {
-                                await Get.toNamed("/perfil");
-                                if (turmas.turmaAtual != null) {
-                                  getAtv = turmas.turmaAtual!
-                                      .getAtvDB(filters: listFilter);
-                                  setState(() {});
-                                }
+                  : Refresh(
+                      onRefresh: () async {
+                        await TurmasState.to.getTurmas();
+                        await TurmasLocal.to.getTurmas();
+                      },
+                      child: CustomScrollView(slivers: [
+                        SliverAppBar(
+                          leading: IconButton(
+                              onPressed: () {
+                                scaffoldKey.currentState!.openDrawer();
                               },
-                              icon: const Icon(Icons.person,
-                                  color: Colors.black45))
-                        ],
-                        title: GestureDetector(
-                            onDoubleTap: _incrementCounter,
-                            onTap: () {},
-                            onLongPress: () async {},
-                            child: Text(
-                              frases[_counter] +
-                                  (turmas.turmaAtual != null
-                                      ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                      : ""),
-                              style: const TextStyle(
-                                  color: Colors.black45,
-                                  fontWeight: FontWeight.w800),
-                            )),
-                      ),
-                      SliverList(
-                          delegate: SliverChildListDelegate([
-                        SizedBox(
-                          height:
-                              height - 70 - MediaQuery.of(context).padding.top,
-                          child: loading
-                              ? Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    CircularProgressIndicator(
-                                      color: darkPrimary,
-                                    )
-                                  ],
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children:
-                                      /*turmas.loading
-                                    ? [CircularProgressIndicator()]
-                                    :*/
-                                      [
-                                      const Text(
-                                          "Cadastre turmas antes de usar",
-                                          style: fonts.label),
-                                      TextButton(
-                                          style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      darkPrimary)),
-                                          onPressed: () {
-                                            Get.toNamed("/minhasTurmas");
-                                            if (turmas.turmaAtual != null) {
-                                              getAtv = turmas.turmaAtual!
-                                                  .getAtividades();
-                                              setState(() {});
-                                            }
-                                          },
-                                          child: const Text("Adionar Turmas",
-                                              style: fonts.buttonText)),
-                                    ]),
+                              icon: const Icon(Icons.menu,
+                                  color: Colors.black45)),
+                          backgroundColor: primary,
+                          elevation: 0,
+                          centerTitle: true,
+                          toolbarHeight: 55,
+                          actions: [
+                            IconButton(
+                                onPressed: () async {
+                                  await Get.toNamed("/perfil");
+                                  if (turmas.turmaAtual != null) {
+                                    getAtv = turmas.turmaAtual!
+                                        .getAtvDB(filters: listFilter);
+                                    setState(() {});
+                                  }
+                                },
+                                icon: const Icon(Icons.person,
+                                    color: Colors.black45))
+                          ],
+                          title: GestureDetector(
+                              onDoubleTap: _incrementCounter,
+                              onTap: () {},
+                              onLongPress: () async {},
+                              child: Text(
+                                frases[_counter] +
+                                    (turmas.turmaAtual != null
+                                        ? " - ${turmas.turmaAtual!.nome.toString()}"
+                                        : ""),
+                                style: const TextStyle(
+                                    color: Colors.black45,
+                                    fontWeight: FontWeight.w800),
+                              )),
                         ),
-                      ]))
-                    ]),
+                        SliverList(
+                            delegate: SliverChildListDelegate([
+                          SizedBox(
+                            height: height -
+                                70 -
+                                MediaQuery.of(context).padding.top,
+                            child: loading
+                                ? Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      CircularProgressIndicator(
+                                        color: darkPrimary,
+                                      )
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children:
+                                        /*turmas.loading
+                                      ? [CircularProgressIndicator()]
+                                      :*/
+                                        [
+                                        const Text(
+                                            "Cadastre turmas antes de usar",
+                                            style: fonts.label),
+                                        TextButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        darkPrimary)),
+                                            onPressed: () {
+                                              Get.toNamed("/minhasTurmas");
+                                              if (turmas.turmaAtual != null) {
+                                                getAtv = turmas.turmaAtual!
+                                                    .getAtividades();
+                                                setState(() {});
+                                              }
+                                            },
+                                            child: const Text("Adionar Turmas",
+                                                style: fonts.buttonText)),
+                                      ]),
+                          ),
+                        ]))
+                      ]),
+                    ),
               floatingActionButton: turmas.turmaAtual != null
                   ? turmas.turmaAtual!.isAdmin
                       ? FloatingActionButton(

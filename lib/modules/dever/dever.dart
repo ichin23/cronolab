@@ -9,6 +9,7 @@ class Dever {
   double? pontos;
   String? id;
   String? local;
+  bool? status;
 
   Dever(
       {this.id,
@@ -17,7 +18,8 @@ class Dever {
       this.materia,
       this.materiaID,
       this.pontos,
-      this.local});
+      this.local,
+      this.status});
   Dever.fromJson(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
@@ -36,6 +38,11 @@ class Dever {
             id: document["id"] as String,
             title: document['title'].toString(),
             materia: Materia.fromJsonDB(document),
+            status: document["status"] == null
+                ? false
+                : document['status'] == 1
+                    ? true
+                    : false,
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
             pontos: double.tryParse(document['pontos'].toString()),

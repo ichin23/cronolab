@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
+import 'shared/colors.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -20,6 +22,8 @@ void main() async {
       builder: (context, snap) {
         return snap.connectionState == ConnectionState.done
             ? const MainApp()
-            : Container();
+            : Container(
+                color: black,
+              );
       }));
 }

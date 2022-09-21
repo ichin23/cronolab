@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,6 +39,7 @@ class TurmasState extends GetxController {
   }
 
   initTurma(String code) async {
+    changeLoading = true;
     var response = await http.put(Uri.parse(url + "/class"),
         headers: {
           "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid,
@@ -49,8 +52,15 @@ class TurmasState extends GetxController {
     bool works = jsonDecode(response.body)["newTurma"] ?? false;
     if (works) {
       await Get.dialog(AlertDialog(
-        title: const Text("Turma não encontrada"),
-        content: const Text("Deseja criar uma nova turma?"),
+        backgroundColor: black,
+        title: const Text(
+          "Turma não encontrada",
+          style: label,
+        ),
+        content: const Text(
+          "Deseja criar uma nova turma?",
+          style: label,
+        ),
         actions: [
           TextButton(
               onPressed: () {
@@ -76,9 +86,12 @@ class TurmasState extends GetxController {
         ],
       ));
     }
+
+    changeLoading = false;
   }
 
   deleteTurma(String code) async {
+    changeLoading = true;
     var response = await http.delete(Uri.parse(url + "/class"),
         headers: {
           "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid,
@@ -87,57 +100,68 @@ class TurmasState extends GetxController {
         body: jsonEncode({
           "turmaID": code,
         }));
+    changeLoading = false;
   }
 
   Future getTurmas() async {
-    // print("Chamou");
+    try {
+      changeLoading = true;
+      print("Pegando Turmas");
+      var response = await http.get(
+        Uri.parse(url + "/users/turmas"),
+        headers: {
+          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
+        },
+      );
 
-    loading = true;
-    // update();
-    var response = await http.get(
-      Uri.parse(url + "/users/turmas"),
-      headers: {
-        "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-      },
-    );
+      var turmasJson = json.decode(response.body)["turmas"] as List;
 
-    var turmasJson = json.decode(response.body)["turmas"] as List;
-
-    if (turmasJson.isNotEmpty) {
-      turmas.clear();
-      for (Map<String, dynamic> turma in turmasJson) {
-        var turmaAdd = Turma.fromJson(turma);
-        if (turma["admin"] == true) {
-          turmaAdd.setAdmin();
-        }
-        if (Platform.isAndroid || Platform.isIOS) {
-          TurmasLocal.to.addTurma(turmaAdd);
-        }
-        List materias = turma["materias"];
-        List<Materia> listMat = materias.map((mat) {
-          var materia = Materia.fromJson(mat);
-
-          return materia;
-        }).toList();
-        for (var materia in listMat) {
-          if (Platform.isAndroid || Platform.isIOS) {
-            await TurmasLocal.to.addMateria(materia, turmaAdd.id);
+      print(turmasJson);
+      if (turmasJson.isNotEmpty) {
+        turmas.clear();
+        for (Map<String, dynamic> turma in turmasJson) {
+          var turmaAdd = Turma.fromJson(turma);
+          if (turma["admin"] == true) {
+            turmaAdd.setAdmin();
           }
+          if (Platform.isAndroid || Platform.isIOS) {
+            TurmasLocal.to.addTurma(turmaAdd);
+          }
+          List materias = turma["materias"];
+          List<Materia> listMat = materias.map((mat) {
+            var materia = Materia.fromJson(mat);
+
+            return materia;
+          }).toList();
+          for (var materia in listMat) {
+            if (Platform.isAndroid || Platform.isIOS) {
+              await TurmasLocal.to.addMateria(materia, turmaAdd.id);
+            }
+          }
+
+          // print(listMat[0].contato);
+
+          turmaAdd.setMaterias = listMat;
+          await turmaAdd.getAtividades();
+          turmas.add(turmaAdd);
         }
-
-        // print(listMat[0].contato);
-
-        turmaAdd.setMaterias = listMat;
-        await turmaAdd.getAtividades();
-        turmas.add(turmaAdd);
+        turmaAtual = turmas[0];
+        print(turmas);
+        changeLoading = false;
+        update();
+        return turmas;
       }
-      turmaAtual = turmas[0];
-      print(turmas);
-      return;
+      changeLoading = false;
+      update();
+    } catch (e) {
+      e.printError();
+      e.printInfo();
     }
+  }
 
-    loading = false;
-
+  set changeLoading(bool load) {
+    loading = load;
+    print(loading);
     update();
   }
 }

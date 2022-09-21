@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import '../../../materia/materia.dart';
 import '../../../turmas/turmasLocal.dart';
 
-DateFormat dateStr = DateFormat("dd/MM/YY");
+DateFormat dateStr = DateFormat("dd/MM/yy");
 cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController titulo = TextEditingController();
