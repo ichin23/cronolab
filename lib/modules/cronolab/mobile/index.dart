@@ -188,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       )),
                                 ),
                                 SliverPadding(
-                                  padding: const EdgeInsets.only(right: 10),
+                                  padding: const EdgeInsets.only(right: 0),
                                   sliver: SliverList(
                                       delegate: SliverChildListDelegate(
                                     [

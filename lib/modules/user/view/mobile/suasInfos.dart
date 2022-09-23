@@ -32,21 +32,22 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
           stream: FirebaseAuth.instance.userChanges(),
           builder: (context, snap) {
             return snap.data!=null? Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(15),
               child: ListView(
                 children: [
                   Container(
-                      padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                       height: 60,
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
                           color: white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(10)),
                       child: Text(
                         "Email: ${snap.data!.email}",
                         style: fonts.input,
                       )),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
+                 
                   InkWell(
                     onTap: () {
                       TextEditingController newUser = TextEditingController();
@@ -65,7 +66,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                                       icon: const Icon(Icons.person,
                                           color: white),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(10),
                                       )),
                                   controller: newUser,
                                 ),
@@ -82,12 +83,12 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                       setState(() {});
                     },
                     child: Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                         height: 60,
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
                             color: white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -97,12 +98,12 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                             ),
                             const Icon(
                               Icons.arrow_forward_ios,
-                              color: white,
+                              color: primary2,
                             )
                           ],
                         )),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   InkWell(
                     onTap: () {
                       TextEditingController newSenha = TextEditingController();
@@ -118,9 +119,9 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                                   decoration: InputDecoration(
                                       labelStyle: fonts.white,
                                       label: const Text("Nova senha"),
-                                      icon: const Icon(Icons.key, color: white),
+                                      icon: const Icon(Icons.key, color: primary2),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(10),
                                       )),
                                   controller: newSenha,
                                 ),
@@ -136,12 +137,12 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                           }));
                     },
                     child: Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                         height: 60,
                         alignment: Alignment.centerLeft,
                         decoration: BoxDecoration(
                             color: white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [
@@ -151,7 +152,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                             ),
                             Icon(
                               Icons.arrow_forward_ios,
-                              color: white,
+                              color: primary2,
                             )
                           ],
                         )),

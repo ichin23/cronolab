@@ -12,6 +12,10 @@ class GerenciarTurmas extends StatefulWidget {
   @override
   State<GerenciarTurmas> createState() => _GerenciarTurmasState();
 }
+extension StringCasingExtension on String {
+  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+}
 
 class _GerenciarTurmasState extends State<GerenciarTurmas> {
   @override
@@ -22,11 +26,14 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
       systemNavigationBarColor: darkPrimary,
     ));
   }
+  
+  
 
   bool loading = false;
 
   @override
   Widget build(BuildContext context) {
+    
     TurmasState turmas = TurmasState.to;
 
     // var auth = Provider.of<Auth>(context);
@@ -60,8 +67,9 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
         builder: (turmas) => ListView.builder(
             itemCount: turmas.turmas.length,
             itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
                   child: ListTile(
+                    
                       onTap: () {
                         if (turmas.turmas[i].isAdmin) {
                           Get.toNamed('/turma', arguments: turmas.turmas[i]);
@@ -85,10 +93,12 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                         color: white,
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
+                          borderRadius: BorderRadius.circular(10)),
                       tileColor: white.withOpacity(0.1),
-                      title: Text(turmas.turmas[i].nome,
-                          style: const TextStyle(color: white))),
+                      title: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: Text(turmas.turmas[i].nome.toTitleCase(),
+                        style: const TextStyle(color: white)))),
                 )),
       )),
       floatingActionButton: FloatingActionButton(

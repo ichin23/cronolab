@@ -8,6 +8,7 @@ import '../dever/dever.dart';
 import '../materia/materia.dart';
 import 'turma.dart';
 
+
 class TurmasLocal extends GetxController {
   List<Dever> lista = [];
   List<Turma> turmas = [];

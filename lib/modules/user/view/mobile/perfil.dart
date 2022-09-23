@@ -119,7 +119,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         Get.toNamed("/suasInfos");
                       },
                       trailing:
-                          const Icon(Icons.arrow_forward_ios, color: white),
+                          const Icon(Icons.arrow_forward_ios, color: primary2),
                     ),
                     ListTile(
                       title: const Text("Gerenciar Turmas",
@@ -128,7 +128,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         Get.toNamed("/minhasTurmas");
                       },
                       trailing:
-                          const Icon(Icons.arrow_forward_ios, color: white),
+                          const Icon(Icons.arrow_forward_ios, color: primary2),
                     ),
                     ListTile(
                       title:
