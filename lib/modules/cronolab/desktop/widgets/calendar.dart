@@ -22,11 +22,21 @@ class CalendarState extends State<Calendar> {
   late DateTime diaI;
   late DateTime ultimoDia;
   late DateTime primeiroDia;
+  late int mes;
   bool dia1Pronto = false;
 
   bool showDeveres = false;
   Offset? showDeveresPosition;
   List deveresToShow = [];
+
+  changeWeekStart(int day) {
+    switch (day) {
+      case 7:
+        return 0;
+      default:
+        return day;
+    }
+  }
 
   List<String> dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
   List<String> months = [
@@ -51,18 +61,23 @@ class CalendarState extends State<Calendar> {
     data = newData;
     weeks.clear();
     dia1Pronto = false;
-
+    mes = data.month;
     primeiroDia = DateTime(data.year, data.month, 1);
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     var turmas = TurmasState.to.turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
-      print(diaI);
+      /*  print('''
+        DiaI:$diaI
+        UltimoDia: $ultimoDia
+        PrimeiroDia: $primeiroDia
+        Dia1Pronto: $dia1Pronto
+      '''); */
       weeks.add(List.generate(7, (index) {
         if (turmas != null) {
           if (!dia1Pronto) {
-            if (index == diaI.weekday) {
+            if (index == changeWeekStart(diaI.weekday)) {
               dia1Pronto = true;
 
               return Dia(
@@ -74,6 +89,8 @@ class CalendarState extends State<Calendar> {
                           dever.data.year == diaI.year)
                       .toList());
             } else {
+              print(diaI.subtract(
+                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)));
               return Dia(
                   diaI.subtract(
                       Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
@@ -86,7 +103,7 @@ class CalendarState extends State<Calendar> {
             }
           } else {
             diaI = diaI.add(const Duration(days: 1));
-
+            //print("Dia1 Pronto");
             return Dia(
                 diaI,
                 turmas.deveres!
@@ -123,7 +140,6 @@ class CalendarState extends State<Calendar> {
         break;
       }
     }
-    print(weeks);
   }
 
   @override
@@ -160,14 +176,27 @@ class CalendarState extends State<Calendar> {
                   children: [
                     IconButton(
                         onPressed: () {
-                          buildCalendar(
-                              data.subtract(const Duration(days: 30)));
+                          int mes = data.month;
+                          int ano = data.year;
+                          if (mes == 1) {
+                            mes = 12;
+                            ano -= 1;
+                          } else {
+                            mes -= 1;
+                          }
+                          buildCalendar(DateTime(ano, mes));
                           setState(() {});
                         },
                         icon: const Icon(Icons.arrow_back_ios)),
-                    Text(
-                      "${months[data.month - 1]} - ${data.year.toString()}",
-                      style: const TextStyle(fontSize: 20),
+                    InkWell(
+                      onTap: () {
+                        buildCalendar(DateTime.now());
+                        setState(() {});
+                      },
+                      child: Text(
+                        "${months[data.month - 1]} - ${data.year.toString()}",
+                        style: const TextStyle(fontSize: 20),
+                      ),
                     ),
                     IconButton(
                         onPressed: () {
@@ -208,58 +237,65 @@ class CalendarState extends State<Calendar> {
                               /* ...List.filled(data.weekday, Container()),
                               Text(data.day.toString()) */
                               ...weeks
-                                  .map((e) => Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            ...e
-                                                .map((f) => MouseRegion(
-                                                      cursor: SystemMouseCursors
-                                                          .click,
-                                                      onEnter: (ev) {
-                                                        if (f != null) {
-                                                          print(f.deveres);
-                                                          if (f.deveres
-                                                              .isNotEmpty) {
-                                                            setState(() {
-                                                              deveresToShow =
-                                                                  f.deveres;
-                                                              showDeveres =
-                                                                  true;
-                                                              showDeveresPosition =
-                                                                  ev.position;
-                                                            });
-                                                            print(size.height);
-                                                            print(showDeveresPosition!
-                                                                        .dy -
-                                                                    paddingHeight -
-                                                                    widget.height *
-                                                                        0.2 +
-                                                                    widget.width *
-                                                                        0.4 >
-                                                                size.height);
-                                                          }
-                                                        }
-                                                      },
-                                                      onExit: (ev) {
-                                                        if (f != null) {
-                                                          if (f.deveres
-                                                              .isNotEmpty) {
-                                                            setState(() {
-                                                              deveresToShow =
-                                                                  [];
-                                                              showDeveres =
-                                                                  false;
-                                                              showDeveresPosition =
-                                                                  null;
-                                                            });
-                                                          }
-                                                        }
-                                                      },
-                                                      child: Listener(
-                                                        onPointerDown: (event) {
-                                                          if (f != null) {
-                                                            /* showMenu(
+                                  .map(
+                                      (e) => Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ...e
+                                                    .map((f) => MouseRegion(
+                                                          cursor:
+                                                              SystemMouseCursors
+                                                                  .click,
+                                                                  
+                                                          onEnter: (ev) {
+                                                            if (f != null) {
+                                                              print(f.deveres);
+                                                              if (f.deveres
+                                                                  .isNotEmpty) {
+                                                                setState(() {
+                                                                  deveresToShow =
+                                                                      f.deveres;
+                                                                  showDeveres =
+                                                                      true;
+                                                                  showDeveresPosition =
+                                                                      ev.position;
+                                                                });
+                                                                print(size
+                                                                    .height);
+                                                                print(showDeveresPosition!
+                                                                            .dy -
+                                                                        paddingHeight -
+                                                                        widget.height *
+                                                                            0.2 +
+                                                                        widget.width *
+                                                                            0.4 >
+                                                                    size.height);
+                                                              }
+                                                            }
+                                                          },
+                                                          onExit: (ev) {
+                                                            if (f != null) {
+                                                              if (f.deveres
+                                                                  .isNotEmpty) {
+                                                                setState(() {
+                                                                  deveresToShow =
+                                                                      [];
+                                                                  showDeveres =
+                                                                      false;
+                                                                  showDeveresPosition =
+                                                                      null;
+                                                                });
+                                                              }
+                                                            }
+                                                          },
+                                                          
+                                                          child: Listener(
+                                                            
+                                                            onPointerDown:
+                                                                (event) {
+                                                              if (f != null) {
+                                                                /* showMenu(
                                                                     context:
                                                                         context,
                                                                     color:
@@ -294,69 +330,67 @@ class CalendarState extends State<Calendar> {
                                                                                 TextStyle(color: primary2),
                                                                           ))
                                                                     ]); */
-                                                            if (!f.data.isBefore(
-                                                                hoje.subtract(
-                                                                    const Duration(
-                                                                        days:
-                                                                            1)))) {
-                                                              cliqueDireito(
-                                                                  event,
-                                                                  f.data);
-                                                            }
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            height: (widget
-                                                                        .height -
-                                                                    80 -
-                                                                    80) /
-                                                                weeks.length,
-                                                            width:
-                                                                (widget.width -
+                                                                if (!f.data.isBefore(
+                                                                    hoje.subtract(
+                                                                        const Duration(
+                                                                            days:
+                                                                                1)))) {
+                                                                  cliqueDireito(
+                                                                      event,
+                                                                      f.data);
+                                                                }
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                height: (widget
+                                                                            .height -
+                                                                        80 -
+                                                                        80) /
+                                                                    weeks
+                                                                        .length,
+                                                                width: (widget
+                                                                            .width -
                                                                         30 -
                                                                         100) /
                                                                     7,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                color: f != null
-                                                                    ? f.data.day == hoje.day && f.data.month == hoje.month
-                                                                        ? const Color(0xffACBDF5)
-                                                                        : const Color(0xff3C353C)
-                                                                    : Colors.transparent),
-                                                            child: f != null
-                                                                ? Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        f.data
-                                                                            .day
-                                                                            .toString(),
-                                                                        style: TextStyle(
-                                                                            color: f.data.isAfter(ultimoDia) || f.data.isBefore(primeiroDia) || (f.data.month == hoje.month && f.data.isBefore(hoje.subtract(const Duration(days: 1))))
-                                                                                // || f.data.isBefore(diaI)
-                                                                                ? Colors.white24
-                                                                                : Colors.white,
-                                                                            fontSize: 40),
-                                                                      ),
-                                                                      f.deveres
-                                                                              .isNotEmpty
-                                                                          ? Container(
-                                                                              width: 10,
-                                                                              height: 10,
-                                                                              decoration: const BoxDecoration(color: primary2, shape: BoxShape.circle),
-                                                                            )
-                                                                          : Container(),
-                                                                    ],
-                                                                  )
-                                                                : Container()),
-                                                      ),
-                                                    ))
-                                                .toList()
-                                          ]))
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(15),
+                                                                    color: f != null
+                                                                        ? f.data.day == hoje.day && f.data.month == hoje.month && data.year == hoje.year
+                                                                            ? const Color(0xffACBDF5)
+                                                                            : const Color(0xff3C353C)
+                                                                        : Colors.transparent),
+                                                                child: f != null
+                                                                    ? Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          Text(
+                                                                            f.data.day.toString(),
+                                                                            style: TextStyle(
+                                                                                color: f.data.isAfter(ultimoDia) || f.data.isBefore(primeiroDia) || (f.data.month == hoje.month && f.data.isBefore(hoje.subtract(const Duration(days: 1))))
+                                                                                    // || f.data.isBefore(diaI)
+                                                                                    ? Colors.white24
+                                                                                    : Colors.white,
+                                                                                fontSize: 40),
+                                                                          ),
+                                                                          f.deveres.isNotEmpty
+                                                                              ? Container(
+                                                                                  width: 10,
+                                                                                  height: 10,
+                                                                                  decoration: const BoxDecoration(color: primary2, shape: BoxShape.circle),
+                                                                                )
+                                                                              : Container(),
+                                                                        ],
+                                                                      )
+                                                                    : Container()),
+                                                          ),
+                                                        ))
+                                                    .toList()
+                                              ]))
                                   .toList()
                             ]),
                       )
@@ -413,7 +447,7 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> cliqueDireito(PointerDownEvent event, DateTime data) async {
-    print(event.buttons == kSecondaryMouseButton);
+    print(event.buttons );
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton) {
       cadastraDeverDesktop(context, data);

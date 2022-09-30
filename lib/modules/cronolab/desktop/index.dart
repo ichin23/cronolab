@@ -78,6 +78,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
+                                    print(MediaQuery.of(context).size);
                                     Get.toNamed("/perfil");
                                   },
                                   child: Row(children: [
