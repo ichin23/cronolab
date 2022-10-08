@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -11,7 +12,9 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
   DateFormat date = DateFormat("dd/MM");
   TimeOfDay? hora;
   var _form = GlobalKey<FormState>();
-  var nome = TextEditingController();
+  var titulo = TextEditingController();
+  var local = TextEditingController();
+  var pontos = TextEditingController();
 
   Materia? materiaSelect;
   await Get.dialog(
@@ -35,6 +38,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                   style: fonts.label),
               const SizedBox(height: 15),
               TextFormField(
+                  controller: titulo,
                   validator: (value) {
                     if (value != null && value.isEmpty) {
                       return "Digite um valor";
@@ -86,6 +90,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                   }),
               const SizedBox(height: 15),
               TextFormField(
+                  controller: pontos,
                   validator: (value) {
                     if (value != null && value.isEmpty) {
                       return "Digite um valor";
@@ -106,6 +111,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       ))),
               const SizedBox(height: 15),
               TextFormField(
+                  controller: local,
                   validator: (value) {
                     if (value != null && value.isEmpty) {
                       return "Digite um valor";
@@ -147,6 +153,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
               const SizedBox(height: 15),
               TextButton(
                   onPressed: () async {
+                    print("Começa");
                     if (!_form.currentState!.validate()) {
                       return;
                     }
@@ -158,13 +165,18 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       print("Matéria não selecionada");
                       return;
                     }
-                    /*  await TurmasState.to.turmaAtual!.addDever(Dever(
-                        data: DateTime(data.year, data.month, data.day,
-                            hora!.hour, hora!.minute),
-                        materiaID: materiaSelect!.id,
-                        title: titulo.text,
-                        pontos: double.parse(pontos.text),
-                        local: local.text)); */
+                    print("Cadastrando");
+                    await TurmasState.to.turmaAtual!
+                        .addDever(Dever(
+                            data: DateTime(data.year, data.month, data.day,
+                                hora!.hour, hora!.minute),
+                            materiaID: materiaSelect!.id,
+                            title: titulo.text,
+                            pontos: double.parse(pontos.text),
+                            local: local.text))
+                        .then((value) {
+                      print("Cadastrado");
+                    });
                   },
                   child: const Text("Cadastra"))
             ],

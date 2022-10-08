@@ -1,0 +1,74 @@
+import 'package:cronolab/core/updater.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:intl/intl.dart';
+
+class IndexController extends GetxController {
+  final int _counter = 0;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  DateFormat dateStr = DateFormat("dd/MM/yyyy");
+  DateFormat hourStr = DateFormat("Hm");
+  Future<List?> getAtv = Future(() => []);
+
+  bool erro = false;
+  bool loading = false;
+  List? _listFilter;
+  var refreshVisible = false;
+
+  refreshDb() {
+    getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
+    update();
+  }
+
+  /* Future<List?> get getAtv => _getAtv;
+  set getAtv(Future<List?> refreshAtv) {
+    _getAtv = refreshAtv;
+    update();
+  } */
+
+  List? get listFilter => _listFilter;
+  set listFilter(List? refreshAtv) {
+    _listFilter = refreshAtv;
+    update();
+  }
+
+  bool get turmaAtualIsNull => TurmasLocal.to.turmaAtual == null;
+
+  loadData() async {
+    try {
+      var turmas = TurmasState.to;
+
+      loading = true;
+      update();
+      bool internet = await InternetConnectionChecker().hasConnection;
+
+      if (internet) {
+        Updater().init();
+      }
+      if (internet) {
+        await turmas.getTurmas().then((value) {});
+      }
+
+      await TurmasLocal.to.getTurmas();
+
+      await TurmasLocal.to.turmaAtual?.getAtividades();
+      getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
+      update();
+
+      //await TurmasLocal.to.getTurmas();
+
+      //await turmas.turmaAtual!.getAtividades();
+
+    } on Exception catch (e) {
+      print(e);
+      erro = true;
+      loading = false;
+      update();
+    }
+    loading = false;
+    update();
+  }
+}

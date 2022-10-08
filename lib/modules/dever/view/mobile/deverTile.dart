@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/cronolab/mobile/controller/indexController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
@@ -7,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class DeverTile extends StatefulWidget {
-  final Function() notifyParent;
+  final Function()? notifyParent;
   const DeverTile(this.dever, {Key? key, required this.notifyParent})
       : super(key: key);
   final Dever dever;
@@ -22,29 +23,33 @@ class _DeverTileState extends State<DeverTile> {
   void initState() {
     super.initState();
     var turmas = TurmasLocal.to;
-    popMenu.add(
-      PopupMenuItem(
-        child: const Text("Concluída",
-            style: TextStyle(color: white), textAlign: TextAlign.center),
-        onTap: () async {
-          await turmas.setDeverStatus(widget.dever.id!, !widget.dever.status!);
-          widget.notifyParent();
-        },
-      ),
-    );
-    if (turmas.turmaAtual!.isAdmin) {
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popMenu.add(
         PopupMenuItem(
-          child: const Text("Excluir",
+          child: const Text("Concluída",
               style: TextStyle(color: white), textAlign: TextAlign.center),
           onTap: () async {
-            turmas.turmaAtual!
-                .deleteDever(widget.dever.id!)
-                .then((value) => widget.notifyParent());
+            await turmas.setDeverStatus(
+                widget.dever.id!, !widget.dever.status!);
+            Get.find<IndexController>().refreshDb();
           },
         ),
       );
-    }
+      if (turmas.turmaAtual!.isAdmin) {
+        popMenu.add(
+          PopupMenuItem(
+            child: const Text("Excluir",
+                style: TextStyle(color: white), textAlign: TextAlign.center),
+            onTap: () async {
+              turmas.turmaAtual!.deleteDever(widget.dever.id!).then((value) {
+                Get.find<IndexController>().refreshDb();
+              });
+            },
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -67,12 +72,11 @@ class _DeverTileState extends State<DeverTile> {
     DateFormat hourStr = DateFormat("Hm");
     return GestureDetector(
       onTapDown: (tapDetail) {
-        print(widget.dever.status);
         tapDetails = tapDetail;
       },
       onTap: () {
-        debugPrint(
-            "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
+        //debugPrint(
+        //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
         Get.toNamed("/dever", arguments: widget.dever);
       },
       onLongPress: () {
@@ -86,7 +90,7 @@ class _DeverTileState extends State<DeverTile> {
               tapDetails.globalPosition.dy,
               width - tapDetails.globalPosition.dx,
               height - tapDetails.globalPosition.dy),
-          items: popMenu,
+          items: [...popMenu],
         );
       },
       child: Container(

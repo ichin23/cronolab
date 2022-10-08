@@ -146,16 +146,17 @@ class Turma {
     try {
       response = await http
           .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
-      // print(response.body);
-      var deveresJson = jsonDecode(response.body);
+
+      var deveresJson = jsonDecode(response.body.toString());
       deveres = [];
+
       for (var dever in deveresJson) {
         if (deveres != null) {
           var deverData = Dever.fromJson(dever);
           if (Platform.isAndroid || Platform.isIOS) {
-            TurmasLocal.to.addDever(deverData, id);
+            await TurmasLocal.to.addDever(deverData, id);
           }
-          deveres!.add(deverData);
+          deveres?.add(deverData);
         } else {
           deveres = [Dever.fromJson(dever)];
         }
@@ -163,8 +164,6 @@ class Turma {
 
       return deveres;
     } catch (e) {
-      print(e);
-
       return null;
     }
   }

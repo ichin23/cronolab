@@ -28,7 +28,7 @@ void main() async {
         return snap.connectionState == ConnectionState.done
             ? const MainApp()
             : Container(
-                color: black,
+                color: primary2,
               );
       }));
 }

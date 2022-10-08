@@ -20,7 +20,7 @@ class TurmasState extends GetxController {
   bool loading = false;
 
   Future<Turma> refreshTurma(String id) async {
-    print(id);
+
     var response = await http.get(
       Uri.parse(url + "/class?id=$id"),
       headers: {
@@ -106,7 +106,7 @@ class TurmasState extends GetxController {
   Future getTurmas() async {
     try {
       changeLoading = true;
-      print("Pegando Turmas");
+
       var response = await http.get(
         Uri.parse(url + "/users/turmas"),
         headers: {
@@ -116,7 +116,6 @@ class TurmasState extends GetxController {
 
       var turmasJson = json.decode(response.body)["turmas"] as List;
 
-      print(turmasJson);
       if (turmasJson.isNotEmpty) {
         turmas.clear();
         for (Map<String, dynamic> turma in turmasJson) {
@@ -146,7 +145,7 @@ class TurmasState extends GetxController {
           turmas.add(turmaAdd);
         }
         turmaAtual = turmas[0];
-        print(turmas);
+
         changeLoading = false;
         update();
         return turmas;
@@ -154,6 +153,7 @@ class TurmasState extends GetxController {
       changeLoading = false;
       update();
     } catch (e) {
+      print(e.runtimeType);
       e.printError();
       e.printInfo();
     }

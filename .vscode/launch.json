@@ -9,6 +9,8 @@
             "request": "launch",
             "type": "dart"
         },
+        {"name": "Linux", "request": "launch", "type": "dart", "deviceId": "Linux"},
+        {"name": "Android", "request": "launch", "type": "dart"},
         {
             "name": "cronolab (profile mode)",
             "request": "launch",
@@ -25,6 +27,12 @@
             "request": "launch",
             "type": "dart",
             "args": ["-d", "chrome","--web-port", "8000", "--web-renderer", "html"],
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Android && Linux",
+            "configurations": ["Android", "Linux"]
         }
     ]
 }

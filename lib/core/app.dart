@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../modules/cronolab/mobile/controller/indexController.dart';
 import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
 import '../modules/user/view/mobile/perfil.dart';
 import '../modules/user/view/mobile/suasInfos.dart';
@@ -33,6 +34,7 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     Get.put(TurmasState());
     Get.put(TurmasLocal());
+    Get.put(IndexController());
     if (!kIsWeb) {
       if (Platform.isAndroid || Platform.isIOS) {
         TurmasLocal.to.init();
@@ -50,7 +52,7 @@ class _MainAppState extends State<MainApp> {
           ? Transition.native
           : Platform.isLinux || Platform.isWindows
               ? Transition.fadeIn
-              : Transition.leftToRight,
+              : Transition.rightToLeftWithFade,
       title: "Cronolab",
       theme: ThemeData(
           fontFamily: "Inter",
@@ -82,12 +84,18 @@ class _MainAppState extends State<MainApp> {
             builder: (context, stream) {
               if (stream.connectionState != ConnectionState.waiting) {
                 if (stream.data != null) {
-                  print(stream.data!.uid);
                   return kIsWeb
                       ? const HomePageDesktop()
                       : Platform.isLinux || Platform.isWindows
                           ? const HomePageDesktop()
-                          : const HomeScreen();
+                          : FutureBuilder(
+                              future: TurmasLocal.to.init(),
+                              builder: (context, snap) {
+                                return snap.connectionState ==
+                                        ConnectionState.done
+                                    ? const HomeScreen()
+                                    : Container();
+                              });
                 } else {
                   return kIsWeb
                       ? const LoginPageDesktop()
