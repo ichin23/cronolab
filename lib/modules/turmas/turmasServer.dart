@@ -20,7 +20,6 @@ class TurmasState extends GetxController {
   bool loading = false;
 
   Future<Turma> refreshTurma(String id) async {
-
     var response = await http.get(
       Uri.parse(url + "/class?id=$id"),
       headers: {
@@ -49,6 +48,7 @@ class TurmasState extends GetxController {
           "idTurma": code,
           "data": {"nome": code}
         }));
+
     bool works = jsonDecode(response.body)["newTurma"] ?? false;
     if (works) {
       await Get.dialog(AlertDialog(
@@ -85,6 +85,8 @@ class TurmasState extends GetxController {
               child: const Text("Sim"))
         ],
       ));
+    } else {
+      Get.back();
     }
 
     changeLoading = false;

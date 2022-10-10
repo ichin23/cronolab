@@ -148,6 +148,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                   controllerPage.loading) {
                                 return const Center(
                                     child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      (snapshot.error as Exception)
+                                          .toString()
+                                          .replaceAll("Exception: ", ""),
+                                      style: fonts.label,
+                                    ),
+                                    TextButton(
+                                      child: const Text("Cadastrar turma"),
+                                      onPressed: () async {
+                                        await Get.toNamed("/minhasTurmas");
+                                        controllerPage.loadData();
+                                      },
+                                    )
+                                  ],
+                                );
                               } else if (snapshot.connectionState ==
                                   ConnectionState.done) {
                                 List? list = snapshot.data;

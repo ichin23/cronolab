@@ -54,8 +54,12 @@ class IndexController extends GetxController {
 
       await TurmasLocal.to.getTurmas();
 
-      await TurmasLocal.to.turmaAtual?.getAtividades();
-      getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
+      if (TurmasLocal.to.turmaAtual != null) {
+        await TurmasLocal.to.turmaAtual?.getAtividades();
+        getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
+      } else {
+        getAtv = Future.error(Exception("Nenhuma turma Cadastrada"));
+      }
       update();
 
       //await TurmasLocal.to.getTurmas();
