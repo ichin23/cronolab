@@ -4,7 +4,7 @@ import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart'
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:cronolab/shared/myInput.dart';
+import 'package:cronolab/shared/components/myInput.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../shared/refresh.dart';
+import '../../../shared/components/refresh.dart';
+import '../../../shared/models/cronolabExceptions.dart';
 import '../../dever/view/mobile/cadastraDever.dart';
 import '../../turmas/turmasLocal.dart';
 import 'controller/indexController.dart';
@@ -101,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (turmas) {
                       return IconButton(
                           onPressed: () async {
-                            var espera = await Get.toNamed("/perfil");
+                            await Get.toNamed("/perfil");
                             if (turmas.turmaAtual != null) {
                               controllerPage.getAtv =
                                   turmas.turmaAtual!.getAtividades();
@@ -149,28 +150,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return const Center(
                                     child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      (snapshot.error as Exception)
-                                          .toString()
-                                          .replaceAll("Exception: ", ""),
-                                      style: fonts.label,
-                                    ),
-                                    TextButton(
-                                      child: const Text("Cadastrar turma"),
-                                      onPressed: () async {
-                                        await Get.toNamed("/minhasTurmas");
-                                        controllerPage.loadData();
-                                      },
-                                    )
-                                  ],
-                                );
+                                switch ((snapshot.error as CronolabException)
+                                    .code) {
+                                  case 10:
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                              Icons
+                                                  .signal_wifi_connected_no_internet_4,
+                                              size: 40,
+                                              color: red),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            (snapshot.error
+                                                    as CronolabException)
+                                                .toString(),
+                                            textAlign: TextAlign.center,
+                                            style: fonts.label,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  case 11:
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          (snapshot.error as CronolabException)
+                                              .toString(),
+                                          style: fonts.label,
+                                        ),
+                                        TextButton(
+                                          child: const Text("Cadastrar turma"),
+                                          onPressed: () async {
+                                            await Get.toNamed("/minhasTurmas");
+                                            controllerPage.loadData();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                }
                               } else if (snapshot.connectionState ==
                                   ConnectionState.done) {
                                 List? list = snapshot.data;
-                                print("Done");
 
                                 return Padding(
                                     padding: const EdgeInsets.only(right: 0),

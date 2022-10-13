@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../shared/models/cronolabExceptions.dart';
+
 class IndexController extends GetxController {
   final int _counter = 0;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -44,27 +46,31 @@ class IndexController extends GetxController {
       loading = true;
       update();
       bool internet = await InternetConnectionChecker().hasConnection;
-
+      print("Internet: $internet");
       if (internet) {
         Updater().init();
-      }
-      if (internet) {
-        await turmas.getTurmas().then((value) {});
+
+        await turmas.getTurmas();
       }
 
       await TurmasLocal.to.getTurmas();
-
-      if (TurmasLocal.to.turmaAtual != null) {
+      print("TurmaAtual: ${TurmasLocal.to.turmaAtual}");
+      if (TurmasLocal.to.turmaAtual == null && !internet) {
+        getAtv = Future.error(
+            CronolabException("Sem internet e nenhuma turma encontrada", 10));
+        update();
+      } else if (TurmasLocal.to.turmaAtual != null) {
         await TurmasLocal.to.turmaAtual?.getAtividades();
         getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
       } else {
-        getAtv = Future.error(Exception("Nenhuma turma Cadastrada"));
+        getAtv =
+            Future.error(CronolabException("Nenhuma turma Cadastrada", 11));
       }
       update();
 
       //await TurmasLocal.to.getTurmas();
 
-      //await turmas.turmaAtual!.getAtividades();
+      //await turmas.turmaAtual!.getAtividades();/v
 
     } on Exception catch (e) {
       print(e);
