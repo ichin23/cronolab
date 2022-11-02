@@ -60,7 +60,7 @@ class _DeverTileState extends State<DeverTile> {
     TapDownDetails tapDetails = TapDownDetails();
     // final width = MediaQuery.of(context).size.width;
     var data = widget.dever.data;
-    Color corText = widget.dever.status!
+    Color corText = widget.dever.status ?? false
         ? const Color.fromARGB(255, 109, 109, 109)
         : data.difference(DateTime.now()).inDays < 1
             ? const Color(0xff813838)

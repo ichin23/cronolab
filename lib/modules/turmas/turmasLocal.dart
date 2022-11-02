@@ -205,6 +205,7 @@ class TurmasLocal extends GetxController {
 
     for (var item in query) {
       lista.add(Dever.fromJsonDB(item));
+      print(item);
     }
     print("Infos $lista");
     return lista;

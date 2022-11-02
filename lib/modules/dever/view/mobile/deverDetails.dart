@@ -113,12 +113,12 @@ class _DeverDetailsState extends State<DeverDetails> {
                       Flexible(
                         child: SizedBox(
                           width: width * 0.7 - 50,
-                          child: Text("Nome: ${dever.materia!.prof}",
+                          child: Text("Matéria: ${dever.materia!.nome}",
                               style: label),
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text("Matéria: ${dever.materia!.nome}", style: label),
+                      Text("Professor: ${dever.materia!.prof}", style: label),
                       const SizedBox(height: 10),
                       Text("Contato: ${dever.materia!.contato}", style: label)
                     ],

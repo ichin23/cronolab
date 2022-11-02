@@ -104,8 +104,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () async {
                             await Get.toNamed("/perfil");
                             if (turmas.turmaAtual != null) {
-                              controllerPage.getAtv =
-                                  turmas.turmaAtual!.getAtividades();
+                              controllerPage.refreshDb();
+                              /* controllerPage.getAtv =
+                                  turmas.turmaAtual!.getAtividades(); */
                               setState(() {});
                             }
                           },
@@ -324,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             )
                                           : const Center(
                                               child: Text(
-                                              "Não contém dados",
+                                              "Não há atividades cadastradas",
                                               style: fonts.white,
                                             ))
                                     ]));
