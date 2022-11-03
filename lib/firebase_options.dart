@@ -28,8 +28,6 @@ class DefaultFirebaseOptions {
         return macos;
       case TargetPlatform.windows:
         return windows;
-      case TargetPlatform.linux:
-        return linux;
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -47,6 +45,15 @@ class DefaultFirebaseOptions {
     measurementId: 'G-7DESB1W6BQ',
   );
 
+  static const FirebaseOptions windows = FirebaseOptions(
+      apiKey: "AIzaSyCban6xMGmPa9vwKk653MZShmBvl7jYznU",
+      appId: "1:286245196387:web:438113f5ee6ba4c560de56",
+      messagingSenderId: "286245196387",
+      projectId: "deveres-faa4f",
+      storageBucket: "deveres-faa4f.appspot.com",
+      authDomain: "deveres-faa4f.firebaseapp.com",
+      measurementId: "G-7DESB1W6BQ");
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyADokojB6V778BvQvL5kFXcrKUFFobSArc',
     appId: '1:286245196387:android:d811660d7091134660de56',
@@ -61,8 +68,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '286245196387',
     projectId: 'deveres-faa4f',
     storageBucket: 'deveres-faa4f.appspot.com',
-    androidClientId: '286245196387-dpo6dlbcnd46hk3ibuffit5jrolrross.apps.googleusercontent.com',
-    iosClientId: '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
+    androidClientId:
+        '286245196387-5rkfvp73eq0gjtlor5b2k2ve59tk1agn.apps.googleusercontent.com',
+    iosClientId:
+        '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
     iosBundleId: 'com.cronolab.cronolab',
   );
 
@@ -72,28 +81,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '286245196387',
     projectId: 'deveres-faa4f',
     storageBucket: 'deveres-faa4f.appspot.com',
-    androidClientId: '286245196387-dpo6dlbcnd46hk3ibuffit5jrolrross.apps.googleusercontent.com',
-    iosClientId: '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
+    androidClientId:
+        '286245196387-5rkfvp73eq0gjtlor5b2k2ve59tk1agn.apps.googleusercontent.com',
+    iosClientId:
+        '286245196387-02fdnsk01sn42lf0onnanfvgvk1armgu.apps.googleusercontent.com',
     iosBundleId: 'com.cronolab.cronolab',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCban6xMGmPa9vwKk653MZShmBvl7jYznU',
-    appId: '1:286245196387:web:438113f5ee6ba4c560de56',
-    messagingSenderId: '286245196387',
-    projectId: 'deveres-faa4f',
-    authDomain: 'deveres-faa4f.firebaseapp.com',
-    storageBucket: 'deveres-faa4f.appspot.com',
-    measurementId: 'G-7DESB1W6BQ',
-  );
-
-  static const FirebaseOptions linux = FirebaseOptions(
-    apiKey: 'AIzaSyCban6xMGmPa9vwKk653MZShmBvl7jYznU',
-    appId: '1:286245196387:web:5731fc32893e9ed160de56',
-    messagingSenderId: '286245196387',
-    projectId: 'deveres-faa4f',
-    authDomain: 'deveres-faa4f.firebaseapp.com',
-    storageBucket: 'deveres-faa4f.appspot.com',
-    measurementId: 'G-ZHNEGDDHB4',
   );
 }

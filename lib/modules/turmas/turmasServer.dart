@@ -112,6 +112,7 @@ class TurmasState extends GetxController {
       var response = await http.get(
         Uri.parse(url + "/users/turmas"),
         headers: {
+          "Access-Control-Allow-Origin": "*",
           "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
         },
       );
@@ -155,7 +156,6 @@ class TurmasState extends GetxController {
       changeLoading = false;
       update();
     } catch (e) {
-      print(e.runtimeType);
       e.printError();
       e.printInfo();
     }

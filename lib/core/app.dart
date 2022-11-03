@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
@@ -33,10 +34,11 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     Get.put(TurmasState());
-    Get.put(TurmasLocal());
     Get.put(IndexController());
+    Get.put(DeveresController());
     if (!kIsWeb) {
       if (Platform.isAndroid || Platform.isIOS) {
+        Get.put(TurmasLocal());
         TurmasLocal.to.init();
       }
     }

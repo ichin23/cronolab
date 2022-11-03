@@ -47,8 +47,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                             onTap: () {
                                               turmas.changeTurmaAtual(e);
 
-                                              key.currentState!.buildCalendar(
-                                                  DateTime.now());
+                                              // key.currentState!.buildCalendar(
+                                              //     DateTime.now());
                                               setState(() {});
                                             },
                                             shape: RoundedRectangleBorder(

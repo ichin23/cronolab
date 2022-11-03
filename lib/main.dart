@@ -13,12 +13,15 @@ import 'shared/colors.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb && !Platform.isLinux) {
-    OneSignal.shared.setAppId("d9393c5e-61e9-4174-9d19-3d1e3eb7ad3f");
-  } else {
-    //setWindowTitle('Cronolab');
-    setWindowMinSize(const Size(1000, 500));
-    setWindowMaxSize(Size.infinite);
+  if (!kIsWeb) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      OneSignal.shared.setAppId("d9393c5e-61e9-4174-9d19-3d1e3eb7ad3f");
+    }
+    if (Platform.isLinux || Platform.isWindows) {
+      //setWindowTitle('Cronolab');
+      setWindowMinSize(const Size(1100, 500));
+      setWindowMaxSize(Size.infinite);
+    }
   }
   runApp(FutureBuilder(
       future: Firebase.initializeApp(

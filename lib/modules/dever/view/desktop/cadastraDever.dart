@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
@@ -177,6 +178,8 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                         .then((value) {
                       print("Cadastrado");
                     });
+                    TurmasState.to.turmaAtual!.getAtividades().then((value) =>
+                        DeveresController.to.buildCalendar(DateTime.now()));
                   },
                   child: const Text("Cadastra"))
             ],
