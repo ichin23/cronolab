@@ -34,6 +34,7 @@ class TurmasState extends GetxController {
 
   changeTurmaAtual(Turma turma) {
     turmaAtual = turma;
+    print("changre");
     update();
   }
 

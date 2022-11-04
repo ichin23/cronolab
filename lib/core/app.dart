@@ -63,6 +63,13 @@ class _MainAppState extends State<MainApp> {
             seedColor: primary,
             primary: primary2,
           ),
+          scrollbarTheme: ScrollbarThemeData(
+              thumbVisibility: MaterialStateProperty.all(true),
+              thickness: MaterialStateProperty.all(10),
+              crossAxisMargin: 0,
+              thumbColor: MaterialStateProperty.all(primary2),
+              radius: const Radius.circular(10),
+              minThumbLength: 100),
           primaryColor: primary2,
           appBarTheme: const AppBarTheme(
               backgroundColor: primary2,

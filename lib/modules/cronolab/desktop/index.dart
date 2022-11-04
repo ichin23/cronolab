@@ -1,6 +1,7 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deverTile.dart';
+import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
@@ -30,10 +31,15 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: const Text(
-            "Cronolab",
-            style: TextStyle(fontSize: 20),
-          ),
+          title: GetBuilder<TurmasState>(builder: (turmas) {
+            return Text(
+              "Cronolab" +
+                  (turmas.turmaAtual != null
+                      ? " - ${turmas.turmaAtual!.nome}"
+                      : ""),
+              style: const TextStyle(fontSize: 20),
+            );
+          }),
           centerTitle: true,
           leading: GetBuilder<TurmasState>(builder: (turmas) {
             return InkWell(
@@ -60,7 +66,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             GetBuilder<DeveresController>(builder: (deveres) {
                           return MouseRegion(
                             onHover: (ev) async {
-                              await showMenu(
+                              var val = await showMenu(
                                   color: black,
                                   context: context,
                                   position: RelativeRect.fromLTRB(
@@ -69,7 +75,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                       size.width - ev.position.dx,
                                       size.height - ev.position.dy),
                                   items: turmas.turmas
-                                      .map((e) => PopupMenuItem(
+                                      .map((e) => PopupMenuItem<Turma>(
+                                            value: e,
                                             child: MouseRegion(
                                               cursor: SystemMouseCursors.text,
                                               child: InkWell(
@@ -78,7 +85,6 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
 
                                                     deveres.buildCalendar(
                                                         DateTime.now());
-                                                    setState(() {});
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
@@ -99,11 +105,16 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                             ),
                                           ))
                                       .toList());
+                              if (val is Turma) {
+                                turmas.changeTurmaAtual(val);
+
+                                deveres.buildCalendar(DateTime.now());
+                              }
                               Get.back();
                             },
                             child: Row(
                               children: const [
-                                Text("Minha conta", style: fonts.white),
+                                Text("Minhas turmas", style: fonts.white),
                                 Spacer(),
                                 Icon(
                                   Icons.arrow_forward_ios,
@@ -143,18 +154,23 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         width: size.width * 0.35,
                         child:
                             GetBuilder<DeveresController>(builder: (deveres) {
-                          return deveres.diaAtual != null
-                              ? GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2),
-                                  itemCount: deveres.diaAtual!.deveres.length,
-                                  itemBuilder: (context, i) =>
-                                      DeverTile(deveres.diaAtual!.deveres[i],
-                                          notifyParent: () {
-                                        setState(() {});
-                                      }))
-                              : const Center(child: Text("Selecione um dia"));
+                          return Scrollbar(
+                            child: GridView.builder(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2),
+                                padding: const EdgeInsets.only(right: 15),
+                                itemCount: deveres.diaAtual != null
+                                    ? deveres.diaAtual!.deveres.length
+                                    : turmas.turmaAtual!.deveres!.length,
+                                itemBuilder: (context, i) => DeverTile(
+                                        deveres.diaAtual != null
+                                            ? deveres.diaAtual!.deveres[i]
+                                            : turmas.turmaAtual!.deveres![i],
+                                        notifyParent: () {
+                                      setState(() {});
+                                    })),
+                          );
                         })
                         // child: Column(
                         //   children: [

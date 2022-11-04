@@ -53,6 +53,7 @@ class DeveresController extends GetxController {
     primeiroDia = DateTime(data.year, data.month, 1);
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
+    diaAtual = null;
     var turmas = TurmasState.to.turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
