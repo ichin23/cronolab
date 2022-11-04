@@ -1,7 +1,6 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
@@ -168,6 +167,8 @@ class CalendarState extends State<Calendar> {
                                                                         false;
                                                                     deveres.showDeveresPosition =
                                                                         null;
+                                                                    deveres.diaAtual =
+                                                                        null;
                                                                   });
                                                                 }
                                                               }
@@ -176,41 +177,6 @@ class CalendarState extends State<Calendar> {
                                                               onPointerDown:
                                                                   (event) {
                                                                 if (f != null) {
-                                                                  /* showMenu(
-                                                                      context:
-                                                                          context,
-                                                                      color:
-                                                                          black,
-                                                                      shape: RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(
-                                                                                  20)),
-                                                                      position: RelativeRect.fromLTRB(
-                                                                          event
-                                                                              .position
-                                                                              .dx,
-                                                                          event
-                                                                              .position
-                                                                              .dy,
-                                                                          size.width -
-                                                                              event.position.dx,
-                                                                          0),
-                                                                      items: [
-                                                                        PopupMenuItem(
-                                                                            onTap:
-                                                                                () async {
-                                                                              print("ok");
-                                                                              Navigator.pop(context);
-                                                                              await cadastraDeverDesktop(context,
-                                                                                  f.data);
-                                                                            },
-                                                                            child:
-                                                                                const Text(
-                                                                              "Cadastra atividade",
-                                                                              style:
-                                                                                  TextStyle(color: primary2),
-                                                                            ))
-                                                                      ]); */
                                                                   if (!f.data.isBefore(deveres
                                                                       .hoje
                                                                       .subtract(
@@ -289,50 +255,6 @@ class CalendarState extends State<Calendar> {
               ],
             ),
           ),
-          deveres.showDeveres
-              ? Positioned(
-                  left: deveres.showDeveresPosition!.dx -
-                      paddingWidth -
-                      size.width * 0.17 +
-                      2,
-                  top: deveres.showDeveresPosition!.dy -
-                              paddingHeight -
-                              widget.height * 0.2 +
-                              widget.width * 0.4 >
-                          size.height
-                      ? size.height - widget.height * 0.25
-                      : deveres.showDeveresPosition!.dy -
-                          paddingHeight -
-                          widget.height * 0.2,
-                  child: Container(
-                    width: widget.width * 0.3,
-                    height: widget.height * 0.2,
-                    decoration: BoxDecoration(
-                        color: black,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: primary2,
-                            style: BorderStyle.solid,
-                            width: 4)),
-                    child: ListView.builder(
-                        itemCount: deveres.deveresToShow.length,
-                        itemBuilder: (context, i) => ListTile(
-                              tileColor: black,
-                              trailing: Text(
-                                deveres.hourStr
-                                    .format(deveres.deveresToShow[i].data),
-                                style: label,
-                              ),
-                              title: Text(
-                                deveres.deveresToShow[i].title +
-                                    " - " +
-                                    deveres.deveresToShow[i].materia.nome,
-                                style: label,
-                              ),
-                            )),
-                  ),
-                )
-              : Container()
         ],
       ),
     );
