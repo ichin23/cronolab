@@ -7,6 +7,7 @@ import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
@@ -33,13 +34,16 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    Get.put(TurmasState());
+
     Get.put(IndexController());
     Get.put(DeveresController());
     if (!kIsWeb) {
       if (Platform.isAndroid || Platform.isIOS) {
+        Get.put(TurmasState());
         Get.put(TurmasLocal());
         TurmasLocal.to.init();
+      } else {
+        Get.put(TurmasStateDesktop());
       }
     }
   }

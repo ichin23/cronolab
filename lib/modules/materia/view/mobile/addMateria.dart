@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+
 import '../../../../shared/colors.dart';
 import '../../../../shared/fonts.dart' as fonts;
 
@@ -128,23 +126,32 @@ Future addMateria(
                                       loading = true;
                                     });
                                     print("OKOK");
-                                    var response = await http
-                                        .put(Uri.parse(url + "/class/materia"),
-                                            headers: {
-                                              "Content-Type":
-                                                  "application/json",
-                                              "authorization": "Bearer " +
-                                                  FirebaseAuth
-                                                      .instance.currentUser!.uid
-                                            },
-                                            body: jsonEncode({
-                                              "turmaID": turmaID,
-                                              "data": {
-                                                "nome": nome.text,
-                                                "professor": prof.text,
-                                                "contato": contato.text
-                                              }
-                                            }))
+                                    await FirebaseFirestore.instance
+                                        .collection("turmas")
+                                        .doc(turmaID)
+                                        .collection("materias")
+                                        .add({
+                                      "nome": nome.text,
+                                      "professor": prof.text,
+                                      "contato": contato.text
+                                    })
+                                        // var response = await http
+                                        //     .put(Uri.parse(url + "/class/materia"),
+                                        //         headers: {
+                                        //           "Content-Type":
+                                        //               "application/json",
+                                        //           "authorization": "Bearer " +
+                                        //               FirebaseAuth
+                                        //                   .instance.currentUser!.uid
+                                        //         },
+                                        //         body: jsonEncode({
+                                        //           "turmaID": turmaID,
+                                        //           "data": {
+                                        //             "nome": nome.text,
+                                        //             "professor": prof.text,
+                                        //             "contato": contato.text
+                                        //           }
+                                        //         }))
                                         .then((value) => Get.back());
 
                                     await setstate();

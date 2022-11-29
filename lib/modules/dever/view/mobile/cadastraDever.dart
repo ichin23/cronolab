@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/cronolab/mobile/controller/indexController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
@@ -341,6 +342,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                     setState(() {
                                       loading = false;
                                     });
+                                    Get.find<IndexController>().loadData();
                                     Get.back();
                                   }
                                 },

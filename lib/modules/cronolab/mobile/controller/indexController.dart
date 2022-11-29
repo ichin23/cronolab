@@ -1,4 +1,5 @@
 import 'package:cronolab/core/updater.dart';
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:flutter/material.dart';
@@ -38,16 +39,45 @@ class IndexController extends GetxController {
     update();
   }
 
+  reviewData() async {
+    var turmasLocal = TurmasLocal.to.turmas;
+    var turmasFirebase = TurmasState.to.turmas;
+    print(turmasLocal);
+    for (var turma in turmasLocal) {
+      print(turma);
+      var whereTurm =
+          turmasFirebase.where((element) => element.id == turma.id).toList();
+      print("WhereTurm: " + whereTurm.toString());
+      if (whereTurm.isEmpty) {
+        await TurmasLocal.to.deleteTurma(turma.id);
+      } else {
+        var atvFirebase = await turma.getAtividades();
+        var atvBanco = await turma.getAtvDB();
+
+        if (atvFirebase == null || atvBanco == null) break;
+        for (Dever atv in atvBanco) {
+          var whereAtv =
+              atvFirebase.where((element) => element.id == atv.id).toList();
+          print("WhereAtb: " + whereAtv.toString());
+          if (whereAtv.isEmpty) {
+            await TurmasLocal.to.deleteDever(atv.id!);
+          }
+        }
+      }
+    }
+    loadData(false);
+  }
+
   bool get turmaAtualIsNull => TurmasLocal.to.turmaAtual == null;
 
-  loadData() async {
+  loadData([bool check = false]) async {
     try {
       var turmas = TurmasState.to;
 
       loading = true;
       update();
       bool internet = await InternetConnectionChecker().hasConnection;
-      print("Internet: $internet");
+
       if (internet) {
         Updater().init();
 
@@ -55,31 +85,32 @@ class IndexController extends GetxController {
       }
 
       await TurmasLocal.to.getTurmas();
-      print("TurmaAtual: ${TurmasLocal.to.turmaAtual}");
+
       if (TurmasLocal.to.turmaAtual == null && !internet) {
         getAtv = Future.error(
             CronolabException("Sem internet e nenhuma turma encontrada", 10));
         update();
+        return;
       } else if (TurmasLocal.to.turmaAtual != null) {
         await TurmasLocal.to.turmaAtual?.getAtividades();
         getAtv = TurmasLocal.to.turmaAtual!.getAtvDB(filters: listFilter);
       } else {
         getAtv =
             Future.error(CronolabException("Nenhuma turma Cadastrada", 11));
+        loading = false;
+        update();
+        return;
       }
+      if (check) {
+        await reviewData();
+      }
+      loading = false;
       update();
-
-      //await TurmasLocal.to.getTurmas();
-
-      //await turmas.turmaAtual!.getAtividades();/v
-
     } on Exception catch (e) {
       print(e);
       erro = true;
       loading = false;
       update();
     }
-    loading = false;
-    update();
   }
 }

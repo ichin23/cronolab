@@ -1,16 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 
 import '../materia/materia.dart';
 
 class Turma {
-  final String _url = "https://cronolab-server.herokuapp.com";
-
   String nome;
   String id;
   bool isAdmin;
@@ -41,124 +37,153 @@ class Turma {
 
   set setMaterias(List<Materia> materiasList) => {materias = materiasList};
 
-  getMaterias() async {
-    // GetMaterias var data = await _firestoreTurma.doc(id).collection("materias").get();
-    // materias.clear();
-    // data.docs.forEach((element) {
-    //   materias.add(element.data()["nome"]);
-    // });
-  }
-
   deleteTurma() async {
-    var response = await http.delete(Uri.parse(_url + "/class"),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-        },
-        body: jsonEncode({"turmaID": id}));
-    /* print(response.body);
-    print(response.statusCode); */
+    var docs = await FirebaseFirestore.instance
+        .collectionGroup("turmas")
+        .where("id", isEqualTo: id)
+        .get();
+    var docses = [];
+
+    for (var doc in docs.docs) {
+      var uid = doc.reference.path.split("/")[1];
+      docses.add(id);
+    }
+
+    for (var uid in docses) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(id)
+          .collection("turmas")
+          .doc(id)
+          .delete();
+    }
+    await FirebaseFirestore.instance.collection("turmas").doc(id).delete();
   }
 
   Future deleteDever(String idDever) async {
-    await http.delete(Uri.parse(_url + "/class/deveres/dever"),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-        },
-        body: jsonEncode({"turmaID": id, "deverID": idDever}));
+    await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(id)
+        .collection("deveres")
+        .doc(idDever)
+        .delete();
+    if (Platform.isAndroid) {
+      //TODO: Delete on local
+      await TurmasLocal.to.deleteDever(idDever);
+    }
   }
 
   addDever(Dever dever) async {
-    await http.put(Uri.parse(_url + "/class/deveres/dever"),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-        },
-        body: jsonEncode({"turmaID": id, "data": dever.toJson()}));
+    var data = dever.toJson();
 
-    // Dever await _firestoreTurma
-    //     .doc(id)
-    //     .collection("deveres")
-    //     .withConverter<Dever>(
-    //         fromFirestore: (json, _) => Dever.fromJson(json.data()!),
-    //         toFirestore: (dev, _) => dev.toJson())
-    //     .doc()
-    //     .set(dever);
-
-    // await _firestoreTurma
-    //     .doc(id)
-    //     .collection("deveres")
-    //     .withConverter<Dever>(
-    //         fromFirestore: (json, _) => Dever.fromJson(json),
-    //         toFirestore: (dev, _) => dev.toJson())
-    //     .doc()
-    //     .set(dever);
-    // print("FOI");
-    // provider.getTurmas();
+    await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(id)
+        .collection("deveres")
+        .add(data);
   }
 
-  // Future<List<QueryDocumentSnapshot<Map>>> getMateriasList() async {
-  //   var materias = await _firestoreTurma.doc(id).collection("materias").get();
-  //   return materias.docs;
-  // }
-
   Future addMateria(String nome) async {
-    await http.put(
-      Uri.parse(_url + "/class/materia"),
-      body: jsonEncode({
-        "turmaID": id,
-        "data": {"nome": nome}
-      }),
-      headers: {"Content-Type": "application/json"},
-    );
+    await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(id)
+        .collection("materias")
+        .add({"nome": nome});
 
-    await getMaterias();
+    //await getMaterias();
   }
 
   Future deleteMateria(String nome) async {
-    await http.delete(
-      Uri.parse(_url + "/class/materia"),
-      body: jsonEncode({
-        "turmaID": id,
-        "materiaID": nome,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": "Bearer " + FirebaseAuth.instance.currentUser!.uid
-      },
-    );
-
-    await getMaterias();
+    await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(id)
+        .collection("materias")
+        .doc(nome)
+        .delete();
   }
 
-  Future update() async {
-    //TODO:Update Materia await _firestoreTurma.doc(id).update({'nome': nome});
-  }
+  Future update() async {}
 
   Future<List?> getAtvDB({List? filters}) async {
     return TurmasLocal.to.getDeveres(id, filter: filters);
   }
 
-  Future<List?> getAtividades() async {
-    late http.Response response;
-
+  Future<List?> getAtividades([filterToday = true]) async {
     try {
-      response = await http
-          .get(Uri.parse(_url + "/class/deveres?id=$id&filterToday=true"));
+      var list = [];
 
-      var deveresJson = jsonDecode(response.body.toString());
-      deveres = [];
+      if (filterToday) {
+        var deveresQuer = await FirebaseFirestore.instance
+            .collection("turmas")
+            .doc(id)
+            .collection("deveres")
+            .where('data', isGreaterThan: Timestamp.now())
+            .orderBy("data")
+            .get();
+        print(deveresQuer.docs);
+        list = [];
+        deveres = [];
+        for (var dever in deveresQuer.docs) {
+          var deverToAdd = dever.data();
+          deverToAdd["id"] = dever.id;
 
-      for (var dever in deveresJson) {
-        if (deveres != null) {
-          var deverData = Dever.fromJson(dever);
-          if (Platform.isAndroid || Platform.isIOS) {
-            await TurmasLocal.to.addDever(deverData, id);
+          var mat = (await FirebaseFirestore.instance
+              .collection("turmas")
+              .doc(id)
+              .collection("materias")
+              .doc(deverToAdd['materia'])
+              .get());
+          var matToAdd = mat.data()!;
+          matToAdd["id"] = mat.id;
+          deverToAdd["materia"] = matToAdd;
+
+          deverToAdd["data"] =
+              (deverToAdd["data"] as Timestamp).toDate().millisecondsSinceEpoch;
+
+          list.add(deverToAdd);
+          if (deveres != null) {
+            var deverData = Dever.fromJson(deverToAdd);
+            if (Platform.isAndroid || Platform.isIOS) {
+              await TurmasLocal.to.addDever(deverData, id);
+            }
+            deveres?.add(deverData);
+          } else {
+            deveres = [Dever.fromJson(deverToAdd)];
           }
-          deveres?.add(deverData);
-        } else {
-          deveres = [Dever.fromJson(dever)];
+        }
+      } else {
+        var deveresQuery = await FirebaseFirestore.instance
+            .collection("turmas")
+            .doc(id)
+            .collection("deveres")
+            .orderBy("data")
+            .get();
+        list = [];
+        deveres = [];
+        for (var dever in deveresQuery.docs) {
+          var deverToAdd = dever.data();
+          deverToAdd["id"] = dever.id;
+          var mat = (await FirebaseFirestore.instance
+              .collection("turmas")
+              .doc(id)
+              .collection("materias")
+              .doc(deverToAdd['materia'])
+              .get());
+          var matToAdd = mat.data()!;
+          matToAdd["id"] = mat.id;
+          deverToAdd["materia"] = matToAdd;
+          (deverToAdd["data"] as Timestamp).toDate().millisecondsSinceEpoch;
+
+          list.add(deverToAdd);
+          if (deveres != null) {
+            var deverData = Dever.fromJson(deverToAdd);
+            if (Platform.isAndroid || Platform.isIOS) {
+              await TurmasLocal.to.addDever(deverData, id);
+            }
+            deveres?.add(deverData);
+          } else {
+            deveres = [Dever.fromJson(deverToAdd)];
+          }
         }
       }
 

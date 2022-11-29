@@ -42,7 +42,9 @@ class _DeverTileState extends State<DeverTile> {
             child: const Text("Excluir",
                 style: TextStyle(color: white), textAlign: TextAlign.center),
             onTap: () async {
-              turmas.turmaAtual!.deleteDever(widget.dever.id!).then((value) {
+              await turmas.turmaAtual!
+                  .deleteDever(widget.dever.id!)
+                  .then((value) {
                 Get.find<IndexController>().refreshDb();
               });
             },

@@ -153,6 +153,14 @@ class TurmasLocal extends GetxController {
     _method.invokeMethod("update");
   }
 
+  deleteDever(String id) async {
+    try {
+      await db.delete("dever", where: "id=?", whereArgs: [id]);
+    } catch (e) {
+      e.printError();
+    }
+  }
+
   Future setDeverStatus(String deverID, bool status) async {
     await db.update("dever", {"status": status ? 1 : 0},
         where: "dever.id=?", whereArgs: [deverID]);
@@ -204,6 +212,7 @@ class TurmasLocal extends GetxController {
     lista.clear();
 
     for (var item in query) {
+      print(item);
       lista.add(Dever.fromJsonDB(item));
       print(item);
     }

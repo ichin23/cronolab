@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+
 import '../../../../shared/colors.dart';
 import '../../../../shared/fonts.dart' as fonts;
 import '../../../turmas/turma.dart';
@@ -134,24 +132,16 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
                                         setState(() {
                                           loading = true;
                                         });
-                                        await http.put(
-                                            Uri.parse(
-                                                url + "/class/edit/materia"),
-                                            headers: {
-                                              "authorization": "Bearer " +
-                                                  FirebaseAuth.instance
-                                                      .currentUser!.uid,
-                                              "Content-Type": "application/json"
-                                            },
-                                            body: jsonEncode({
-                                              "turmaID": turma.id,
-                                              "materiaID": materia.id,
-                                              "data": {
-                                                "professor": prof.text,
-                                                "nome": nome.text,
-                                                "contato": contato.text,
-                                              }
-                                            }));
+                                        FirebaseFirestore.instance
+                                            .collection("turmas")
+                                            .doc(turma.id)
+                                            .collection("materias")
+                                            .doc(materia.id)
+                                            .update({
+                                          "professor": prof.text,
+                                          "nome": nome.text,
+                                          "contato": contato.text,
+                                        });
 
                                         setState(() {
                                           loading = false;

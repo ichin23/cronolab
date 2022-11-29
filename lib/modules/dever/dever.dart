@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../materia/materia.dart';
 
 class Dever {
@@ -32,6 +34,17 @@ class Dever {
             local: document["local"] != null
                 ? document["local"].toString()
                 : null);
+  Dever.fromJsonFirestore(Map<String, Object?> document)
+      : this(
+            id: document["id"] as String,
+            title: document['title'].toString(),
+            materia: Materia.fromJson(document['materia'] as Map),
+            materiaID: (document["materia"]! as Map)["id"] as String,
+            data: ((document['data'] as Timestamp).toDate()),
+            pontos: double.tryParse(document['pontos'].toString()),
+            local: document["local"] != null
+                ? document["local"].toString()
+                : null);
 
   Dever.fromJsonDB(Map<String, Object?> document)
       : this(
@@ -54,7 +67,7 @@ class Dever {
     return {
       'title': title,
       'materia': materiaID,
-      'data': data.millisecondsSinceEpoch,
+      'data': Timestamp.fromDate(data),
       'pontos': pontos,
       "local": local
     };

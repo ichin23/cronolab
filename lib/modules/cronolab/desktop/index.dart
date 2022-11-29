@@ -3,7 +3,7 @@ import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart
 import 'package:cronolab/modules/cronolab/desktop/widgets/deverTile.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
   @override
   void initState() {
     super.initState();
-    TurmasState.to.getTurmas();
+    TurmasStateDesktop.to.getTurmas();
   }
 
   @override
@@ -33,7 +33,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: GetBuilder<TurmasState>(builder: (turmas) {
+          title: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
             return Text(
               "Cronolab" +
                   (turmas.turmaAtual != null
@@ -43,7 +43,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
             );
           }),
           centerTitle: true,
-          leading: GetBuilder<TurmasState>(builder: (turmas) {
+          leading: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
             return InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () async {
@@ -144,7 +144,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
-                TurmasState.to.getTurmas();
+                TurmasStateDesktop.to.getTurmas();
               },
             )
           ],
@@ -154,7 +154,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                   bottomRight: Radius.circular(10))),
         ),
         backgroundColor: black,
-        body: GetBuilder<TurmasState>(builder: (turmas) {
+        body: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
           return turmas.loading
               ? const Center(child: CircularProgressIndicator())
               : Row(

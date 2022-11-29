@@ -1,27 +1,25 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TurmasState extends GetxController {
-  static TurmasState get to => Get.find();
+class TurmasStateDesktop extends GetxController {
+  static TurmasStateDesktop get to => Get.find();
   List<Turma> turmas = [];
   Turma? turmaAtual;
-  var db = FirebaseFirestore.instance;
+  var db = Firestore.instance;
   bool loading = false;
   String turmasColle = "turmas";
   String usersColle = "users";
 
   Future<Turma> refreshTurma(String id) async {
-    var response = await db.collection(turmasColle).doc(id).get().then((value) {
-      var result = value.data()!;
+    var response =
+        await db.collection(turmasColle).document(id).get().then((value) {
+      var result = value.map;
       result["id"] = value.id;
       return result;
     });
@@ -40,14 +38,14 @@ class TurmasState extends GetxController {
   initTurma(String code) async {
     changeLoading = true;
 
-    var exist =
-        await db.collection(turmasColle).doc(code).get().then((docSnap) {
-      if (docSnap.exists) {
-        return true;
-      } else {
-        return false;
-      }
-    });
+    var result = await db.collection(turmasColle).document(code).get();
+    var exist = false;
+    if (await result.reference.exists) {
+      exist = true;
+    } else {
+      exist = false;
+    }
+
     if (!exist) {
       await Get.dialog(AlertDialog(
         backgroundColor: black,
@@ -67,18 +65,21 @@ class TurmasState extends GetxController {
               child: const Text("Não")),
           TextButton(
               onPressed: () async {
-                await db.collection(turmasColle).doc(code).set({"nome": code});
+                await db
+                    .collection(turmasColle)
+                    .document(code)
+                    .set({"nome": code});
                 await db
                     .collection(usersColle)
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .document(FirebaseAuth.instance.userId)
                     .collection("turmas")
-                    .doc(code)
+                    .document(code)
                     .set({'id': code});
                 await db
                     .collection(turmasColle)
-                    .doc(code)
+                    .document(code)
                     .collection("admins")
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .document(FirebaseAuth.instance.userId)
                     .set({});
                 Get.back();
               },
@@ -88,9 +89,9 @@ class TurmasState extends GetxController {
     } else {
       await db
           .collection(usersColle)
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .document(FirebaseAuth.instance.userId)
           .collection("turmas")
-          .doc(code)
+          .document(code)
           .set({'id': code});
     }
 
@@ -102,9 +103,9 @@ class TurmasState extends GetxController {
 
     await db
         .collection(usersColle)
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .document(FirebaseAuth.instance.userId)
         .collection("turmas")
-        .doc(code)
+        .document(code)
         .delete();
     changeLoading = false;
   }
@@ -115,27 +116,27 @@ class TurmasState extends GetxController {
 
       var minhasTurmas = await db
           .collection(usersColle)
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .document(FirebaseAuth.instance.userId)
           .collection("turmas")
           .get();
 
-      for (var turmaQuery in minhasTurmas.docs) {
+      for (var turmaQuery in minhasTurmas.toList()) {
         Map<String, dynamic> turma = {
           "id": turmaQuery.id,
           "nome": turmaQuery.id
         };
         var admin = await db
             .collection(turmasColle)
-            .doc(turmaQuery.id)
+            .document(turmaQuery.id)
             .collection("admins")
-            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .document(FirebaseAuth.instance.userId)
             .get();
-        if (admin.exists) {
+        if (await admin.reference.exists) {
           turma["admin"] = true;
         }
         var materias = await db
             .collection(turmasColle)
-            .doc(turma["id"])
+            .document(turma["id"])
             .collection("materias")
             .get();
         List<Materia> listMat = [];
@@ -146,12 +147,8 @@ class TurmasState extends GetxController {
           turmaAdd.setAdmin();
         }
 
-        if (Platform.isAndroid || Platform.isIOS) {
-          TurmasLocal.to.addTurma(turmaAdd);
-        }
-
-        for (var materia in materias.docs) {
-          var materiaData = materia.data();
+        for (var materia in materias.toList()) {
+          var materiaData = materia.map;
           materiaData["id"] = materia.id;
 
           var materiaClass = Materia.fromJson(materiaData);

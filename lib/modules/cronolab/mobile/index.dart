@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      controllerPage.loadData();
+      controllerPage.loadData(true);
     });
   }
 
@@ -140,11 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {});
                           }
                         },
+                        //FutureBuilder
                         child: FutureBuilder<List?>(
                             future: controllerPage.getAtv,
                             builder: (context, snapshot) {
-                              debugPrint(
-                                  "New Data: " + snapshot.data.toString());
+                              debugPrint("Erro: " + snapshot.error.toString());
+                              debugPrint("ConnectionState: " +
+                                  snapshot.connectionState.toString());
                               if (snapshot.connectionState ==
                                       ConnectionState.waiting ||
                                   controllerPage.loading) {
@@ -323,11 +325,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               ),
                                             )
-                                          : const Center(
-                                              child: Text(
-                                              "Não há atividades cadastradas",
-                                              style: fonts.white,
-                                            ))
+                                          : SizedBox(
+                                              height: size.height -
+                                                  padding.top -
+                                                  padding.bottom -
+                                                  55 -
+                                                  50,
+                                              child: const Center(
+                                                  child: Text(
+                                                "Não há atividades cadastradas",
+                                                style: fonts.white,
+                                              )),
+                                            )
                                     ]));
 
                                 /* else {
