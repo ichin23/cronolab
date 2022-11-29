@@ -128,22 +128,25 @@ Future addMateria(
                                       loading = true;
                                     });
                                     print("OKOK");
-                                    var response = await http.put(
-                                        Uri.parse(url + "/class/materia"),
-                                        headers: {
-                                          "Content-Type": "application/json",
-                                          "authorization": "Bearer " +
-                                              FirebaseAuth
-                                                  .instance.currentUser!.uid
-                                        },
-                                        body: jsonEncode({
-                                          "turmaID": turmaID,
-                                          "data": {
-                                            "nome": nome.text,
-                                            "professor": prof.text,
-                                            "contato": contato.text
-                                          }
-                                        }));
+                                    var response = await http
+                                        .put(Uri.parse(url + "/class/materia"),
+                                            headers: {
+                                              "Content-Type":
+                                                  "application/json",
+                                              "authorization": "Bearer " +
+                                                  FirebaseAuth
+                                                      .instance.currentUser!.uid
+                                            },
+                                            body: jsonEncode({
+                                              "turmaID": turmaID,
+                                              "data": {
+                                                "nome": nome.text,
+                                                "professor": prof.text,
+                                                "contato": contato.text
+                                              }
+                                            }))
+                                        .then((value) => Get.back());
+
                                     await setstate();
                                   }
                                 },

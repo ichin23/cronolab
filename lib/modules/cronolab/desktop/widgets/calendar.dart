@@ -1,4 +1,6 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/gestures.dart';
@@ -151,8 +153,6 @@ class CalendarState extends State<Calendar> {
                                                                       true;
                                                                   deveres.showDeveresPosition =
                                                                       ev.position;
-                                                                  deveres.diaAtual =
-                                                                      f;
                                                                 }
                                                               }
                                                             },
@@ -167,8 +167,8 @@ class CalendarState extends State<Calendar> {
                                                                         false;
                                                                     deveres.showDeveresPosition =
                                                                         null;
-                                                                    deveres.diaAtual =
-                                                                        null;
+                                                                    // deveres.diaAtual =
+                                                                    //     null;
                                                                   });
                                                                 }
                                                               }
@@ -184,7 +184,8 @@ class CalendarState extends State<Calendar> {
                                                                               days: 1)))) {
                                                                     cliqueDireito(
                                                                         event,
-                                                                        f.data);
+                                                                        f,
+                                                                        deveres);
                                                                   }
                                                                 }
                                                               },
@@ -206,17 +207,13 @@ class CalendarState extends State<Calendar> {
                                                                           .weeks
                                                                           .length,
                                                                   decoration: BoxDecoration(
-                                                                      borderRadius: BorderRadius.circular(15),
+                                                                      borderRadius: BorderRadius.circular(5),
                                                                       border: f == deveres.diaAtual
                                                                           ? Border.all(
                                                                               color: primary2,
                                                                             )
                                                                           : null,
-                                                                      color: f != null
-                                                                          ? f.data.day == deveres.hoje.day && f.data.month == deveres.hoje.month && deveres.data.year == deveres.hoje.year
-                                                                              ? const Color(0xffACBDF5)
-                                                                              : const Color(0xff3C353C)
-                                                                          : Colors.transparent),
+                                                                      color: f != null ? const Color(0xff3C353C) : Colors.transparent),
                                                                   child: f != null
                                                                       ? Column(
                                                                           mainAxisAlignment:
@@ -235,7 +232,13 @@ class CalendarState extends State<Calendar> {
                                                                                 ? Container(
                                                                                     width: 10,
                                                                                     height: 10,
-                                                                                    decoration: const BoxDecoration(color: primary2, shape: BoxShape.circle),
+                                                                                    decoration: BoxDecoration(
+                                                                                        color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
+                                                                                            ? primary2
+                                                                                            : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
+                                                                                                ? const Color.fromARGB(255, 245, 218, 147)
+                                                                                                : const Color.fromARGB(255, 159, 245, 170),
+                                                                                        shape: BoxShape.circle),
                                                                                   )
                                                                                 : Container(),
                                                                           ],
@@ -260,11 +263,18 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  Future<void> cliqueDireito(PointerDownEvent event, DateTime data) async {
+  Future<void> cliqueDireito(
+      PointerDownEvent event, Dia atual, DeveresController deveres) async {
     print(event.buttons);
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton) {
-      cadastraDeverDesktop(context, data);
+      cadastraDeverDesktop(context, atual.data);
+    } else {
+      if (deveres.diaAtual == atual) {
+        deveres.diaAtual = null;
+      } else {
+        deveres.diaAtual = atual;
+      }
     }
   }
 }

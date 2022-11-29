@@ -178,8 +178,11 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                         .then((value) {
                       print("Cadastrado");
                     });
-                    TurmasState.to.turmaAtual!.getAtividades().then((value) =>
-                        DeveresController.to.buildCalendar(DateTime.now()));
+                    TurmasState.to.turmaAtual!
+                        .getAtividades()
+                        .then((value) =>
+                            DeveresController.to.buildCalendar(DateTime.now()))
+                        .then((value) => Get.back());
                   },
                   child: const Text("Cadastra"))
             ],

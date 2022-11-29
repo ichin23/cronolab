@@ -186,7 +186,6 @@ class _EditarTurmaState extends State<EditarTurma>
                                     await turmas.getTurmas();
                                     turma = await turmas.getByID(turma.id);
 
-                                    Get.back();
                                     setState(() {});
                                   });
                                   setState(() {});

@@ -1,6 +1,7 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deverTile.dart';
+import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -19,6 +20,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
   late TapDownDetails details;
   late Future turmasFuture;
   var key = GlobalKey<CalendarState>();
+  ScrollController scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -138,6 +140,14 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                   color: Colors.black45,
                 ));
           }),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                TurmasState.to.getTurmas();
+              },
+            )
+          ],
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(10),
@@ -154,110 +164,39 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         width: size.width * 0.35,
                         child:
                             GetBuilder<DeveresController>(builder: (deveres) {
-                          return Scrollbar(
-                            child: GridView.builder(
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2),
-                                padding: const EdgeInsets.only(right: 15),
-                                itemCount: deveres.diaAtual != null
-                                    ? deveres.diaAtual!.deveres.length
-                                    : turmas.turmaAtual!.deveres!.length,
-                                itemBuilder: (context, i) => DeverTile(
-                                        deveres.diaAtual != null
-                                            ? deveres.diaAtual!.deveres[i]
-                                            : turmas.turmaAtual!.deveres![i],
-                                        notifyParent: () {
-                                      setState(() {});
-                                    })),
+                          return Stack(
+                            children: [
+                              GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  padding: const EdgeInsets.only(right: 15),
+                                  itemCount: deveres.diaAtual != null
+                                      ? deveres.diaAtual!.deveres.length
+                                      : turmas.turmaAtual!.deveres!.length,
+                                  itemBuilder: (context, i) => DeverTile(
+                                          deveres.diaAtual != null
+                                              ? deveres.diaAtual!.deveres[i]
+                                              : turmas.turmaAtual!.deveres![i],
+                                          notifyParent: () {
+                                        setState(() {});
+                                      })),
+                              Positioned(
+                                bottom: 5,
+                                right: 20,
+                                child: FloatingActionButton(
+                                  onPressed: () {
+                                    cadastraDeverDesktop(
+                                        context, DateTime.now());
+                                  },
+                                  backgroundColor: primary2,
+                                  child:
+                                      const Icon(Icons.add, color: darkPrimary),
+                                ),
+                              )
+                            ],
                           );
-                        })
-                        // child: Column(
-                        //   children: [
-                        //     Expanded(
-                        //       child: ListView(
-                        //           children: turmas.turmas
-                        //               .map((e) => MouseRegion(
-                        //                     cursor: SystemMouseCursors.text,
-                        //                     child: ListTile(
-                        //                       onTap: () {
-                        //                         turmas.changeTurmaAtual(e);
-
-                        //                         key.currentState!
-                        //                             .buildCalendar(DateTime.now());
-                        //                         setState(() {});
-                        //                       },
-                        //                       shape: RoundedRectangleBorder(
-                        //                           borderRadius:
-                        //                               BorderRadius.circular(10)),
-                        //                       tileColor:
-                        //                           e.id == turmas.turmaAtual!.id
-                        //                               ? pretoClaro
-                        //                               : black,
-                        //                       title: Text(
-                        //                         e.nome,
-                        //                         style: fonts.input,
-                        //                       ),
-                        //                     ),
-                        //                   ))
-                        //               .toList()),
-                        //     ),
-                        //     MouseRegion(
-                        //       cursor: SystemMouseCursors.click,
-                        //       child: Container(
-                        //         padding: const EdgeInsets.all(5),
-                        //         margin: const EdgeInsets.all(8),
-                        //         decoration: BoxDecoration(
-                        //           borderRadius: BorderRadius.circular(10),
-                        //           color: pretoClaro,
-                        //         ),
-                        //         child: InkWell(
-                        //           onTap: () {
-                        //             Get.toNamed("/perfil");
-                        //           },
-                        //           child: Row(children: [
-                        //             FirebaseAuth.instance.currentUser!.photoURL !=
-                        //                     null
-                        //                 ? Image.network(FirebaseAuth
-                        //                     .instance.currentUser!.photoURL!)
-                        //                 : Container(
-                        //                     width: size.width * 0.05,
-                        //                     height: size.width * 0.05,
-                        //                     decoration: BoxDecoration(
-                        //                         color: black,
-                        //                         borderRadius:
-                        //                             BorderRadius.circular(10)),
-                        //                     child: const Icon(
-                        //                       Icons.person,
-                        //                       size: 40,
-                        //                       color: white,
-                        //                     )),
-                        //             const SizedBox(width: 10),
-                        //             Column(
-                        //               mainAxisSize: MainAxisSize.max,
-                        //               crossAxisAlignment: CrossAxisAlignment.start,
-                        //               mainAxisAlignment: MainAxisAlignment.center,
-                        //               children: [
-                        //                 Text(
-                        //                   FirebaseAuth
-                        //                       .instance.currentUser!.displayName
-                        //                       .toString(),
-                        //                   style: fonts.label,
-                        //                 ),
-                        //                 TextButton(
-                        //                     onPressed: () {
-                        //                       FirebaseAuth.instance.signOut();
-                        //                     },
-                        //                     child: const Text("Sair"))
-                        //               ],
-                        //             ),
-                        //           ]),
-                        //         ),
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
-                        ),
+                        })),
                     Calendar(
                       size.width * 0.62,
                       size.height * 0.95 - 50,

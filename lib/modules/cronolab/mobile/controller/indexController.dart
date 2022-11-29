@@ -13,6 +13,7 @@ class IndexController extends GetxController {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DateFormat dateStr = DateFormat("dd/MM/yyyy");
   DateFormat hourStr = DateFormat("Hm");
+
   Future<List?> getAtv = Future(() => []);
 
   bool erro = false;
