@@ -1,7 +1,5 @@
 import 'package:cronolab/modules/cronolab/mobile/controller/indexController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:get/get.dart';
@@ -126,27 +124,39 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                           .startsWith(
                                               materia.text.toLowerCase()))
                                       .isEmpty
-                                  ? TextButton(
-                                      onPressed: () async {
-                                        await addMateria(
-                                            context, turmas.turmaAtual!.id,
-                                            () async {
-                                          await TurmasState.to.getTurmas();
-                                          await turmas.getTurmas(
-                                              updateTurma: false);
-                                          Get.back();
-                                          setState(() {});
-                                        }).then((value) async {
-                                          print("acabou");
-                                          await turmas.changeTurmaAtualWithID(
-                                              turmas.turmaAtual!.id);
+                                  ? //TextButton(
+                                  // onPressed: () async {
+                                  //   await addMateria(
+                                  //       context, turmas.turmaAtual!.id,
+                                  //       () async {
+                                  //     await TurmasState.to.getTurmas();
+                                  //     await turmas.getTurmas(
+                                  //         updateTurma: false);
+                                  //     Get.back();
+                                  //     setState(() {});
+                                  //   }).then((value) async {
+                                  //     print("acabou");
+                                  //     await turmas.changeTurmaAtualWithID(
+                                  //         turmas.turmaAtual!.id);
 
-                                          setState(() {});
-                                        });
-                                        print("realmente acabou");
-                                      },
-                                      child: Text(
-                                          "Adicionar ${materia.text} à turma"))
+                                  //     setState(() {});
+                                  //   });
+                                  //   print("realmente acabou");
+                                  // },
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Text(
+                                            "${materia.text} não encontrado",
+                                            style: fonts.label,
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   : Container()
                             ],
                           ),
@@ -223,6 +233,9 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                           ),
                           TextButton(
                               onPressed: () async {
+                                localFoc.unfocus();
+                                tituloFoc.unfocus();
+                                materiaFoc.unfocus();
                                 dia = await showDatePicker(
                                     context: context,
                                     firstDate: DateTime.now(),

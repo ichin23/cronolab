@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 const TextStyle white = TextStyle(color: colors.white);
 const TextStyle label =
     TextStyle(color: colors.white, fontSize: 16, fontWeight: FontWeight.w800);
+
+const TextStyle labelPrimary = TextStyle(
+    color: colors.darkPrimary, fontSize: 16, fontWeight: FontWeight.w500);
 const TextStyle error =
     TextStyle(color: colors.red, fontSize: 16, fontWeight: FontWeight.w800);
 
