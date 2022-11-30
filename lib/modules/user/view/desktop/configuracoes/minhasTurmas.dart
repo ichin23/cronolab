@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,8 +13,9 @@ class MinhasTurmasDesktop extends StatefulWidget {
 class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<TurmasState>(
+    return GetBuilder<TurmasStateDesktop>(
       builder: (cont) => ListView.builder(
+        controller: ScrollController(),
         itemCount: cont.turmas.length,
         itemBuilder: (context, i) => MouseRegion(
           cursor: SystemMouseCursors.click,
@@ -29,9 +30,10 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
                     TextButton(
                         onPressed: () async {
                           Get.back();
-                          await TurmasState.to.deleteTurma(cont.turmas[i].id);
+                          await TurmasStateDesktop.to
+                              .deleteTurma(cont.turmas[i].id);
 
-                          TurmasState.to
+                          TurmasStateDesktop.to
                               .getTurmas()
                               .then((value) => setState(() {}));
                         },

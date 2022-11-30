@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +54,7 @@ class DeveresController extends GetxController {
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     diaAtual = null;
-    var turmas = TurmasState.to.turmaAtual;
+    var turmas = TurmasStateDesktop.to.turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
       /*  print('''
@@ -64,11 +64,16 @@ class DeveresController extends GetxController {
         Dia1Pronto: $dia1Pronto
       '''); */
       weeks.add(List.generate(7, (index) {
-        if (turmas != null) {
+        if (turmas != null && turmas.deveres != null) {
           if (!dia1Pronto) {
             if (index == changeWeekStart(diaI.weekday)) {
               dia1Pronto = true;
-
+              print(turmas.deveres!
+                  .where((dever) =>
+                      dever.data.day == diaI.day &&
+                      dever.data.month == diaI.month &&
+                      dever.data.year == diaI.year)
+                  .toList());
               return Dia(
                   diaI,
                   turmas.deveres!
@@ -124,6 +129,7 @@ class DeveresController extends GetxController {
           );
         }
       }));
+      print(weeks);
 
       if (diaI.isAfter(ultimoDia) || diaI.isAtSameMomentAs(ultimoDia)) {
         break;

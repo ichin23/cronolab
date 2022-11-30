@@ -23,6 +23,7 @@ class _AlteraSenhaState extends State<AlteraSenha> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      controller: ScrollController(),
       children: [
         TextFormField(
           controller: senha,

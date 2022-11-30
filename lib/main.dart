@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:window_size/window_size.dart';
 
+import 'core/appDesktop.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,13 +26,14 @@ void main() async {
       //setWindowTitle('Cronolab');
       setWindowMinSize(const Size(1100, 500));
       setWindowMaxSize(Size.infinite);
-
       Firestore.initialize(DefaultFirebaseOptions.windows.projectId,
           databaseId: DefaultFirebaseOptions.windows.databaseURL);
       await SharedStore.init();
       FirebaseAuth.initialize(
-          DefaultFirebaseOptions.windows.apiKey, SharedStore());
+          DefaultFirebaseOptions.windows.apiKey, VolatileStore());
+      await FirebaseAuth.instance
+          .signIn("pedroferreiramanoel2@gmail.com", "123456");
     }
   }
-  runApp(const MainApp());
+  runApp(Platform.isWindows ? const MainAppDesktop() : const MainApp());
 }

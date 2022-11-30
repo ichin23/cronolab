@@ -12,8 +12,7 @@ import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,14 +21,14 @@ import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
 import '../modules/user/view/mobile/perfil.dart';
 import '../modules/user/view/mobile/suasInfos.dart';
 
-class MainApp extends StatefulWidget {
-  const MainApp({Key? key}) : super(key: key);
+class MainAppDesktop extends StatefulWidget {
+  const MainAppDesktop({Key? key}) : super(key: key);
 
   @override
-  State<MainApp> createState() => _MainAppState();
+  State<MainAppDesktop> createState() => _MainAppDesktopState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppDesktopState extends State<MainAppDesktop> {
   @override
   void initState() {
     super.initState();
@@ -53,11 +52,6 @@ class _MainAppState extends State<MainApp> {
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
       debugShowCheckedModeBanner: false,
-      defaultTransition: kIsWeb
-          ? Transition.native
-          : Platform.isLinux || Platform.isWindows
-              ? Transition.fadeIn
-              : Transition.rightToLeftWithFade,
       title: "Cronolab",
       theme: ThemeData(
           fontFamily: "Inter",
@@ -91,23 +85,33 @@ class _MainAppState extends State<MainApp> {
       getPages: [
         GetPage(
           name: "/",
-          page: () => StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
+          page: () => StreamBuilder<bool>(
+            stream: FirebaseAuth.instance.signInState.asBroadcastStream(),
             builder: (context, stream) {
+              print(stream.data);
+              print(stream.connectionState);
               if (stream.connectionState != ConnectionState.waiting) {
                 if (stream.data != null) {
-                  return kIsWeb
-                      ? const HomePageDesktop()
-                      : Platform.isLinux || Platform.isWindows
-                          ? const HomePageDesktop()
-                          : FutureBuilder(
-                              future: TurmasLocal.to.init(),
-                              builder: (context, snap) {
-                                return snap.connectionState ==
-                                        ConnectionState.done
-                                    ? const HomeScreen()
-                                    : Container();
-                              });
+                  if (stream.data!) {
+                    return kIsWeb
+                        ? const HomePageDesktop()
+                        : Platform.isLinux || Platform.isWindows
+                            ? const HomePageDesktop()
+                            : FutureBuilder(
+                                future: TurmasLocal.to.init(),
+                                builder: (context, snap) {
+                                  return snap.connectionState ==
+                                          ConnectionState.done
+                                      ? const HomeScreen()
+                                      : Container();
+                                });
+                  } else {
+                    return kIsWeb
+                        ? const LoginPageDesktop()
+                        : Platform.isLinux || Platform.isWindows
+                            ? const LoginPageDesktop()
+                            : const LoginPage();
+                  }
                 } else {
                   return kIsWeb
                       ? const LoginPageDesktop()

@@ -1,6 +1,5 @@
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:firedart/firedart.dart';
@@ -38,9 +37,9 @@ class TurmasStateDesktop extends GetxController {
   initTurma(String code) async {
     changeLoading = true;
 
-    var result = await db.collection(turmasColle).document(code).get();
+    var result = await db.collection(turmasColle).document(code).exists;
     var exist = false;
-    if (await result.reference.exists) {
+    if (result) {
       exist = true;
     } else {
       exist = false;
@@ -113,25 +112,29 @@ class TurmasStateDesktop extends GetxController {
   Future getTurmas() async {
     try {
       changeLoading = true;
-
+      update();
+      print("GetTurmas");
       var minhasTurmas = await db
           .collection(usersColle)
           .document(FirebaseAuth.instance.userId)
           .collection("turmas")
           .get();
-
+      print(minhasTurmas);
+      turmas.clear();
       for (var turmaQuery in minhasTurmas.toList()) {
         Map<String, dynamic> turma = {
           "id": turmaQuery.id,
           "nome": turmaQuery.id
         };
+
         var admin = await db
             .collection(turmasColle)
             .document(turmaQuery.id)
             .collection("admins")
             .document(FirebaseAuth.instance.userId)
-            .get();
-        if (await admin.reference.exists) {
+            .exists;
+        print(admin);
+        if (admin) {
           turma["admin"] = true;
         }
         var materias = await db
@@ -153,19 +156,18 @@ class TurmasStateDesktop extends GetxController {
 
           var materiaClass = Materia.fromJson(materiaData);
 
-          await TurmasLocal.to.addMateria(materiaClass, turmaQuery.id);
-
           listMat.add(materiaClass);
         }
 
         turmaAdd.setMaterias = listMat;
 
         turmas.add(turmaAdd);
+        print(turmas);
       }
-
       if (turmas.isNotEmpty) {
         turmaAtual = turmas[0];
-        await turmaAtual!.getAtividades();
+        print(turmaAtual!.id);
+        await turmaAtual!.getAtividadesDesk();
         changeLoading = false;
         update();
         return turmas;
@@ -175,6 +177,7 @@ class TurmasStateDesktop extends GetxController {
       update();
     } catch (e) {
       e.printError();
+
       e.printInfo();
     }
   }

@@ -1,4 +1,4 @@
-import 'package:cronolab/modules/user/controller/loginController.dart';
+import 'package:cronolab/modules/user/controller/loginControllerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 
 import 'package:flutter/material.dart';
@@ -106,7 +106,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                   setState(() {
                                     loading = true;
                                   });
-                                  LoginController().loginEmail(
+                                  LoginControllerDesktop().loginEmail(
                                       emailCont.text, senhaCont.text, context);
                                   setState(() {
                                     loading = false;
@@ -176,7 +176,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                         setState(() {
                                           loading = true;
                                         });
-                                        LoginController().loginEmail(
+                                        LoginControllerDesktop().loginEmail(
                                             emailCont.text,
                                             senhaCont.text,
                                             context);

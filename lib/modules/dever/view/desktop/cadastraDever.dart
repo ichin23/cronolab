@@ -1,7 +1,7 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/services.dart';
@@ -55,14 +55,6 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                         borderRadius: BorderRadius.circular(20),
                       ))),
               const SizedBox(height: 15),
-              /* TextFormField(
-                    decoration: InputDecoration(
-                        label: const Text("Matéria"),
-                        icon: const Icon(Icons.border_color, color: white),
-                        labelStyle: fonts.input,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ))), */
               DropdownButtonFormField<Materia>(
                   value: materiaSelect,
                   decoration: InputDecoration(
@@ -74,7 +66,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       )),
                   borderRadius: BorderRadius.circular(10),
                   dropdownColor: black,
-                  items: TurmasState.to.turmaAtual!.materias
+                  items: TurmasStateDesktop.to.turmaAtual!.materias
                       .map((e) => DropdownMenuItem(
                             child: Text(
                               e.nome +
@@ -167,7 +159,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       return;
                     }
                     print("Cadastrando");
-                    await TurmasState.to.turmaAtual!
+                    await TurmasStateDesktop.to.turmaAtual!
                         .addDever(Dever(
                             data: DateTime(data.year, data.month, data.day,
                                 hora!.hour, hora!.minute),
@@ -178,7 +170,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                         .then((value) {
                       print("Cadastrado");
                     });
-                    TurmasState.to.turmaAtual!
+                    TurmasStateDesktop.to.turmaAtual!
                         .getAtividades()
                         .then((value) =>
                             DeveresController.to.buildCalendar(DateTime.now()))

@@ -1,10 +1,11 @@
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/minhasTurmas.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/components/myInput.dart';
+import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,32 +33,46 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
       appBar: AppBar(
         toolbarHeight: 55,
       ),
-      body: GetBuilder<TurmasState>(
+      body: GetBuilder<TurmasStateDesktop>(
         builder: (turmas) => Row(
           children: [
-            Container(
-                padding: const EdgeInsets.all(8),
-                width: size.width * 0.15,
-                child: ListView.builder(
-                    itemCount: pages.length,
-                    itemBuilder: (context, i) => MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: ListTile(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            tileColor:
-                                index == i ? pretoClaro : Colors.transparent,
-                            onTap: () {
-                              setState(() {
-                                index = i;
-                              });
-                            },
-                            title: Text(
-                              pages.keys.toList()[i],
-                              style: label,
-                            ),
-                          ),
-                        ))),
+            Column(
+              children: [
+                Container(
+                    height: size.height * 0.85,
+                    padding: const EdgeInsets.all(8),
+                    width: size.width * 0.15,
+                    child: ListView.builder(
+                        itemCount: pages.length,
+                        itemBuilder: (context, i) => MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                tileColor: index == i
+                                    ? pretoClaro
+                                    : Colors.transparent,
+                                onTap: () {
+                                  setState(() {
+                                    index = i;
+                                  });
+                                },
+                                title: Text(
+                                  pages.keys.toList()[i],
+                                  style: label,
+                                ),
+                              ),
+                            ))),
+                Container(
+                    child: TextButton(
+                  child: const Text("Sair"),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    Get.back();
+                  },
+                ))
+              ],
+            ),
             const RotatedBox(quarterTurns: 1, child: Divider()),
             Expanded(child: pages.values.toList()[index])
           ],
@@ -80,8 +95,10 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                         ),
                         TextButton(
                             onPressed: () async {
-                              await TurmasState.to.initTurma(_turmaCode.text);
-                              await TurmasState.to
+                              await TurmasStateDesktop.to
+                                  .initTurma(_turmaCode.text);
+
+                              await TurmasStateDesktop.to
                                   .getTurmas()
                                   .then((value) => setState(() {}));
                               Get.back();
@@ -93,7 +110,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                   );
                 }));
               },
-              child: TurmasState.to.loading
+              child: TurmasStateDesktop.to.loading
                   ? const CircularProgressIndicator()
                   : const Icon(Icons.add),
             )

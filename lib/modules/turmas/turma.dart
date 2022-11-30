@@ -1,8 +1,10 @@
 import 'dart:io';
 
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:firedart/firedart.dart';
 
 import '../materia/materia.dart';
 
@@ -189,6 +191,94 @@ class Turma {
 
       return deveres;
     } catch (e) {
+      return null;
+    }
+  }
+
+  Future<List?> getAtividadesDesk([filterToday = true]) async {
+    try {
+      print("inint");
+      var list = [];
+
+      if (filterToday) {
+        var deveresQuer = await Firestore.instance
+            .collection("turmas")
+            .document(id)
+            .collection("deveres")
+            .where('data', isGreaterThan: DateTime.now())
+            .orderBy("data")
+            .get();
+
+        print(deveresQuer);
+        list = [];
+        deveres = [];
+        for (var dever in deveresQuer) {
+          var deverToAdd = dever.map;
+          deverToAdd["id"] = dever.id;
+
+          var mat = (await Firestore.instance
+              .collection("turmas")
+              .document(id)
+              .collection("materias")
+              .document(deverToAdd['materia'])
+              .get());
+          var matToAdd = mat.map;
+          matToAdd["id"] = mat.id;
+          deverToAdd["materia"] = matToAdd;
+
+          deverToAdd["data"] =
+              (deverToAdd["data"] as DateTime).millisecondsSinceEpoch;
+
+          list.add(deverToAdd);
+          if (deveres != null) {
+            var deverData = Dever.fromJson(deverToAdd);
+            if (Platform.isAndroid || Platform.isIOS) {
+              await TurmasLocal.to.addDever(deverData, id);
+            }
+            deveres?.add(deverData);
+          } else {
+            deveres = [Dever.fromJson(deverToAdd)];
+          }
+        }
+      } else {
+        var deveresQuery = await Firestore.instance
+            .collection("turmas")
+            .document(id)
+            .collection("deveres")
+            .orderBy("data")
+            .get();
+        list = [];
+        deveres = [];
+        for (var dever in deveresQuery) {
+          var deverToAdd = dever.map;
+          deverToAdd["id"] = dever.id;
+          var mat = (await Firestore.instance
+              .collection("turmas")
+              .document(id)
+              .collection("materias")
+              .document(deverToAdd['materia'])
+              .get());
+          var matToAdd = mat.map;
+          matToAdd["id"] = mat.id;
+          deverToAdd["materia"] = matToAdd;
+          (deverToAdd["data"] as DateTime).millisecondsSinceEpoch;
+
+          list.add(deverToAdd);
+          if (deveres != null) {
+            var deverData = Dever.fromJson(deverToAdd);
+            if (Platform.isAndroid || Platform.isIOS) {
+              await TurmasLocal.to.addDever(deverData, id);
+            }
+            deveres?.add(deverData);
+          } else {
+            deveres = [Dever.fromJson(deverToAdd)];
+          }
+        }
+      }
+
+      return deveres;
+    } catch (e) {
+      print(e);
       return null;
     }
   }

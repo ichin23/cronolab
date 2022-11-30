@@ -1,5 +1,5 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +19,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
   @override
   void initState() {
     super.initState();
-    turmasFuture = TurmasState.to.getTurmas();
+    turmasFuture = TurmasStateDesktop.to.getTurmas();
   }
 
   @override
@@ -27,7 +27,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: black,
-      body: GetBuilder<TurmasState>(
+      body: GetBuilder<TurmasStateDesktop>(
           builder: (turmas) => turmas.loading
               ? const Center(child: CircularProgressIndicator())
               : Row(

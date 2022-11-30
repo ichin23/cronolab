@@ -76,37 +76,48 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                       ev.position.dy,
                                       size.width - ev.position.dx,
                                       size.height - ev.position.dy),
-                                  items: turmas.turmas
-                                      .map((e) => PopupMenuItem<Turma>(
-                                            value: e,
-                                            child: MouseRegion(
-                                              cursor: SystemMouseCursors.text,
-                                              child: InkWell(
-                                                  onTap: () {
-                                                    turmas.changeTurmaAtual(e);
+                                  items: turmas.turmas.isNotEmpty
+                                      ? turmas.turmas
+                                          .map((e) => PopupMenuItem<Turma>(
+                                                value: e,
+                                                child: MouseRegion(
+                                                  cursor:
+                                                      SystemMouseCursors.text,
+                                                  child: InkWell(
+                                                      onTap: () {
+                                                        turmas.changeTurmaAtual(
+                                                            e);
 
-                                                    deveres.buildCalendar(
-                                                        DateTime.now());
-                                                  },
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: e.id ==
-                                                              turmas.turmaAtual!
-                                                                  .id
-                                                          ? pretoClaro
-                                                          : black,
-                                                    ),
-                                                    child: Text(
-                                                      e.nome,
-                                                      style: fonts.input,
-                                                    ),
-                                                  )),
-                                            ),
-                                          ))
-                                      .toList());
+                                                        deveres.buildCalendar(
+                                                            DateTime.now());
+                                                      },
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: e.id ==
+                                                                  turmas
+                                                                      .turmaAtual!
+                                                                      .id
+                                                              ? pretoClaro
+                                                              : black,
+                                                        ),
+                                                        child: Text(
+                                                          e.nome,
+                                                          style: fonts.input,
+                                                        ),
+                                                      )),
+                                                ),
+                                              ))
+                                          .toList()
+                                      : [
+                                          const PopupMenuItem(
+                                            child: Text(
+                                                "Não há turmas cadastradas"),
+                                          )
+                                        ]);
                               if (val is Turma) {
                                 turmas.changeTurmaAtual(val);
 
@@ -159,44 +170,69 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
               ? const Center(child: CircularProgressIndicator())
               : Row(
                   children: [
-                    Container(
-                        padding: const EdgeInsets.all(5),
-                        width: size.width * 0.35,
-                        child:
-                            GetBuilder<DeveresController>(builder: (deveres) {
-                          return Stack(
-                            children: [
-                              GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2),
-                                  padding: const EdgeInsets.only(right: 15),
-                                  itemCount: deveres.diaAtual != null
-                                      ? deveres.diaAtual!.deveres.length
-                                      : turmas.turmaAtual!.deveres!.length,
-                                  itemBuilder: (context, i) => DeverTile(
-                                          deveres.diaAtual != null
-                                              ? deveres.diaAtual!.deveres[i]
-                                              : turmas.turmaAtual!.deveres![i],
-                                          notifyParent: () {
-                                        setState(() {});
-                                      })),
-                              Positioned(
-                                bottom: 5,
-                                right: 20,
-                                child: FloatingActionButton(
-                                  onPressed: () {
-                                    cadastraDeverDesktop(
-                                        context, DateTime.now());
-                                  },
-                                  backgroundColor: primary2,
-                                  child:
-                                      const Icon(Icons.add, color: darkPrimary),
-                                ),
-                              )
-                            ],
-                          );
-                        })),
+                    turmas.turmaAtual != null
+                        ? turmas.turmaAtual!.deveres != null
+                            ? Container(
+                                padding: const EdgeInsets.all(5),
+                                width: size.width * 0.35,
+                                child: GetBuilder<DeveresController>(
+                                    builder: (deveres) {
+                                  return Stack(
+                                    children: [
+                                      GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2),
+                                          padding:
+                                              const EdgeInsets.only(right: 15),
+                                          itemCount: deveres.diaAtual != null
+                                              ? deveres.diaAtual!.deveres.length
+                                              : turmas
+                                                  .turmaAtual!.deveres!.length,
+                                          itemBuilder: (context, i) =>
+                                              DeverTile(
+                                                  deveres.diaAtual != null
+                                                      ? deveres
+                                                          .diaAtual!.deveres[i]
+                                                      : turmas.turmaAtual!
+                                                          .deveres![i],
+                                                  notifyParent: () {
+                                                setState(() {});
+                                              })),
+                                      Positioned(
+                                        bottom: 5,
+                                        right: 20,
+                                        child: FloatingActionButton(
+                                          onPressed: () {
+                                            cadastraDeverDesktop(
+                                                context,
+                                                deveres.diaAtual?.data ??
+                                                    DateTime.now());
+                                          },
+                                          backgroundColor: primary2,
+                                          child: const Icon(Icons.add,
+                                              color: darkPrimary),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }))
+                            : Container(
+                                padding: const EdgeInsets.all(5),
+                                width: size.width * 0.35,
+                                child: const Center(
+                                    child: Text(
+                                  "Nenhuma atividade cadastrada",
+                                  style: fonts.label,
+                                )))
+                        : Container(
+                            padding: const EdgeInsets.all(5),
+                            width: size.width * 0.35,
+                            child: const Center(
+                                child: Text(
+                              "Nenhuma turma cadastrada",
+                              style: fonts.label,
+                            ))),
                     Calendar(
                       size.width * 0.62,
                       size.height * 0.95 - 50,
