@@ -234,7 +234,7 @@ class CalendarState extends State<Calendar> {
                                                                                     height: 10,
                                                                                     decoration: BoxDecoration(
                                                                                         color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
-                                                                                            ? primary2
+                                                                                            ? const Color.fromARGB(255, 247, 150, 148)
                                                                                             : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
                                                                                                 ? const Color.fromARGB(255, 245, 218, 147)
                                                                                                 : const Color.fromARGB(255, 159, 245, 170),

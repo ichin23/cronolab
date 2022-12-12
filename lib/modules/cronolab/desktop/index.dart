@@ -153,7 +153,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
           }),
           actions: [
             IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh, color: pretoClaro),
               onPressed: () {
                 TurmasStateDesktop.to.getTurmas();
               },
@@ -205,9 +205,12 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                         child: FloatingActionButton(
                                           onPressed: () {
                                             cadastraDeverDesktop(
-                                                context,
-                                                deveres.diaAtual?.data ??
-                                                    DateTime.now());
+                                                    context,
+                                                    deveres.diaAtual?.data ??
+                                                        DateTime.now())
+                                                .then((value) {
+                                              TurmasStateDesktop.to.getTurmas();
+                                            });
                                           },
                                           backgroundColor: primary2,
                                           child: const Icon(Icons.add,

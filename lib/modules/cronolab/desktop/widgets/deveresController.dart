@@ -86,14 +86,9 @@ class DeveresController extends GetxController {
               print(diaI.subtract(
                   Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)));
               return Dia(
-                  diaI.subtract(
-                      Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
-                  turmas.deveres!
-                      .where((dever) =>
-                          dever.data.day == diaI.day &&
-                          dever.data.month == diaI.month &&
-                          dever.data.year == diaI.year)
-                      .toList());
+                diaI.subtract(
+                    Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
+              );
             }
           } else {
             diaI = diaI.add(const Duration(days: 1));

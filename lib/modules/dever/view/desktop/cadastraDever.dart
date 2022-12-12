@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
+import 'package:firedart/firedart.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -159,14 +161,21 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       return;
                     }
                     print("Cadastrando");
-                    await TurmasStateDesktop.to.turmaAtual!
-                        .addDever(Dever(
+                    var deverJson = Dever(
                             data: DateTime(data.year, data.month, data.day,
                                 hora!.hour, hora!.minute),
                             materiaID: materiaSelect!.id,
                             title: titulo.text,
                             pontos: double.parse(pontos.text),
-                            local: local.text))
+                            local: local.text)
+                        .toJson();
+                    deverJson["data"] =
+                        (deverJson["data"] as Timestamp).toDate();
+                    await Firestore.instance
+                        .collection("turmas")
+                        .document(TurmasStateDesktop.to.turmaAtual!.id)
+                        .collection("deveres")
+                        .add(deverJson)
                         .then((value) {
                       print("Cadastrado");
                     });
