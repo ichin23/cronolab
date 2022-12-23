@@ -1,7 +1,6 @@
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -12,9 +11,15 @@ class GerenciarTurmas extends StatefulWidget {
   @override
   State<GerenciarTurmas> createState() => _GerenciarTurmasState();
 }
+
 extension StringCasingExtension on String {
-  String toCapitalized() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}':'';
-  String toTitleCase() => replaceAll(RegExp(' +'), ' ').split(' ').map((str) => str.toCapitalized()).join(' ');
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }
 
 class _GerenciarTurmasState extends State<GerenciarTurmas> {
@@ -26,24 +31,14 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
       systemNavigationBarColor: darkPrimary,
     ));
   }
-  
-  
 
   bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    
     TurmasState turmas = TurmasState.to;
 
-    // var auth = Provider.of<Auth>(context);
-    return
-        // Consumer<TurmasProvider>(builder: (context, turmas, child) {
-        //   // print(turmas.turmas);
-        //   // List turmas = [];
-        //   return
-        Scaffold(
-      backgroundColor: black,
+    return Scaffold(
       appBar: AppBar(
         title: const Text("Gerenciar Turmas"),
         leading: IconButton(
@@ -54,12 +49,6 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
               Icons.arrow_back_ios,
               color: Colors.black45,
             )),
-        // actions: [
-        //   loading
-        //       ? Container(
-        //           height: 20, width: 20, child: CircularProgressIndicator())
-        //       : Container()
-        // ],
       ),
       body: SafeArea(
           child: GetBuilder<TurmasLocal>(
@@ -67,76 +56,109 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
         builder: (turmas) => ListView.builder(
             itemCount: turmas.turmas.length,
             itemBuilder: (context, i) => Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
                   child: ListTile(
-                    
-                      onTap: () {
+                      onTap: () async {
                         if (turmas.turmas[i].isAdmin) {
-                          Get.toNamed('/turma', arguments: turmas.turmas[i]);
+                          await Get.toNamed('/turma',
+                              arguments: turmas.turmas[i]);
                         } else {
-                          Get.dialog(
-                            const AlertDialog(
-                              backgroundColor: black,
-                              title: Text(
-                                "Erro ao acessar",
-                                style: TextStyle(color: white),
-                              ),
-                              content: Text(
-                                  "Você não é administrador dessa turma",
-                                  style: TextStyle(color: white)),
-                            ),
-                          );
+                          await Get.bottomSheet(BottomSheet(
+                              onClosing: () {},
+                              builder: (context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: backgroundDark,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        title: Text(
+                                          "Excluir",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                        ),
+                                        trailing: Icon(
+                                          Icons.delete,
+                                          color: Theme.of(context).errorColor,
+                                        ),
+                                        onTap: () async {
+                                          await turmas.turmas[i].sairTurma();
+                                          await turmas
+                                              .deleteTurma(turmas.turmas[i].id);
+
+                                          Get.back();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }));
+                          // Get.dialog(
+                          //   const AlertDialog(
+                          //     backgroundColor: black,
+                          //     title: Text(
+                          //       "Erro ao acessar",
+                          //       style: TextStyle(color: white),
+                          //     ),
+                          //     content: Text(
+                          //         "Você não é administrador dessa turma",
+                          //         style: TextStyle(color: white)),
+                          //   ),
+                          // );
                         }
+                        turmas.getTurmas().then((value) => setState(() {}));
                       },
                       trailing: const Icon(
                         Icons.settings,
-                        color: white,
+                        //color: whiteColor,
                       ),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      tileColor: white.withOpacity(0.1),
+                      tileColor: Theme.of(context).hoverColor.withOpacity(0.1),
                       title: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Text(turmas.turmas[i].nome.toTitleCase(),
-                        style: const TextStyle(color: white)))),
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: Text(turmas.turmas[i].nome.toTitleCase(),
+                              style: Theme.of(context).textTheme.labelMedium))),
                 )),
       )),
       floatingActionButton: FloatingActionButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          backgroundColor: primary,
           onPressed: loading
               ? null
               : () {
                   TextEditingController code = TextEditingController();
                   Get.dialog(StatefulBuilder(
                     builder: (context, setstate) => AlertDialog(
-                      backgroundColor: black,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
-                      title: const Text("Adicionar Turma",
-                          style: TextStyle(color: white)),
+                      title: Text("Adicionar Turma",
+                          style: Theme.of(context).textTheme.bodyMedium),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text("Digite o código da turma",
-                              style: TextStyle(color: white)),
+                          Text("Digite o código da turma",
+                              style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(height: 15),
                           TextField(
-                            style: fonts.input,
+                            style: Theme.of(context).textTheme.headlineSmall,
                             decoration: InputDecoration(
                               disabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: white),
+                                  borderSide:
+                                      const BorderSide(color: whiteColor),
                                   borderRadius: BorderRadius.circular(10)),
                               focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       const BorderSide(color: darkPrimary),
                                   borderRadius: BorderRadius.circular(10)),
                               enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: primary),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(10)),
                               border: OutlineInputBorder(
-                                  borderSide: const BorderSide(color: white),
+                                  borderSide:
+                                      const BorderSide(color: whiteColor),
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                             controller: code,
@@ -159,10 +181,8 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                       loading = true;
                                       setstate(() {});
 
-                                      // print("AAAAAAAAAAAAAAAAAAAAA");
-                                      await turmas.initTurma(code.text);
-
-                                      // await turmas.enterTurma(code.text, context);
+                                      await turmas.initTurma(
+                                          code.text, context);
 
                                       await turmas.getTurmas();
 
@@ -176,22 +196,22 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                       setState(() {});
                                     },
                               child: loading
-                                  ? const CircularProgressIndicator(
-                                      color: black)
+                                  ? CircularProgressIndicator(
+                                      color: Theme.of(context).backgroundColor)
                                   : const Text("Adicionar",
-                                      style: TextStyle(color: white)))
+                                      style: TextStyle(color: whiteColor)))
                         ],
                       ),
                     ),
                   ));
                 },
           child: loading
-              ? const CircularProgressIndicator(
-                  color: black,
+              ? CircularProgressIndicator(
+                  color: Theme.of(context).backgroundColor,
                 )
-              : const Icon(
+              : Icon(
                   Icons.add,
-                  color: black,
+                  color: Theme.of(context).backgroundColor,
                   size: 40,
                 )),
       // );

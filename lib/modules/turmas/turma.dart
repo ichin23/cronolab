@@ -4,7 +4,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:firedart/firedart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firedart/firestore/firestore.dart';
+import 'package:flutter/material.dart';
+
+
 
 import '../materia/materia.dart';
 
@@ -38,6 +42,10 @@ class Turma {
   }
 
   set setMaterias(List<Materia> materiasList) => {materias = materiasList};
+
+  sairTurma() async{
+    await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).collection("turmas").doc(id).delete();
+  }
 
   deleteTurma() async {
     var docs = await FirebaseFirestore.instance
@@ -122,7 +130,7 @@ class Turma {
             .where('data', isGreaterThan: Timestamp.now())
             .orderBy("data")
             .get();
-        print(deveresQuer.docs);
+        debugPrint(deveresQuer.docs.toString());
         list = [];
         deveres = [];
         for (var dever in deveresQuer.docs) {
@@ -197,7 +205,7 @@ class Turma {
 
   Future<List?> getAtividadesDesk([filterToday = true]) async {
     try {
-      print("inint");
+      debugPrint("inint");
       var list = [];
 
       if (filterToday) {
@@ -209,7 +217,7 @@ class Turma {
             .orderBy("data")
             .get();
 
-        print(deveresQuer);
+        debugPrint(deveresQuer.toString());
         list = [];
         deveres = [];
         for (var dever in deveresQuer) {
@@ -278,7 +286,7 @@ class Turma {
 
       return deveres;
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return null;
     }
   }

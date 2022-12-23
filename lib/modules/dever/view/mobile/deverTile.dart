@@ -9,9 +9,11 @@ import 'package:intl/intl.dart';
 
 class DeverTile extends StatefulWidget {
   final Function()? notifyParent;
-  const DeverTile(this.dever, {Key? key, required this.notifyParent})
+  const DeverTile(this.dever,
+      {Key? key, required this.notifyParent, required this.index})
       : super(key: key);
   final Dever dever;
+  final int index;
 
   @override
   State<DeverTile> createState() => _DeverTileState();
@@ -27,8 +29,9 @@ class _DeverTileState extends State<DeverTile> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popMenu.add(
         PopupMenuItem(
-          child: const Text("Concluída",
-              style: TextStyle(color: white), textAlign: TextAlign.center),
+          child: Text("Concluída",
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center),
           onTap: () async {
             await turmas.setDeverStatus(
                 widget.dever.id!, !widget.dever.status!);
@@ -39,8 +42,9 @@ class _DeverTileState extends State<DeverTile> {
       if (turmas.turmaAtual!.isAdmin) {
         popMenu.add(
           PopupMenuItem(
-            child: const Text("Excluir",
-                style: TextStyle(color: white), textAlign: TextAlign.center),
+            child: Text("Excluir",
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center),
             onTap: () async {
               await turmas.turmaAtual!
                   .deleteDever(widget.dever.id!)
@@ -83,7 +87,7 @@ class _DeverTileState extends State<DeverTile> {
       },
       onLongPress: () {
         showMenu(
-          color: black,
+          color: backgroundDark,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           context: context,
@@ -116,20 +120,28 @@ class _DeverTileState extends State<DeverTile> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(dateStr.format(widget.dever.data),
-                    style: TextStyle(color: corText, fontSize: 15)),
-                Text(hourStr.format(widget.dever.data),
-                    style: TextStyle(color: corText, fontSize: 15)),
-              ]),
+              Hero(
+                tag: "data${widget.index.toString()}",
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(dateStr.format(widget.dever.data),
+                          style: TextStyle(color: corText, fontSize: 15)),
+                      Text(hourStr.format(widget.dever.data),
+                          style: TextStyle(color: corText, fontSize: 15)),
+                    ]),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(widget.dever.title,
-                      style: TextStyle(
-                          color: corText,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800)),
+                  Hero(
+                    tag: "title${widget.index.toString()}",
+                    child: Text(widget.dever.title,
+                        style: TextStyle(
+                            color: corText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800)),
+                  ),
                   Text(widget.dever.materia!.nome,
                       style: TextStyle(color: corText, fontSize: 17)),
                   /* Text(
@@ -144,12 +156,16 @@ class _DeverTileState extends State<DeverTile> {
                 ],
               ),
               Container(),
-              Text(
-                  (int.parse(widget.dever.pontos.toString().split(".")[1]) == 0
-                          ? widget.dever.pontos!.toStringAsFixed(0)
-                          : widget.dever.pontos.toString()) +
-                      " pontos",
-                  style: TextStyle(color: corText)),
+              Hero(
+                tag: "pontos${widget.index.toString()}",
+                child: Text(
+                    (int.parse(widget.dever.pontos.toString().split(".")[1]) ==
+                                0
+                            ? widget.dever.pontos!.toStringAsFixed(0)
+                            : widget.dever.pontos.toString()) +
+                        " pontos",
+                    style: TextStyle(color: corText)),
+              ),
 
               // Container(
               //     width: width * 0.1,

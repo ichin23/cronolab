@@ -31,8 +31,6 @@ void main() async {
       await SharedStore.init();
       FirebaseAuth.initialize(
           DefaultFirebaseOptions.windows.apiKey, VolatileStore());
-      await FirebaseAuth.instance
-          .signIn("pedroferreiramanoel2@gmail.com", "123456");
     }
   }
   runApp(Platform.isWindows ? const MainAppDesktop() : const MainApp());

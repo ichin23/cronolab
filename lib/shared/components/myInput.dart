@@ -1,5 +1,5 @@
-import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:cronolab/shared/colors.dart' as color;
+import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 
 class MyField extends StatelessWidget {
@@ -14,13 +14,13 @@ class MyField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: fonts.input,
+      style: fonts.inputDark,
       enabled: editable,
       controller: nome,
       decoration: InputDecoration(
-        fillColor: color.white.withOpacity(0.1),
+        fillColor: color.whiteColor.withOpacity(0.1),
         label: label,
-        labelStyle: fonts.label,
+        labelStyle: fonts.labelDark,
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

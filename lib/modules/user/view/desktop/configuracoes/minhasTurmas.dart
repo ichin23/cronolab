@@ -59,7 +59,7 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
             },
             title: Text(
               cont.turmas[i].nome,
-              style: label,
+              style: labelDark,
             ),
           ),
         ),

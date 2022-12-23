@@ -21,7 +21,7 @@ class Updater {
         });
     Map versionJson = jsonDecode(response.body);
     if (versionJson['version'] > appVersion) {
-      // print("novaAtualização");
+      // debugPrint("novaAtualização");
       var newFile = await http.get(Uri.parse(versionJson['url']));
       var apk = await File((await getApplicationDocumentsDirectory()).path +
               "newVersion.apk")
@@ -34,7 +34,7 @@ class Updater {
         snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.white,
         mainButton: TextButton(
-          style: TextButton.styleFrom(backgroundColor: primary2),
+          style: TextButton.styleFrom(backgroundColor: primaryDark),
           child: const Text(
             "SIM",
             style: TextStyle(color: Colors.white),
@@ -45,8 +45,8 @@ class Updater {
         ),
       );
 
-      // print(newFile.body);
+      // debugPrint(newFile.body);
     }
-    // print(versionJson);
+    // debugPrint(versionJson);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/shared/colors.dart' as colors;
-import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +21,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   Dever dever = Get.arguments as Dever;
   bool editavel = false;
   InputDecoration fieldDecoration = InputDecoration(
-      fillColor: colors.white.withOpacity(0.1),
+      fillColor: colors.whiteColor.withOpacity(0.1),
       filled: true,
       // suffix: Icon(Icons.person),
       border: OutlineInputBorder(
@@ -41,7 +40,7 @@ class _DeverDetailsState extends State<DeverDetails> {
     local.text = dever.local ?? "";
     //editavel = TurmasLocal.to.turmaAtual!.isAdmin;
     editavel = false;
-    // print(editavel);
+    // debugPrint(editavel);
   }
 
   @override
@@ -61,40 +60,39 @@ class _DeverDetailsState extends State<DeverDetails> {
             )),
         title: const Text("Dever"),
       ),
-      backgroundColor: colors.black,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(15),
           child: ListView(children: [
-            const Text("Título", style: label),
+            Text("Título", style: Theme.of(context).textTheme.labelMedium),
             TextField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
-                style: inputDever,
+                style: Theme.of(context).textTheme.labelLarge,
                 controller: title),
             const SizedBox(height: 15),
-            const Text("Data", style: label),
+            Text("Data", style: Theme.of(context).textTheme.labelMedium),
             TextFormField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
-                style: inputDever,
+                style: Theme.of(context).textTheme.labelLarge,
                 controller: data),
             const SizedBox(height: 15),
-            const Text("Hora", style: label),
+            Text("Hora", style: Theme.of(context).textTheme.labelMedium),
             TextFormField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
-                style: inputDever,
+                style: Theme.of(context).textTheme.labelLarge,
                 controller: hora),
             const SizedBox(height: 15),
-            const Text("Local", style: label),
+            Text("Local", style: Theme.of(context).textTheme.labelMedium),
             TextFormField(
                 decoration: fieldDecoration,
                 readOnly: !editavel,
-                style: inputDever,
+                style: Theme.of(context).textTheme.labelLarge,
                 controller: local),
             const SizedBox(height: 15),
-            const Text("Matéria", style: label),
+            Text("Matéria", style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: 10),
             Container(
                 width: width - 30,
@@ -102,7 +100,7 @@ class _DeverDetailsState extends State<DeverDetails> {
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: colors.white.withOpacity(0.1),
+                  color: colors.whiteColor.withOpacity(0.1),
                 ),
                 child:
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -114,13 +112,15 @@ class _DeverDetailsState extends State<DeverDetails> {
                         child: SizedBox(
                           width: width * 0.7 - 50,
                           child: Text("Matéria: ${dever.materia!.nome}",
-                              style: label),
+                              style: Theme.of(context).textTheme.labelMedium),
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text("Professor: ${dever.materia!.prof}", style: label),
+                      Text("Professor: ${dever.materia!.prof}",
+                          style: Theme.of(context).textTheme.labelMedium),
                       const SizedBox(height: 10),
-                      Text("Contato: ${dever.materia!.contato}", style: label)
+                      Text("Contato: ${dever.materia!.contato}",
+                          style: Theme.of(context).textTheme.labelMedium)
                     ],
                   ),
                 ]))

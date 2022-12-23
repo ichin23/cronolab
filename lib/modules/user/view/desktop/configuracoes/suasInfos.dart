@@ -2,7 +2,6 @@ import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:firedart/auth/user_gateway.dart';
 import 'package:firedart/firedart.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -43,9 +42,9 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
             children: [
               TextFormField(
                 controller: nome,
-                style: input,
+                style: inputDark,
                 decoration: const InputDecoration(
-                    label: Text("Nome"), labelStyle: label),
+                    label: Text("Nome"), labelStyle: labelDark),
               ),
               InkWell(
                 onTap: () {
@@ -56,10 +55,10 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
                 },
                 child: TextFormField(
                     controller: email,
-                    style: input,
+                    style: inputDark,
                     enabled: false,
                     decoration: const InputDecoration(
-                        label: Text("Email"), labelStyle: label)),
+                        label: Text("Email"), labelStyle: labelDark)),
               ),
               const SizedBox(
                 height: 15,
@@ -68,11 +67,11 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
                 width: MediaQuery.of(context).size.width * 0.1,
                 child: TextButton(
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(primary),
-                      textStyle: MaterialStateProperty.all(label)),
+                      backgroundColor: MaterialStateProperty.all(primaryDark),
+                      textStyle: MaterialStateProperty.all(labelDark)),
                   child: const Text(
                     "Salvar",
-                    style: labelBlack,
+                    style: labelBlackDark,
                   ),
                   onPressed: () {},
                 ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
@@ -11,11 +12,11 @@ import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
-import 'package:cronolab/shared/colors.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../modules/cronolab/mobile/controller/indexController.dart';
 import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
 import '../modules/user/view/mobile/perfil.dart';
@@ -57,19 +58,20 @@ class _MainAppDesktopState extends State<MainAppDesktop> {
           fontFamily: "Inter",
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: primary,
-            primary: primary2,
+            seedColor: Theme.of(context).primaryColor,
+            primary: Theme.of(context).primaryColor,
           ),
           scrollbarTheme: ScrollbarThemeData(
               thumbVisibility: MaterialStateProperty.all(true),
               thickness: MaterialStateProperty.all(10),
               crossAxisMargin: 0,
-              thumbColor: MaterialStateProperty.all(primary2),
+              thumbColor:
+                  MaterialStateProperty.all(Theme.of(context).primaryColor),
               radius: const Radius.circular(10),
               minThumbLength: 100),
-          primaryColor: primary2,
-          appBarTheme: const AppBarTheme(
-              backgroundColor: primary2,
+          primaryColor: Theme.of(context).primaryColor,
+          appBarTheme: AppBarTheme(
+              backgroundColor: Theme.of(context).primaryColor,
               elevation: 0,
               centerTitle: true,
               toolbarHeight: 55,
@@ -88,8 +90,8 @@ class _MainAppDesktopState extends State<MainAppDesktop> {
           page: () => StreamBuilder<bool>(
             stream: FirebaseAuth.instance.signInState.asBroadcastStream(),
             builder: (context, stream) {
-              print(stream.data);
-              print(stream.connectionState);
+              debugPrint(stream.data.toString());
+              debugPrint(stream.connectionState.toString());
               if (stream.connectionState != ConnectionState.waiting) {
                 if (stream.data != null) {
                   if (stream.data!) {

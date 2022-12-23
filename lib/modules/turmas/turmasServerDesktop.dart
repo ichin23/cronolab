@@ -30,11 +30,11 @@ class TurmasStateDesktop extends GetxController {
 
   changeTurmaAtual(Turma turma) {
     turmaAtual = turma;
-    print("changre");
+    debugPrint("changre");
     update();
   }
 
-  initTurma(String code) async {
+  initTurma(String code, BuildContext context) async {
     changeLoading = true;
 
     var result = await db.collection(turmasColle).document(code).exists;
@@ -47,14 +47,14 @@ class TurmasStateDesktop extends GetxController {
 
     if (!exist) {
       await Get.dialog(AlertDialog(
-        backgroundColor: black,
-        title: const Text(
+
+        title:  Text(
           "Turma não encontrada",
-          style: label,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
-        content: const Text(
+        content:  Text(
           "Deseja criar uma nova turma?",
-          style: label,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
         actions: [
           TextButton(
@@ -113,13 +113,13 @@ class TurmasStateDesktop extends GetxController {
     try {
       changeLoading = true;
       update();
-      print("GetTurmas");
+      debugPrint("GetTurmas");
       var minhasTurmas = await db
           .collection(usersColle)
           .document(FirebaseAuth.instance.userId)
           .collection("turmas")
           .get();
-      print(minhasTurmas);
+      debugPrint(minhasTurmas.toString());
       turmas.clear();
       for (var turmaQuery in minhasTurmas.toList()) {
         Map<String, dynamic> turma = {
@@ -133,7 +133,7 @@ class TurmasStateDesktop extends GetxController {
             .collection("admins")
             .document(FirebaseAuth.instance.userId)
             .exists;
-        print(admin);
+        debugPrint(admin.toString());
         if (admin) {
           turma["admin"] = true;
         }
@@ -162,11 +162,11 @@ class TurmasStateDesktop extends GetxController {
         turmaAdd.setMaterias = listMat;
 
         turmas.add(turmaAdd);
-        print(turmas);
+        debugPrint(turmas.toString());
       }
       if (turmas.isNotEmpty) {
         turmaAtual = turmas[0];
-        print(turmaAtual!.id);
+        debugPrint(turmaAtual!.id);
         await turmaAtual!.getAtividadesDesk();
         changeLoading = false;
         update();
@@ -184,7 +184,7 @@ class TurmasStateDesktop extends GetxController {
 
   set changeLoading(bool load) {
     loading = load;
-    print(loading);
+    debugPrint(loading.toString());
     update();
   }
 }

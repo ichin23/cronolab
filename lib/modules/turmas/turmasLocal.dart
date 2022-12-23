@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
@@ -47,7 +48,7 @@ class TurmasLocal extends GetxController {
   Future addTurma(Turma turma) async {
     if (!(await checkTurmaExist(turma.id))) {
       await db.insert("turma", turma.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.abort);
+          conflictAlgorithm: ConflictAlgorithm.ignore);
     }
     _method.invokeMethod("update");
   }
@@ -167,9 +168,9 @@ class TurmasLocal extends GetxController {
   }
 
   Future seeTables() async {
-    print(await db.query("turma"));
-    print(await db.query("materia"));
-    print(await db.query("dever"));
+    debugPrint((await db.query("turma")).toString());
+    debugPrint((await db.query("materia")).toString());
+    debugPrint((await db.query("dever")).toString());
   }
 
   Future<List> getDeveres(String turmaID, {List? filter}) async {
@@ -212,18 +213,22 @@ class TurmasLocal extends GetxController {
     lista.clear();
 
     for (var item in query) {
-      print(item);
+      debugPrint(item.toString());
       lista.add(Dever.fromJsonDB(item));
-      print(item);
+      debugPrint(item.toString());
     }
-    print("Infos $lista");
+    debugPrint("Infos $lista");
     return lista;
   }
 
   deleteTurma(String turmaID) async {
-    await db.delete("turma", where: "id==?", whereArgs: [turmaID]);
     await db.delete("dever", where: "turmaID==?", whereArgs: [turmaID]);
     await db.delete("materia", where: "turmaID==?", whereArgs: [turmaID]);
+    await db.delete("turma", where: "id==?", whereArgs: [turmaID]);
+
+    turmas.removeWhere((element) => element.id==turmaID);
+    await getTurmas();
+    update();
   }
 
   Future deleteAll() async {

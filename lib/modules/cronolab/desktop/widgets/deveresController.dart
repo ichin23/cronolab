@@ -57,7 +57,7 @@ class DeveresController extends GetxController {
     var turmas = TurmasStateDesktop.to.turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
-      /*  print('''
+      /*  debugPrint('''
         DiaI:$diaI
         UltimoDia: $ultimoDia
         PrimeiroDia: $primeiroDia
@@ -68,12 +68,12 @@ class DeveresController extends GetxController {
           if (!dia1Pronto) {
             if (index == changeWeekStart(diaI.weekday)) {
               dia1Pronto = true;
-              print(turmas.deveres!
+              debugPrint(turmas.deveres!
                   .where((dever) =>
                       dever.data.day == diaI.day &&
                       dever.data.month == diaI.month &&
                       dever.data.year == diaI.year)
-                  .toList());
+                  .toList().toString());
               return Dia(
                   diaI,
                   turmas.deveres!
@@ -83,8 +83,8 @@ class DeveresController extends GetxController {
                           dever.data.year == diaI.year)
                       .toList());
             } else {
-              print(diaI.subtract(
-                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)));
+              debugPrint(diaI.subtract(
+                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)).toString());
               return Dia(
                 diaI.subtract(
                     Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
@@ -92,7 +92,7 @@ class DeveresController extends GetxController {
             }
           } else {
             diaI = diaI.add(const Duration(days: 1));
-            //print("Dia1 Pronto");
+            //debugPrint("Dia1 Pronto");
             return Dia(
                 diaI,
                 turmas.deveres!
@@ -124,7 +124,7 @@ class DeveresController extends GetxController {
           );
         }
       }));
-      print(weeks);
+      debugPrint(weeks.toString());
 
       if (diaI.isAfter(ultimoDia) || diaI.isAtSameMomentAs(ultimoDia)) {
         break;

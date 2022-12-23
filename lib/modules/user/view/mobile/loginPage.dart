@@ -1,7 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
         MediaQuery.of(context).padding.top +
         200;
     return Scaffold(
-      backgroundColor: black,
       body: SafeArea(
         child: Form(
           key: _form,
@@ -56,17 +54,13 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Column(
                         children: [
-                          const Hero(
+                          Hero(
                             tag: 'title',
                             child: Material(
                               type: MaterialType.transparency,
-                              child: Text(
-                                "CRONOLAB",
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800),
-                              ),
+                              child: Text("CRONOLAB",
+                                  style:
+                                      Theme.of(context).textTheme.labelLarge),
                             ),
                           ),
                           const SizedBox(height: 25),
@@ -76,18 +70,19 @@ class _LoginPageState extends State<LoginPage> {
                               type: MaterialType.transparency,
                               child: TextFormField(
                                 controller: emailCont,
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
+                                style: const TextStyle(
+                                    fontSize: 16, color: whiteColor),
                                 decoration: InputDecoration(
                                     label: const Text("Email"),
-                                    labelStyle: const TextStyle(color: white),
+                                    labelStyle:
+                                        const TextStyle(color: whiteColor),
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
+                                        borderSide: const BorderSide(
+                                            color: whiteColor))),
                               ),
                             ),
                           ),
@@ -98,12 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                               type: MaterialType.transparency,
                               child: TextFormField(
                                 controller: senhaCont,
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
+                                style: const TextStyle(
+                                    fontSize: 16, color: whiteColor),
                                 obscureText: hidePassword,
                                 decoration: InputDecoration(
                                     label: const Text("Senha"),
-                                    labelStyle: const TextStyle(color: white),
+                                    labelStyle:
+                                        const TextStyle(color: whiteColor),
                                     suffixIcon: IconButton(
                                         onPressed: () {
                                           setState(() {
@@ -114,15 +110,15 @@ class _LoginPageState extends State<LoginPage> {
                                           hidePassword
                                               ? Icons.visibility_off
                                               : Icons.visibility,
-                                          color: white,
+                                          color: whiteColor,
                                         )),
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
+                                        borderSide: const BorderSide(
+                                            color: whiteColor))),
                               ),
                             ),
                           ),
@@ -147,16 +143,20 @@ class _LoginPageState extends State<LoginPage> {
                               child: TextButton(
                                 style: TextButton.styleFrom(
                                     minimumSize: Size(width - 50, 55),
-                                    backgroundColor: primary2,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(15))),
                                 child: loading
-                                    ? const CircularProgressIndicator(
-                                        color: black, strokeWidth: 3)
-                                    : const Text("Login",
+                                    ? CircularProgressIndicator(
+                                        color:
+                                            Theme.of(context).backgroundColor,
+                                        strokeWidth: 3)
+                                    : Text("Login",
                                         style: TextStyle(
-                                            color: black,
+                                            color: Theme.of(context)
+                                                .backgroundColor,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800)),
                                 onPressed: () async {
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                                   : TextButton(
                                       style: TextButton.styleFrom(
                                           minimumSize: Size(width - 50, 55),
-                                          backgroundColor: white,
+                                          backgroundColor: whiteColor,
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(15))),
@@ -188,11 +188,12 @@ class _LoginPageState extends State<LoginPage> {
                                             "assets/image/google.png",
                                             height: 30,
                                           ),
-                                          const Padding(
+                                          Padding(
                                             padding: EdgeInsets.only(left: 15),
                                             child: Text("Entrar com Google",
                                                 style: TextStyle(
-                                                    color: black,
+                                                    color: Theme.of(context)
+                                                        .backgroundColor,
                                                     fontSize: 20,
                                                     fontWeight:
                                                         FontWeight.w800)),
@@ -215,17 +216,18 @@ class _LoginPageState extends State<LoginPage> {
                                 children: [
                                   const Text(
                                     "Não possui conta?",
-                                    style:
-                                        TextStyle(color: white, fontSize: 16),
+                                    style: TextStyle(
+                                        color: whiteColor, fontSize: 16),
                                   ),
                                   TextButton(
                                       onPressed: () {
                                         Get.to(const CadastroPage());
                                       },
-                                      child: const Text("Cadastre-se",
+                                      child: Text("Cadastre-se",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
-                                              color: primary2,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
                                               fontSize: 16)))
                                 ],
                               ),

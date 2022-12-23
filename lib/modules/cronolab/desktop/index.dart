@@ -1,6 +1,6 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
-import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deverTile.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
@@ -54,7 +54,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                           details.globalPosition.dy,
                           size.width - details.globalPosition.dx,
                           size.height - details.globalPosition.dy),
-                      color: black,
+                      color: backgroundDark,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       constraints: const BoxConstraints(minWidth: 100),
@@ -62,14 +62,14 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         PopupMenuItem(
                             value: "perfil",
                             onTap: () {},
-                            child:
-                                const Text("Minha conta", style: fonts.white)),
+                            child: const Text("Minha conta",
+                                style: fonts.whiteFont)),
                         PopupMenuItem(child:
                             GetBuilder<DeveresController>(builder: (deveres) {
                           return MouseRegion(
                             onHover: (ev) async {
                               var val = await showMenu(
-                                  color: black,
+                                  color: backgroundDark,
                                   context: context,
                                   position: RelativeRect.fromLTRB(
                                       ev.position.dx,
@@ -101,12 +101,13 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                                   turmas
                                                                       .turmaAtual!
                                                                       .id
-                                                              ? pretoClaro
-                                                              : black,
+                                                              ? hoverDark
+                                                              : backgroundDark,
                                                         ),
                                                         child: Text(
                                                           e.nome,
-                                                          style: fonts.input,
+                                                          style:
+                                                              fonts.inputDark,
                                                         ),
                                                       )),
                                                 ),
@@ -127,12 +128,12 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             },
                             child: Row(
                               children: const [
-                                Text("Minhas turmas", style: fonts.white),
+                                Text("Minhas turmas", style: fonts.whiteFont),
                                 Spacer(),
                                 Icon(
                                   Icons.arrow_forward_ios,
                                   size: 12,
-                                  color: white,
+                                  color: whiteColor,
                                 )
                               ],
                             ),
@@ -153,7 +154,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
           }),
           actions: [
             IconButton(
-              icon: const Icon(Icons.refresh, color: pretoClaro),
+              icon: const Icon(Icons.refresh, color: hoverDark),
               onPressed: () {
                 TurmasStateDesktop.to.getTurmas();
               },
@@ -164,7 +165,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10))),
         ),
-        backgroundColor: black,
+        backgroundColor: backgroundDark,
         body: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
           return turmas.loading
               ? const Center(child: CircularProgressIndicator())
@@ -212,7 +213,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                               TurmasStateDesktop.to.getTurmas();
                                             });
                                           },
-                                          backgroundColor: primary2,
+                                          backgroundColor: primaryDark,
                                           child: const Icon(Icons.add,
                                               color: darkPrimary),
                                         ),
@@ -226,7 +227,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                 child: const Center(
                                     child: Text(
                                   "Nenhuma atividade cadastrada",
-                                  style: fonts.label,
+                                  style: fonts.labelDark,
                                 )))
                         : Container(
                             padding: const EdgeInsets.all(5),
@@ -234,7 +235,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             child: const Center(
                                 child: Text(
                               "Nenhuma turma cadastrada",
-                              style: fonts.label,
+                              style: fonts.labelDark,
                             ))),
                     Calendar(
                       size.width * 0.62,

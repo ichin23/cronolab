@@ -1,30 +1,27 @@
-import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/shared/fonts.dart';
+import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<List> filterDever({List? oldList}) async {
+Future<List> filterDever(BuildContext context, {List? oldList}) async {
   final _cores = ["Vermelha", "Amarela", "Verde"];
   List<dynamic> list = oldList ?? List.generate(2, (index) => null);
   Materia? materiaSelect;
-  print(list);
+  debugPrint(list.toString());
   int? corSelect;
 
   await Get.dialog(AlertDialog(
-    backgroundColor: black,
-    title: const Text(
+    title: Text(
       "Selecione o Filtro",
-      style: inputDever,
+      style: Theme.of(context).textTheme.labelLarge,
     ),
     content: StatefulBuilder(builder: (context, setState) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             "Cores",
-            style: label,
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(height: 10),
           SingleChildScrollView(
@@ -51,14 +48,16 @@ Future<List> filterDever({List? oldList}) async {
                             decoration: BoxDecoration(
                                 color: list[0] != null
                                     ? list[0] == _cores.indexOf(cor)
-                                        ? primary2
+                                        ? Theme.of(context).primaryColor
                                         : Colors.transparent
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
-                                  color: primary2,
+                                  color: Theme.of(context).primaryColor,
                                 )),
-                            child: Text(cor, style: input)),
+                            child: Text(cor,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall)),
                       ),
                     )
                     .toList(),
@@ -66,9 +65,9 @@ Future<List> filterDever({List? oldList}) async {
             ),
           ),
           const SizedBox(height: 15),
-          const Text(
+          Text(
             "Matéria",
-            style: label,
+            style: Theme.of(context).textTheme.labelMedium,
           ),
           const SizedBox(height: 10),
           SingleChildScrollView(
@@ -94,16 +93,16 @@ Future<List> filterDever({List? oldList}) async {
                             decoration: BoxDecoration(
                                 color: list[1] != null
                                     ? list[1] == e.id
-                                        ? primary2
+                                        ? Theme.of(context).primaryColor
                                         : Colors.transparent
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
-                                  color: primary2,
+                                  color: Theme.of(context).primaryColor,
                                 )),
                             child: Text(
                               e.nome,
-                              style: input,
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                           ),
                         ))

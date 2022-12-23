@@ -2,8 +2,6 @@ import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/minhasTurmas.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
-import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +27,6 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: black,
       appBar: AppBar(
         toolbarHeight: 55,
       ),
@@ -50,7 +47,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 tileColor: index == i
-                                    ? pretoClaro
+                                    ? Theme.of(context).hoverColor
                                     : Colors.transparent,
                                 onTap: () {
                                   setState(() {
@@ -59,7 +56,8 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                                 },
                                 title: Text(
                                   pages.keys.toList()[i],
-                                  style: label,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ),
                             ))),
@@ -84,8 +82,8 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
               onPressed: () {
                 Get.dialog(StatefulBuilder(builder: (context, setState) {
                   return AlertDialog(
-                    backgroundColor: black,
-                    title: const Text("Entrar na turma", style: label),
+                    title: Text("Entrar na turma",
+                        style: Theme.of(context).textTheme.titleMedium),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -96,7 +94,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                         TextButton(
                             onPressed: () async {
                               await TurmasStateDesktop.to
-                                  .initTurma(_turmaCode.text);
+                                  .initTurma(_turmaCode.text, context);
 
                               await TurmasStateDesktop.to
                                   .getTurmas()

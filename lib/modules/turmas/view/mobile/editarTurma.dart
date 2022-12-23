@@ -2,8 +2,6 @@ import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
 import 'package:cronolab/modules/turmas/turmasServer.dart';
 import 'package:cronolab/shared/colors.dart' as color;
-import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -72,7 +70,6 @@ class _EditarTurmaState extends State<EditarTurma>
               color: Colors.black45,
             )),
       ),
-      backgroundColor: color.black,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -89,9 +86,10 @@ class _EditarTurmaState extends State<EditarTurma>
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Privada", style: label),
+                    Text("Privada",
+                        style: Theme.of(context).textTheme.labelMedium),
                     Switch(
-                        activeColor: color.primary,
+                        activeColor: Theme.of(context).primaryColor,
                         value: privada,
                         onChanged: (value) {
                           // controller.dispose();
@@ -116,16 +114,16 @@ class _EditarTurmaState extends State<EditarTurma>
                     child: MyField(nome: senha, label: const Text("Senha")))
                 : Container(),
             const SizedBox(height: 15),
-            const Text(
+            Text(
               "Matérias",
-              style: label,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: 15),
             Container(
               height: MediaQuery.of(context).size.height * 0.4,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: color.white.withOpacity(0.1),
+                color: color.whiteColor.withOpacity(0.1),
               ),
               child: Stack(
                 children: [
@@ -138,8 +136,8 @@ class _EditarTurmaState extends State<EditarTurma>
                                     () => setState(() {}));
                               },
                               leading: IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: color.red),
+                                  icon: Icon(Icons.delete,
+                                      color: Theme.of(context).errorColor),
                                   onPressed: loading
                                       ? null
                                       : () async {
@@ -155,20 +153,22 @@ class _EditarTurmaState extends State<EditarTurma>
                                           TurmasLocal.to
                                               .changeTurmaAtualWithID(turma.id);
                                           turma = TurmasLocal.to.turmaAtual!;
-                                          print(turma.materias.length);
+                                          debugPrint(
+                                              turma.materias.length.toString());
                                           // widget.turma.materias
                                           //     .remove(widget.turma.materias[i]);
                                           setState(() {
                                             loading = false;
                                           });
                                         }),
-                              title:
-                                  Text(turma.materias[i].nome, style: label)),
+                              title: Text(turma.materias[i].nome,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium)),
                         )
-                      : const Center(
+                      : Center(
                           child: Text(
                             "Nada foi encontrado",
-                            style: label,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
                   Positioned(
@@ -215,30 +215,32 @@ class _EditarTurmaState extends State<EditarTurma>
                               excluindo = true;
                             });
                             await turmas.deleteTurma(turma.id);
-                            await turma.deleteTurma();
-                            Get.back();
+                            await turma.sairTurma();
+
                             await turmas.getTurmas();
-                            /* turmas.newTurma = turmas.turmas.isNotEmpty
-                                ? turmas.turmas[0]
-                                : null; */
+
                             setState(() {
                               excluindo = false;
                             });
+                            Get.back();
                           },
                     child: excluindo
                         ? const CircularProgressIndicator()
-                        : const Text("Excluir", style: buttonText)),
+                        : Text("Excluir",
+                            style: Theme.of(context).textTheme.headlineMedium)),
                 TextButton(
                     style: ButtonStyle(
                         padding:
                             MaterialStateProperty.all(const EdgeInsets.all(10)),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
-                        backgroundColor: MaterialStateProperty.all(primary)),
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor)),
                     onPressed: () async {
                       Get.back();
                     },
-                    child: const Text("Salvar", style: buttonText)),
+                    child: Text("Salvar",
+                        style: Theme.of(context).textTheme.headlineMedium)),
               ],
             )
             // : Container()

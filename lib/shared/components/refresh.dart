@@ -43,7 +43,7 @@ class _RefreshState extends State<Refresh> with SingleTickerProviderStateMixin {
             _renderCompleteState = false;
           });
         }
-        print(change);
+        debugPrint(change.toString());
       },
       builder: (
         BuildContext context,
@@ -51,9 +51,9 @@ class _RefreshState extends State<Refresh> with SingleTickerProviderStateMixin {
         IndicatorController controller,
       ) {
         controller.addListener(() {
-          print(controller.value);
+          debugPrint(controller.value.toString());
         });
-        print(controller.isDragging);
+        debugPrint(controller.isDragging.toString());
         return Stack(
           children: <Widget>[
             AnimatedBuilder(

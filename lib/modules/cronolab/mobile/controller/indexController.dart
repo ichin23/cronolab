@@ -42,12 +42,12 @@ class IndexController extends GetxController {
   reviewData() async {
     var turmasLocal = TurmasLocal.to.turmas;
     var turmasFirebase = TurmasState.to.turmas;
-    print(turmasLocal);
+
     for (var turma in turmasLocal) {
-      print(turma);
+      debugPrint(turma.toString());
       var whereTurm =
           turmasFirebase.where((element) => element.id == turma.id).toList();
-      print("WhereTurm: " + whereTurm.toString());
+      debugPrint("WhereTurm: " + whereTurm.toString());
       if (whereTurm.isEmpty) {
         await TurmasLocal.to.deleteTurma(turma.id);
       } else {
@@ -58,7 +58,7 @@ class IndexController extends GetxController {
         for (Dever atv in atvBanco) {
           var whereAtv =
               atvFirebase.where((element) => element.id == atv.id).toList();
-          print("WhereAtb: " + whereAtv.toString());
+          debugPrint("WhereAtb: " + whereAtv.toString());
           if (whereAtv.isEmpty) {
             await TurmasLocal.to.deleteDever(atv.id!);
           }
@@ -107,7 +107,7 @@ class IndexController extends GetxController {
       loading = false;
       update();
     } on Exception catch (e) {
-      print(e);
+      debugPrint(e.toString());
       erro = true;
       loading = false;
       update();

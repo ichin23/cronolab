@@ -6,10 +6,10 @@ import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firedart/firedart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 
 cadastraDeverDesktop(BuildContext context, DateTime data) async {
   DateFormat date = DateFormat("dd/MM");
@@ -27,18 +27,18 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
     return Dialog(
       insetPadding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.3),
-      backgroundColor: black,
+      backgroundColor: backgroundDark,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-            color: black, borderRadius: BorderRadius.circular(20)),
+            color: backgroundDark, borderRadius: BorderRadius.circular(20)),
         child: Form(
           key: _form,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text("Cadastrar Matéria para o dia: ${date.format(data)}",
-                  style: fonts.label),
+                  style: fonts.labelDark),
               const SizedBox(height: 15),
               TextFormField(
                   controller: titulo,
@@ -48,11 +48,11 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                     }
                     return null;
                   },
-                  style: fonts.label,
+                  style: fonts.labelDark,
                   decoration: InputDecoration(
                       label: const Text("Título"),
-                      icon: const Icon(Icons.border_color, color: white),
-                      labelStyle: fonts.input,
+                      icon: const Icon(Icons.border_color, color: whiteColor),
+                      labelStyle: fonts.inputDark,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ))),
@@ -61,13 +61,13 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                   value: materiaSelect,
                   decoration: InputDecoration(
                       label: const Text("Matéria"),
-                      icon: const Icon(Icons.border_color, color: white),
-                      labelStyle: fonts.input,
+                      icon: const Icon(Icons.border_color, color: whiteColor),
+                      labelStyle: fonts.inputDark,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       )),
                   borderRadius: BorderRadius.circular(10),
-                  dropdownColor: black,
+                  dropdownColor: backgroundDark,
                   items: TurmasStateDesktop.to.turmaAtual!.materias
                       .map((e) => DropdownMenuItem(
                             child: Text(
@@ -75,7 +75,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                   (e.prof != null
                                       ? " - " + e.prof.toString()
                                       : ""),
-                              style: fonts.label,
+                              style: fonts.labelDark,
                             ),
                             value: e,
                           ))
@@ -92,15 +92,15 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                     }
                     return null;
                   },
-                  style: fonts.label,
+                  style: fonts.labelDark,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
                         RegExp(r"^\d+(\.|,?)(\d{1,2})?"))
                   ],
                   decoration: InputDecoration(
                       label: const Text("Valor/Pontuação"),
-                      icon: const Icon(Icons.border_color, color: white),
-                      labelStyle: fonts.input,
+                      icon: const Icon(Icons.border_color, color: whiteColor),
+                      labelStyle: fonts.inputDark,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ))),
@@ -113,23 +113,23 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                     }
                     return null;
                   },
-                  style: fonts.label,
+                  style: fonts.labelDark,
                   inputFormatters: const [],
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       label: const Text("Local"),
-                      icon: const Icon(Icons.border_color, color: white),
-                      labelStyle: fonts.input,
+                      icon: const Icon(Icons.border_color, color: whiteColor),
+                      labelStyle: fonts.inputDark,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ))),
               const SizedBox(height: 15),
               Row(children: [
-                const Icon(Icons.timer, color: white),
+                const Icon(Icons.timer, color: whiteColor),
                 const SizedBox(width: 20),
                 const Text(
                   "Hora: ",
-                  style: fonts.label,
+                  style: fonts.labelDark,
                 ),
                 TextButton(
                     onPressed: () async {
@@ -140,7 +140,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                     child: Text(
                       hora?.format(context) ?? "Selecione",
                       style: TextStyle(
-                          color: hora == null ? primary2 : white,
+                          color: hora == null ? primaryDark : whiteColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w800),
                     ))
@@ -148,19 +148,19 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
               const SizedBox(height: 15),
               TextButton(
                   onPressed: () async {
-                    print("Começa");
+                    debugPrint("Começa");
                     if (!_form.currentState!.validate()) {
                       return;
                     }
                     if (hora == null) {
-                      print("Hora não inserida");
+                      debugPrint("Hora não inserida");
                       return;
                     }
                     if (materiaSelect == null) {
-                      print("Matéria não selecionada");
+                      debugPrint("Matéria não selecionada");
                       return;
                     }
-                    print("Cadastrando");
+                    debugPrint("Cadastrando");
                     var deverJson = Dever(
                             data: DateTime(data.year, data.month, data.day,
                                 hora!.hour, hora!.minute),
@@ -177,7 +177,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                         .collection("deveres")
                         .add(deverJson)
                         .then((value) {
-                      print("Cadastrado");
+                      debugPrint("Cadastrado");
                     });
                     TurmasStateDesktop.to.turmaAtual!
                         .getAtividades()

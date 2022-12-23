@@ -1,6 +1,6 @@
 import 'package:cronolab/modules/user/controller/loginControllerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
-
+import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
 
 class LoginPageDesktop extends StatefulWidget {
@@ -31,7 +31,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
         MediaQuery.of(context).padding.top +
         200;
     return Scaffold(
-      backgroundColor: black,
+      backgroundColor: backgroundDark,
       body: SafeArea(
         child: Form(
           key: _form,
@@ -59,10 +59,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                               type: MaterialType.transparency,
                               child: Text(
                                 "CRONOLAB",
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800),
+                                style: inputDeverDark,
                               ),
                             ),
                           ),
@@ -79,18 +76,19 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                   emailFoc.unfocus();
                                   senhaFoc.requestFocus();
                                 },
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
+                                style: const TextStyle(
+                                    fontSize: 16, color: whiteColor),
                                 decoration: InputDecoration(
                                     label: const Text("Email"),
-                                    labelStyle: const TextStyle(color: white),
+                                    labelStyle:
+                                        const TextStyle(color: whiteColor),
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
+                                        borderSide: const BorderSide(
+                                            color: whiteColor))),
                               ),
                             ),
                           ),
@@ -112,12 +110,13 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                     loading = false;
                                   });
                                 },
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
+                                style: const TextStyle(
+                                    fontSize: 16, color: whiteColor),
                                 obscureText: hidePassword,
                                 decoration: InputDecoration(
                                     label: const Text("Senha"),
-                                    labelStyle: const TextStyle(color: white),
+                                    labelStyle:
+                                        const TextStyle(color: whiteColor),
                                     suffixIcon: IconButton(
                                         onPressed: () {
                                           setState(() {
@@ -128,15 +127,15 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                           hidePassword
                                               ? Icons.visibility_off
                                               : Icons.visibility,
-                                          color: white,
+                                          color: whiteColor,
                                         )),
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
+                                        borderSide: const BorderSide(
+                                            color: whiteColor))),
                               ),
                             ),
                           ),
@@ -158,16 +157,16 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                               child: TextButton(
                                 style: TextButton.styleFrom(
                                     minimumSize: Size(width - 50, 55),
-                                    backgroundColor: primary2,
+                                    backgroundColor: primaryDark,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(15))),
                                 child: loading
                                     ? const CircularProgressIndicator(
-                                        color: black, strokeWidth: 3)
+                                        color: backgroundDark, strokeWidth: 3)
                                     : const Text("Login",
                                         style: TextStyle(
-                                            color: black,
+                                            color: backgroundDark,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800)),
                                 onPressed: loading
@@ -201,8 +200,8 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                 children: [
                                   const Text(
                                     "Não possui conta?",
-                                    style:
-                                        TextStyle(color: white, fontSize: 16),
+                                    style: TextStyle(
+                                        color: whiteColor, fontSize: 16),
                                   ),
                                   TextButton(
                                       onPressed: () {
@@ -211,7 +210,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                       child: const Text("Cadastre-se",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
-                                              color: primary2,
+                                              color: primaryDark,
                                               fontSize: 16)))
                                 ],
                               ),

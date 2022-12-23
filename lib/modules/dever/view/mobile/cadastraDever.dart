@@ -1,16 +1,15 @@
 import 'package:cronolab/modules/cronolab/mobile/controller/indexController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart' as fonts;
-import 'package:get/get.dart';
-
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../materia/materia.dart';
 import '../../../turmas/turmasLocal.dart';
 
 DateFormat dateStr = DateFormat("dd/MM/yy");
+
 cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController titulo = TextEditingController();
@@ -33,7 +32,6 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
 
   await Get.bottomSheet(StatefulBuilder(builder: (context, setState) {
     return BottomSheet(
-        backgroundColor: black,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
         onClosing: () {
@@ -50,7 +48,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                     children: [
                       TextFormField(
                         enabled: true,
-                        style: fonts.white,
+                        style: Theme.of(context).textTheme.bodyMedium,
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.sentences,
                         textInputAction: TextInputAction.next,
@@ -61,8 +59,10 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         controller: titulo,
                         decoration: InputDecoration(
                             label: const Text("Título"),
-                            icon: const Icon(Icons.border_color, color: white),
-                            labelStyle: fonts.input,
+                            icon: const Icon(Icons.border_color,
+                                color: whiteColor),
+                            labelStyle:
+                                Theme.of(context).textTheme.headlineSmall,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             )),
@@ -70,7 +70,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                       const SizedBox(height: 10),
 
                       TextFormField(
-                        style: fonts.white,
+                        style: Theme.of(context).textTheme.bodyMedium,
                         focusNode: materiaFoc,
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.sentences,
@@ -87,8 +87,9 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         controller: materia,
                         decoration: InputDecoration(
                             label: const Text("Matéria"),
-                            icon: const Icon(Icons.menu_book, color: white),
-                            labelStyle: fonts.input,
+                            icon:
+                                const Icon(Icons.menu_book, color: whiteColor),
+                            labelStyle: Theme.of(context).textTheme.labelMedium,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             )),
@@ -102,7 +103,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         child: Container(
                           height: 100,
                           decoration: BoxDecoration(
-                            color: white.withOpacity(0.1),
+                            color: whiteColor.withOpacity(0.1),
                           ),
                           child: ListView(
                             children: [
@@ -111,7 +112,10 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                       .toLowerCase()
                                       .startsWith(materia.text.toLowerCase()))
                                   .map((e) => ListTile(
-                                      title: Text(e.nome, style: fonts.label),
+                                      title: Text(e.nome,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium),
                                       onTap: () {
                                         materiaSelect = e;
                                         materia.text = e.nome;
@@ -135,13 +139,13 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                   //     Get.back();
                                   //     setState(() {});
                                   //   }).then((value) async {
-                                  //     print("acabou");
+                                  //     debugPrint("acabou");
                                   //     await turmas.changeTurmaAtualWithID(
                                   //         turmas.turmaAtual!.id);
 
                                   //     setState(() {});
                                   //   });
-                                  //   print("realmente acabou");
+                                  //   debugPrint("realmente acabou");
                                   // },
                                   Row(
                                       mainAxisAlignment:
@@ -152,7 +156,9 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                               vertical: 8.0),
                                           child: Text(
                                             "${materia.text} não encontrado",
-                                            style: fonts.label,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium,
                                           ),
                                         ),
                                       ],
@@ -164,7 +170,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        style: fonts.white,
+                        style: Theme.of(context).textTheme.bodyMedium,
                         focusNode: pontosFoc,
                         textCapitalization: TextCapitalization.sentences,
                         keyboardType: const TextInputType.numberWithOptions(),
@@ -181,8 +187,8 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         controller: pontos,
                         decoration: InputDecoration(
                           label: const Text("Valor/Pontuação"),
-                          labelStyle: fonts.input,
-                          icon: const Icon(Icons.check_box, color: white),
+                          labelStyle: Theme.of(context).textTheme.labelMedium,
+                          icon: const Icon(Icons.check_box, color: whiteColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -190,7 +196,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        style: fonts.white,
+                        style: Theme.of(context).textTheme.bodyMedium,
                         focusNode: localFoc,
                         textCapitalization: TextCapitalization.sentences,
                         keyboardType: TextInputType.name,
@@ -201,11 +207,11 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                         controller: local,
                         decoration: InputDecoration(
                           label: const Text("Local"),
-                          labelStyle: fonts.input,
+                          labelStyle: Theme.of(context).textTheme.headlineSmall,
                           hintText: "Ex: Moodle, Classroom",
                           hintStyle:
-                              const TextStyle(fontSize: 16, color: white),
-                          icon: const Icon(Icons.public, color: white),
+                              const TextStyle(fontSize: 16, color: whiteColor),
+                          icon: const Icon(Icons.public, color: whiteColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -225,11 +231,11 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_month, color: white),
+                          const Icon(Icons.calendar_month, color: whiteColor),
                           const SizedBox(width: 20),
                           const Text(
                             "Data",
-                            style: TextStyle(color: white),
+                            style: TextStyle(color: whiteColor),
                           ),
                           TextButton(
                               onPressed: () async {
@@ -243,6 +249,22 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                     cancelText: "Cancelar",
                                     confirmText: "Selecionar",
                                     helpText: "Selecione uma data",
+                                    builder: (context, child) => Theme(
+                                        data: ThemeData(
+                                          backgroundColor:
+                                              Theme.of(context).backgroundColor,
+                                          primaryColor:
+                                              Theme.of(context).primaryColor,
+                                          secondaryHeaderColor:
+                                              Theme.of(context).primaryColor,
+                                          colorScheme: ColorScheme.dark(
+                                            primary:
+                                                Theme.of(context).primaryColor,
+                                            background: Theme.of(context)
+                                                .backgroundColor,
+                                          ),
+                                        ),
+                                        child: child!),
                                     lastDate: DateTime.now()
                                         .add(const Duration(days: 365)));
                                 setState(() {});
@@ -260,21 +282,21 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                 //     dia!.year
                                 //         .toString()
                                 ,
-                                style: const TextStyle(color: white),
+                                style: Theme.of(context).textTheme.bodyMedium,
                               )),
                         ],
                       ),
                       Row(
                         children: [
-                          const Icon(Icons.access_time, color: white),
+                          const Icon(Icons.access_time, color: whiteColor),
                           const SizedBox(width: 20),
-                          const Text(
+                          Text(
                             "Hora",
-                            style: TextStyle(color: white),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           TextButton(
                               onPressed: () async {
-                                print(hora);
+                                debugPrint(hora.toString());
                                 TimeOfDay? newHora = await showTimePicker(
                                     context: context,
                                     cancelText: "Cancelar",
@@ -282,9 +304,20 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                     helpText: "Selecionar uma hora",
                                     minuteLabelText: "Minutos",
                                     hourLabelText: "Hora",
+                                    builder: (context, child) => Theme(
+                                        data: ThemeData(
+                                          backgroundColor:
+                                              Theme.of(context).backgroundColor,
+                                          primaryColor:
+                                              Theme.of(context).primaryColor,
+                                          colorScheme: ColorScheme.dark(
+                                              primary: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                        child: child!),
                                     initialTime:
                                         hora != null ? hora! : TimeOfDay.now());
-                                print(newHora.toString());
+                                debugPrint(newHora.toString());
                                 if (newHora != null) {
                                   hora = newHora;
                                 }
@@ -292,7 +325,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                               },
                               child: Text(
                                 hora == null ? "--:--" : hora!.format(context),
-                                style: const TextStyle(color: white),
+                                style: Theme.of(context).textTheme.bodyMedium,
                               )),
                         ],
                       ),
@@ -321,7 +354,7 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                     setState(() {
                                       loading = true;
                                     });
-                                    // print(turmas
+                                    // debugPrint(turmas
                                     //     .turmaAtual!
                                     //     .id);
                                     await turmas.turmaAtual!.addDever(
@@ -360,15 +393,15 @@ cadastra(BuildContext context, TurmasLocal turmas, Function() setState) async {
                                   }
                                 },
                           child: loading
-                              ? const Padding(
+                              ? Padding(
                                   padding: EdgeInsets.all(10),
                                   child: CircularProgressIndicator(
-                                    color: black,
+                                    color: Theme.of(context).backgroundColor,
                                   ),
                                 )
-                              : const Text(
+                              : Text(
                                   "Salvar",
-                                  style: TextStyle(color: white),
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ))
                     ],
                   ),

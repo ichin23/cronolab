@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,11 +31,11 @@ class TurmasState extends GetxController {
 
   changeTurmaAtual(Turma turma) {
     turmaAtual = turma;
-    print("changre");
+    debugPrint("changre");
     update();
   }
 
-  initTurma(String code) async {
+  initTurma(String code, BuildContext context) async {
     changeLoading = true;
 
     var exist =
@@ -50,14 +48,13 @@ class TurmasState extends GetxController {
     });
     if (!exist) {
       await Get.dialog(AlertDialog(
-        backgroundColor: black,
-        title: const Text(
+        title: Text(
           "Turma não encontrada",
-          style: label,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
-        content: const Text(
+        content: Text(
           "Deseja criar uma nova turma?",
-          style: label,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
         actions: [
           TextButton(
@@ -184,7 +181,7 @@ class TurmasState extends GetxController {
 
   set changeLoading(bool load) {
     loading = load;
-    print(loading);
+    debugPrint(loading.toString());
     update();
   }
 }

@@ -143,8 +143,8 @@ class CalendarState extends State<Calendar> {
                                                                     .click,
                                                             onEnter: (ev) {
                                                               if (f != null) {
-                                                                print(
-                                                                    f.deveres);
+                                                                debugPrint(
+                                                                    f.deveres.toString());
                                                                 if (f.deveres
                                                                     .isNotEmpty) {
                                                                   deveres.deveresToShow =
@@ -210,7 +210,7 @@ class CalendarState extends State<Calendar> {
                                                                       borderRadius: BorderRadius.circular(5),
                                                                       border: f == deveres.diaAtual
                                                                           ? Border.all(
-                                                                              color: primary2,
+                                                                              color: primaryDark,
                                                                             )
                                                                           : null,
                                                                       color: f != null ? const Color(0xff3C353C) : Colors.transparent),
@@ -265,7 +265,7 @@ class CalendarState extends State<Calendar> {
 
   Future<void> cliqueDireito(
       PointerDownEvent event, Dia atual, DeveresController deveres) async {
-    print(event.buttons);
+    debugPrint(event.buttons.toString());
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton) {
       cadastraDeverDesktop(context, atual.data);

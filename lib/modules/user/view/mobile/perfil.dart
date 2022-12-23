@@ -17,9 +17,9 @@ class _PerfilPageState extends State<PerfilPage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: primary,
-      systemNavigationBarColor: primary,
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: primaryDark,
+      systemNavigationBarColor: primaryDark,
     ));
   }
 
@@ -38,7 +38,6 @@ class _PerfilPageState extends State<PerfilPage> {
             )),
         title: const Text("Gerenciar Perfil"),
       ),
-      backgroundColor: black,
       body: SafeArea(
         child: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
@@ -67,18 +66,20 @@ class _PerfilPageState extends State<PerfilPage> {
                                         BoxShadow(blurRadius: 10),
                                         BoxShadow()
                                       ],
-                                      color: primary,
+                                      color: Theme.of(context).primaryColor,
                                       borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(color: primary)),
+                                      border: Border.all(
+                                          color:
+                                              Theme.of(context).primaryColor)),
                                   child: const Icon(
                                     Icons.person,
                                     size: 40,
-                                    color: white,
+                                    color: whiteColor,
                                   )),
                           const SizedBox(width: 30),
                           Text(
                             snap.data!.displayName.toString(),
-                            style: const TextStyle(color: white),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           /*  TextButton(
                             onPressed: () {
@@ -113,34 +114,37 @@ class _PerfilPageState extends State<PerfilPage> {
                       ),
                     ),
                     ListTile(
-                      title: const Text("Suas Informações",
-                          style: TextStyle(color: white)),
+                      title: Text("Suas Informações",
+                          style: Theme.of(context).textTheme.labelMedium),
                       onTap: () {
                         Get.toNamed("/suasInfos");
                       },
-                      trailing:
-                          const Icon(Icons.arrow_forward_ios, color: primary2),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                     ListTile(
-                      title: const Text("Gerenciar Turmas",
-                          style: TextStyle(color: white)),
+                      title: Text("Gerenciar Turmas",
+                          style: Theme.of(context).textTheme.labelMedium),
                       onTap: () {
                         Get.toNamed("/minhasTurmas");
                       },
-                      trailing:
-                          const Icon(Icons.arrow_forward_ios, color: primary2),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                     ListTile(
-                      title:
-                          const Text("Sair", style: TextStyle(color: primary2)),
+                      title: Text("Sair",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16)),
                       onTap: () {
                         FirebaseAuth.instance.signOut();
                         TurmasLocal.to.deleteAll();
                         // turmas.clear();
                         Get.back();
                       },
-                      trailing: const Icon(Icons.exit_to_app_rounded,
-                          color: primary2),
+                      trailing: Icon(Icons.exit_to_app_rounded,
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ]),
                 );
@@ -158,20 +162,21 @@ class _PerfilPageState extends State<PerfilPage> {
                                     BoxShadow(blurRadius: 20),
                                     BoxShadow()
                                   ],
-                                  color: primary,
+                                  color: Theme.of(context).primaryColor,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: primary)),
+                                  border: Border.all(
+                                      color: Theme.of(context).primaryColor)),
                               child: const Icon(
                                 Icons.person,
                                 size: 40,
-                                color: white,
+                                color: whiteColor,
                               )),
                           const SizedBox(width: 30),
                           OutlinedButton(
                               style: ButtonStyle(
                                   elevation: MaterialStateProperty.all(5),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(primary),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Theme.of(context).primaryColor),
                                   shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
                                           borderRadius:
@@ -204,27 +209,27 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     ListTile(
                       title: const Text("Suas Informações",
-                          style: TextStyle(color: white)),
+                          style: TextStyle(color: whiteColor)),
                       trailing: IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.arrow_forward_ios,
-                              color: white)),
+                              color: whiteColor)),
                     ),
                     ListTile(
                       title: const Text("Gerenciar Turmas",
-                          style: TextStyle(color: white)),
+                          style: TextStyle(color: whiteColor)),
                       trailing: IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.arrow_forward_ios,
-                              color: white)),
+                              color: whiteColor)),
                     ),
                     ListTile(
                       title: const Text("Sobre o APP",
-                          style: TextStyle(color: white)),
+                          style: TextStyle(color: whiteColor)),
                       trailing: IconButton(
                           onPressed: () {},
                           icon: const Icon(Icons.arrow_forward_ios,
-                              color: white)),
+                              color: whiteColor)),
                     ),
                   ]),
                 );

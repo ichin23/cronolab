@@ -11,29 +11,29 @@ class CadastroController {
           .createUserWithEmailAndPassword(email: email, password: password);
       FirebaseAuth.instance.currentUser!.updateDisplayName(nome);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       if (e.toString().contains("email-already-in-use")) {
         Get.dialog(
           const AlertDialog(
-            backgroundColor: black,
+            backgroundColor: backgroundDark,
             title: Text(
               "Erro no cadastro",
-              style: TextStyle(color: white),
+              style: TextStyle(color: whiteColor),
             ),
             content: Text("Esse email já é usado por outra conta",
-                style: TextStyle(color: white)),
+                style: TextStyle(color: whiteColor)),
           ),
         );
       } else {
         Get.dialog(
           const AlertDialog(
-            backgroundColor: black,
+            backgroundColor: backgroundDark,
             title: Text(
               "Erro no cadastro",
-              style: TextStyle(color: white),
+              style: TextStyle(color: whiteColor),
             ),
             content: Text("Ocorreu um erro ao cadastrar sua conta",
-                style: TextStyle(color: white)),
+                style: TextStyle(color: whiteColor)),
           ),
         );
       }

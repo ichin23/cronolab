@@ -1,6 +1,5 @@
 import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/shared/colors.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,7 +25,6 @@ class _CadastroPageState extends State<CadastroPage> {
         MediaQuery.of(context).padding.top +
         200;
     return Scaffold(
-        backgroundColor: black,
         body: SafeArea(
             child: Form(
                 key: _form,
@@ -47,16 +45,14 @@ class _CadastroPageState extends State<CadastroPage> {
                         children: [
                           Column(
                             children: [
-                              const Hero(
+                              Hero(
                                 tag: 'title',
                                 child: Material(
                                   type: MaterialType.transparency,
                                   child: Text(
                                     "CRONOLAB",
-                                    style: TextStyle(
-                                        color: white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800),
+                                    style:
+                                        Theme.of(context).textTheme.labelLarge,
                                   ),
                                 ),
                               ),
@@ -68,11 +64,11 @@ class _CadastroPageState extends State<CadastroPage> {
                                   child: TextFormField(
                                     controller: emailCont,
                                     style: const TextStyle(
-                                        fontSize: 16, color: white),
+                                        fontSize: 16, color: whiteColor),
                                     decoration: InputDecoration(
                                         label: const Text("Email"),
                                         labelStyle:
-                                            const TextStyle(color: white),
+                                            const TextStyle(color: whiteColor),
                                         border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
@@ -80,25 +76,26 @@ class _CadastroPageState extends State<CadastroPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: white))),
+                                                color: whiteColor))),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 45),
                               TextFormField(
                                 controller: nomeCont,
-                                style:
-                                    const TextStyle(fontSize: 16, color: white),
+                                style: const TextStyle(
+                                    fontSize: 16, color: whiteColor),
                                 decoration: InputDecoration(
                                     label: const Text("Nome"),
-                                    labelStyle: const TextStyle(color: white),
+                                    labelStyle:
+                                        const TextStyle(color: whiteColor),
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
-                                        borderSide:
-                                            const BorderSide(color: white))),
+                                        borderSide: const BorderSide(
+                                            color: whiteColor))),
                               ),
                               const SizedBox(height: 45),
                               Hero(
@@ -108,11 +105,11 @@ class _CadastroPageState extends State<CadastroPage> {
                                   child: TextFormField(
                                     controller: passwordCont,
                                     style: const TextStyle(
-                                        fontSize: 16, color: white),
+                                        fontSize: 16, color: whiteColor),
                                     decoration: InputDecoration(
                                         label: const Text("Senha"),
                                         labelStyle:
-                                            const TextStyle(color: white),
+                                            const TextStyle(color: whiteColor),
                                         border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
@@ -120,7 +117,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: const BorderSide(
-                                                color: white))),
+                                                color: whiteColor))),
                                   ),
                                 ),
                               ),
@@ -135,16 +132,19 @@ class _CadastroPageState extends State<CadastroPage> {
                                   child: TextButton(
                                     style: TextButton.styleFrom(
                                         minimumSize: Size(width - 50, 55),
-                                        backgroundColor: primary2,
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15))),
                                     child: loading
-                                        ? const CircularProgressIndicator(
-                                            color: black)
-                                        : const Text("Cadastrar",
+                                        ? CircularProgressIndicator(
+                                            color: Theme.of(context)
+                                                .backgroundColor)
+                                        : Text("Cadastrar",
                                             style: TextStyle(
-                                                color: black,
+                                                color: Theme.of(context)
+                                                    .backgroundColor,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w800)),
                                     onPressed: () {
@@ -177,17 +177,16 @@ class _CadastroPageState extends State<CadastroPage> {
                                       const Text(
                                         "Já possui conta?",
                                         style: TextStyle(
-                                            color: white, fontSize: 16),
+                                            color: whiteColor, fontSize: 16),
                                       ),
                                       TextButton(
                                           onPressed: () {
                                             Get.back();
                                           },
-                                          child: const Text("Login",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: primary2,
-                                                  fontSize: 16)))
+                                          child: Text("Login",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineLarge))
                                     ],
                                   ),
                                 ),

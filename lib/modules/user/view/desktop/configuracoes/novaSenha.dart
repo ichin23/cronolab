@@ -27,15 +27,15 @@ class _AlteraSenhaState extends State<AlteraSenha> {
       children: [
         TextFormField(
           controller: senha,
-          style: input,
+          style: inputDark,
           decoration: const InputDecoration(
-              label: Text("Nova Senha"), labelStyle: label),
+              label: Text("Nova Senha"), labelStyle: labelDark),
         ),
         TextFormField(
             controller: senhaConfirm,
-            style: input,
+            style: inputDark,
             decoration: const InputDecoration(
-                label: Text("Confirmar Senha"), labelStyle: label)),
+                label: Text("Confirmar Senha"), labelStyle: labelDark)),
         const SizedBox(
           height: 15,
         ),
@@ -43,11 +43,11 @@ class _AlteraSenhaState extends State<AlteraSenha> {
           width: MediaQuery.of(context).size.width * 0.1,
           child: TextButton(
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(primary),
-                textStyle: MaterialStateProperty.all(label)),
+                backgroundColor: MaterialStateProperty.all(primaryDark),
+                textStyle: MaterialStateProperty.all(labelDark)),
             child: const Text(
               "Salvar",
-              style: labelBlack,
+              style: labelBlackDark,
             ),
             onPressed: () {},
           ),
