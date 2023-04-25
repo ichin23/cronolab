@@ -18,8 +18,7 @@ dependencies:
   firedart: ^0.9.0+1
   flutter:
     sdk: flutter
-  get: ^4.6.5
-  get_storage: ^2.0.3
+  
   google_sign_in: ^5.4.1
   http: ^0.13.4
   internet_connection_checker: ^0.0.1+4
@@ -28,6 +27,7 @@ dependencies:
   open_file: ^3.2.1
   path: ^1.8.1
   path_provider: any
+  provider: ^6.0.5
   shared_preferences: ^2.0.15
   sqflite: ^2.0.3
   window_size:

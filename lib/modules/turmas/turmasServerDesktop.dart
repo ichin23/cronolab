@@ -1,13 +1,9 @@
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class TurmasStateDesktop extends GetxController {
-  static TurmasStateDesktop get to => Get.find();
+class TurmasStateDesktop with ChangeNotifier {
   List<Turma> turmas = [];
   Turma? turmaAtual;
   var db = Firestore.instance;
@@ -15,23 +11,24 @@ class TurmasStateDesktop extends GetxController {
   String turmasColle = "turmas";
   String usersColle = "users";
 
-  Future<Turma> refreshTurma(String id) async {
+  Future<Turma?> refreshTurma(String id) async {
     var response =
         await db.collection(turmasColle).document(id).get().then((value) {
       var result = value.map;
       result["id"] = value.id;
       return result;
     });
+    return null;
 
-    Turma newTurma = Turma.fromJson(response);
+    // Turma newTurma = Turma.fromJson(response);
 
-    return newTurma;
+    // return newTurma;
   }
 
   changeTurmaAtual(Turma turma) {
     turmaAtual = turma;
     debugPrint("changre");
-    update();
+    notifyListeners();
   }
 
   initTurma(String code, BuildContext context) async {
@@ -46,45 +43,46 @@ class TurmasStateDesktop extends GetxController {
     }
 
     if (!exist) {
-      await Get.dialog(AlertDialog(
-
-        title:  Text(
-          "Turma não encontrada",
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        content:  Text(
-          "Deseja criar uma nova turma?",
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("Não")),
-          TextButton(
-              onPressed: () async {
-                await db
-                    .collection(turmasColle)
-                    .document(code)
-                    .set({"nome": code});
-                await db
-                    .collection(usersColle)
-                    .document(FirebaseAuth.instance.userId)
-                    .collection("turmas")
-                    .document(code)
-                    .set({'id': code});
-                await db
-                    .collection(turmasColle)
-                    .document(code)
-                    .collection("admins")
-                    .document(FirebaseAuth.instance.userId)
-                    .set({});
-                Get.back();
-              },
-              child: const Text("Sim"))
-        ],
-      ));
+      await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(
+                  "Turma não encontrada",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                content: Text(
+                  "Deseja criar uma nova turma?",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Não")),
+                  TextButton(
+                      onPressed: () async {
+                        await db
+                            .collection(turmasColle)
+                            .document(code)
+                            .set({"nome": code});
+                        await db
+                            .collection(usersColle)
+                            .document(FirebaseAuth.instance.userId)
+                            .collection("turmas")
+                            .document(code)
+                            .set({'id': code});
+                        await db
+                            .collection(turmasColle)
+                            .document(code)
+                            .collection("admins")
+                            .document(FirebaseAuth.instance.userId)
+                            .set({});
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Sim"))
+                ],
+              ));
     } else {
       await db
           .collection(usersColle)
@@ -109,10 +107,10 @@ class TurmasStateDesktop extends GetxController {
     changeLoading = false;
   }
 
-  Future getTurmas() async {
+  Future getTurmas(BuildContext context) async {
     try {
       changeLoading = true;
-      update();
+      notifyListeners();
       debugPrint("GetTurmas");
       var minhasTurmas = await db
           .collection(usersColle)
@@ -144,10 +142,10 @@ class TurmasStateDesktop extends GetxController {
             .get();
         List<Materia> listMat = [];
 
-        var turmaAdd = Turma.fromJson(turma);
+        // var turmaAdd = Turma.fromJson(turma);
 
         if (turma["admin"] == true) {
-          turmaAdd.setAdmin();
+          // turmaAdd.setAdmin();
         }
 
         for (var materia in materias.toList()) {
@@ -159,32 +157,32 @@ class TurmasStateDesktop extends GetxController {
           listMat.add(materiaClass);
         }
 
-        turmaAdd.setMaterias = listMat;
+        // turmaAdd.setMaterias = listMat;
 
-        turmas.add(turmaAdd);
+        // turmas.add(turmaAdd);
         debugPrint(turmas.toString());
       }
       if (turmas.isNotEmpty) {
         turmaAtual = turmas[0];
         debugPrint(turmaAtual!.id);
-        await turmaAtual!.getAtividadesDesk();
+        await turmaAtual!.getAtividadesDesk(context);
         changeLoading = false;
-        update();
+        notifyListeners();
         return turmas;
       }
 
       changeLoading = false;
-      update();
+      notifyListeners();
     } catch (e) {
-      e.printError();
+      print(e);
 
-      e.printInfo();
+      print(e);
     }
   }
 
   set changeLoading(bool load) {
     loading = load;
     debugPrint(loading.toString());
-    update();
+    notifyListeners();
   }
 }

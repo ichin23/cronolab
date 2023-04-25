@@ -1,9 +1,9 @@
-import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class GerenciarTurmas extends StatefulWidget {
   const GerenciarTurmas({Key? key}) : super(key: key);
@@ -36,14 +36,14 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
 
   @override
   Widget build(BuildContext context) {
-    TurmasState turmas = TurmasState.to;
+
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Gerenciar Turmas"),
         leading: IconButton(
             onPressed: () {
-              Get.back();
+              Navigator.pop(context);
             },
             icon: const Icon(
               Icons.arrow_back_ios,
@@ -51,51 +51,55 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
             )),
       ),
       body: SafeArea(
-          child: GetBuilder<TurmasLocal>(
-        init: TurmasLocal.to,
-        builder: (turmas) => ListView.builder(
-            itemCount: turmas.turmas.length,
+          child: Consumer<Turmas>(
+              builder: (context, turmas, child) =>
+                   ListView.builder(
+            itemCount: turmas.turmasSQL.turmas.length,
             itemBuilder: (context, i) => Padding(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
                   child: ListTile(
                       onTap: () async {
-                        if (turmas.turmas[i].isAdmin) {
-                          await Get.toNamed('/turma',
-                              arguments: turmas.turmas[i]);
+                        if (turmas.turmasSQL.turmas[i].isAdmin) {
+                          await Navigator.of(context)
+                              .pushNamed('/turma', arguments: turmas.turmasSQL.turmas[i]);
                         } else {
-                          await Get.bottomSheet(BottomSheet(
-                              onClosing: () {},
-                              builder: (context) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: backgroundDark,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ListTile(
-                                        title: Text(
-                                          "Excluir",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium,
-                                        ),
-                                        trailing: Icon(
-                                          Icons.delete,
-                                          color: Theme.of(context).errorColor,
-                                        ),
-                                        onTap: () async {
-                                          await turmas.turmas[i].sairTurma();
-                                          await turmas
-                                              .deleteTurma(turmas.turmas[i].id);
+                          await showModalBottomSheet(
+                              context: context,
+                              builder: (context) => BottomSheet(
+                                  onClosing: () {},
+                                  builder: (context) {
+                                    return Container(
+                                      decoration: const BoxDecoration(
+                                        color: backgroundDark,
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ListTile(
+                                            title: Text(
+                                              "Excluir",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium,
+                                            ),
+                                            trailing: Icon(
+                                              Icons.delete,
+                                              color:
+                                                  Theme.of(context).errorColor,
+                                            ),
+                                            onTap: () async {
+                                              // await turmas.turmasSQL.turmas[i]
+                                              //     .sairTurma();
+                                              await turmas.turmasSQL.deleteTurma(
+                                                  turmas.turmasSQL.turmas[i]);
 
-                                          Get.back();
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }));
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }));
                           // Get.dialog(
                           //   const AlertDialog(
                           //     backgroundColor: black,
@@ -109,7 +113,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                           //   ),
                           // );
                         }
-                        turmas.getTurmas().then((value) => setState(() {}));
+                        turmas.getData().then((value) => setState(() {}));
                       },
                       trailing: const Icon(
                         Icons.settings,
@@ -120,90 +124,111 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                       tileColor: Theme.of(context).hoverColor.withOpacity(0.1),
                       title: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Text(turmas.turmas[i].nome.toTitleCase(),
+                          child: Text(turmas.turmasSQL.turmas[i].nome.toTitleCase(),
                               style: Theme.of(context).textTheme.labelMedium))),
                 )),
-      )),
+              )),
       floatingActionButton: FloatingActionButton(
           onPressed: loading
               ? null
               : () {
                   TextEditingController code = TextEditingController();
-                  Get.dialog(StatefulBuilder(
-                    builder: (context, setstate) => AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      title: Text("Adicionar Turma",
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Digite o código da turma",
-                              style: Theme.of(context).textTheme.bodyMedium),
-                          const SizedBox(height: 15),
-                          TextField(
-                            style: Theme.of(context).textTheme.headlineSmall,
-                            decoration: InputDecoration(
-                              disabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: whiteColor),
-                                  borderRadius: BorderRadius.circular(10)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: darkPrimary),
-                                  borderRadius: BorderRadius.circular(10)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor),
-                                  borderRadius: BorderRadius.circular(10)),
-                              border: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: whiteColor),
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                            controller: code,
-                            onSubmitted: (value) {},
-                          ),
-                          const SizedBox(height: 10),
-                          TextButton(
-                              style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.all(20)),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(darkPrimary),
-                                  shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
+                  showDialog(
+                      context: context,
+                      builder: (context) => StatefulBuilder(
+                            builder: (context, setstate) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              title: Text("Adicionar Turma",
+                                  style:
+                                      Theme.of(context).textTheme.bodyMedium),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text("Digite o código da turma",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                  const SizedBox(height: 15),
+                                  TextField(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
+                                    decoration: InputDecoration(
+                                      disabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: whiteColor),
                                           borderRadius:
-                                              BorderRadius.circular(15)))),
-                              onPressed: loading
-                                  ? null
-                                  : () async {
-                                      loading = true;
-                                      setstate(() {});
+                                              BorderRadius.circular(10)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: darkPrimary),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      border: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: whiteColor),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                    ),
+                                    controller: code,
+                                    onSubmitted: (value) {},
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextButton(
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.all(20)),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  darkPrimary),
+                                          shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15)))),
+                                      onPressed: loading
+                                          ? null
+                                          : () async {
+                                              loading = true;
+                                              setstate(() {});
 
-                                      await turmas.initTurma(
-                                          code.text, context);
+                                              await context.read<Turmas>().turmasSQL.createTurma(Turma(nome: code.text, id: code.text)..setAdmin());
+                                              context.read<Turmas>().getData();
 
-                                      await turmas.getTurmas();
+                                              // await turmas.initTurma(
+                                              //     code.text, context);
 
-                                      TurmasLocal.to
-                                          .getTurmas()
-                                          .then((value) => setState(() {
-                                                loading = false;
-                                              }));
+                                              // await turmas.getTurmas(
+                                              //     context.read<TurmasLocal>());
 
-                                      Get.back();
-                                      setState(() {});
-                                    },
-                              child: loading
-                                  ? CircularProgressIndicator(
-                                      color: Theme.of(context).backgroundColor)
-                                  : const Text("Adicionar",
-                                      style: TextStyle(color: whiteColor)))
-                        ],
-                      ),
-                    ),
-                  ));
+                                              // context
+                                              //     .read<TurmasLocal>()
+                                              //     .getTurmas()
+                                              //     .then((value) => setState(() {
+                                              //           loading = false;
+                                              //         }));
+
+                                              Navigator.pop(context);
+                                              setState(() {});
+                                            },
+                                      child: loading
+                                          ? CircularProgressIndicator(
+                                              color: Theme.of(context)
+                                                  .backgroundColor)
+                                          : const Text("Adicionar",
+                                              style:
+                                                  TextStyle(color: whiteColor)))
+                                ],
+                              ),
+                            ),
+                          ));
                 },
           child: loading
               ? CircularProgressIndicator(

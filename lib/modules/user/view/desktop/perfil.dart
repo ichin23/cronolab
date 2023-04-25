@@ -5,7 +5,7 @@ import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart'
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class PerfilPageDesktop extends StatefulWidget {
   const PerfilPageDesktop({Key? key}) : super(key: key);
@@ -30,8 +30,8 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
       appBar: AppBar(
         toolbarHeight: 55,
       ),
-      body: GetBuilder<TurmasStateDesktop>(
-        builder: (turmas) => Row(
+      body: Consumer<TurmasStateDesktop>(
+        builder: (context, turmas, child) => Row(
           children: [
             Column(
               children: [
@@ -66,7 +66,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                   child: const Text("Sair"),
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
-                    Get.back();
+                    Navigator.pop(context);
                   },
                 ))
               ],
@@ -80,35 +80,40 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
           ? FloatingActionButton(
               isExtended: true,
               onPressed: () {
-                Get.dialog(StatefulBuilder(builder: (context, setState) {
-                  return AlertDialog(
-                    title: Text("Entrar na turma",
-                        style: Theme.of(context).textTheme.titleMedium),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MyField(
-                          nome: _turmaCode,
-                          label: const Text("Código da turma"),
-                        ),
-                        TextButton(
-                            onPressed: () async {
-                              await TurmasStateDesktop.to
-                                  .initTurma(_turmaCode.text, context);
+                showDialog(
+                    context: context,
+                    builder: (context) =>
+                        StatefulBuilder(builder: (context, setState) {
+                          return AlertDialog(
+                            title: Text("Entrar na turma",
+                                style: Theme.of(context).textTheme.titleMedium),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                MyField(
+                                  nome: _turmaCode,
+                                  label: const Text("Código da turma"),
+                                ),
+                                TextButton(
+                                    onPressed: () async {
+                                      await Provider.of<TurmasStateDesktop>(
+                                              context)
+                                          .initTurma(_turmaCode.text, context);
 
-                              await TurmasStateDesktop.to
-                                  .getTurmas()
-                                  .then((value) => setState(() {}));
-                              Get.back();
-                              _turmaCode.text = "";
-                            },
-                            child: const Text("Entrar"))
-                      ],
-                    ),
-                  );
-                }));
+                                      await Provider.of<TurmasStateDesktop>(
+                                              context)
+                                          .getTurmas(context)
+                                          .then((value) => setState(() {}));
+                                      Navigator.pop(context);
+                                      _turmaCode.text = "";
+                                    },
+                                    child: const Text("Entrar"))
+                              ],
+                            ),
+                          );
+                        }));
               },
-              child: TurmasStateDesktop.to.loading
+              child: Provider.of<TurmasStateDesktop>(context).loading
                   ? const CircularProgressIndicator()
                   : const Icon(Icons.add),
             )

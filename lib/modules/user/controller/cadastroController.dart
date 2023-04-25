@@ -1,7 +1,6 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CadastroController {
   Future siginEmail(
@@ -13,8 +12,9 @@ class CadastroController {
     } catch (e) {
       debugPrint(e.toString());
       if (e.toString().contains("email-already-in-use")) {
-        Get.dialog(
-          const AlertDialog(
+        showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
             backgroundColor: backgroundDark,
             title: Text(
               "Erro no cadastro",
@@ -25,8 +25,9 @@ class CadastroController {
           ),
         );
       } else {
-        Get.dialog(
-          const AlertDialog(
+        showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
             backgroundColor: backgroundDark,
             title: Text(
               "Erro no cadastro",

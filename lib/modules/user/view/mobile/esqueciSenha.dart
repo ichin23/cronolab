@@ -1,7 +1,6 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class EsqueciSenha extends StatefulWidget {
   const EsqueciSenha({Key? key}) : super(key: key);
@@ -110,7 +109,8 @@ class _EsqueciSenhaState extends State<EsqueciSenha> {
                                         await FirebaseAuth.instance
                                             .sendPasswordResetEmail(
                                                 email: emailCont.text)
-                                            .then((value) => Get.back());
+                                            .then((value) =>
+                                                Navigator.pop(context));
                                       }
                                     },
                                   ),

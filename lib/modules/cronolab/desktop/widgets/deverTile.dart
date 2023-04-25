@@ -1,7 +1,7 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
 
 class DeverTile extends StatefulWidget {
@@ -45,7 +45,8 @@ class _DeverTileState extends State<DeverTile> {
       onTap: () {
         //debugPrint(
         //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
-        Get.toNamed("/dever", arguments: widget.dever);
+
+        Navigator.pushNamed(context, "/dever", arguments: widget.dever);
       },
       onLongPress: () {
         showMenu(
@@ -96,7 +97,7 @@ class _DeverTileState extends State<DeverTile> {
                           color: corText,
                           fontSize: 20,
                           fontWeight: FontWeight.w800)),
-                  Text(widget.dever.materia!.nome,
+                  Text(widget.dever.materiaID.toString(),
                       style: TextStyle(color: corText, fontSize: 17)),
                   /* Text(
                       (int.parse(widget.dever.pontos
@@ -154,7 +155,7 @@ class Original extends StatelessWidget {
     var data = dever.data;
     return ListTile(
       title: Text(dever.title),
-      subtitle: Text(dever.materia!.nome),
+      subtitle: Text(dever.materiaID.toString()),
       trailing: Text(dever.pontos.toString() + " pts"),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,

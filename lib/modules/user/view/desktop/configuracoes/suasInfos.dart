@@ -3,7 +3,6 @@ import 'package:cronolab/shared/fonts.dart';
 import 'package:firedart/auth/user_gateway.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SuasInfosDesktop extends StatefulWidget {
   const SuasInfosDesktop({Key? key}) : super(key: key);
@@ -48,10 +47,12 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
               ),
               InkWell(
                 onTap: () {
-                  Get.dialog(const AlertDialog(
-                    title: Text("Erro"),
-                    content: Text("Não é possível alterar o email"),
-                  ));
+                  showDialog(
+                      context: context,
+                      builder: (context) => const AlertDialog(
+                            title: Text("Erro"),
+                            content: Text("Não é possível alterar o email"),
+                          ));
                 },
                 child: TextFormField(
                     controller: email,

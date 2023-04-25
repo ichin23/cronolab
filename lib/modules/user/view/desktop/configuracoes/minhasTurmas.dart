@@ -1,7 +1,7 @@
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class MinhasTurmasDesktop extends StatefulWidget {
   const MinhasTurmasDesktop({Key? key}) : super(key: key);
@@ -13,8 +13,8 @@ class MinhasTurmasDesktop extends StatefulWidget {
 class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<TurmasStateDesktop>(
-      builder: (cont) => ListView.builder(
+    return Consumer<TurmasStateDesktop>(
+      builder: (context, cont, child) => ListView.builder(
         controller: ScrollController(),
         itemCount: cont.turmas.length,
         itemBuilder: (context, i) => MouseRegion(
@@ -22,24 +22,27 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
           child: ListTile(
             trailing: IconButton(
               onPressed: () {
-                Get.dialog(AlertDialog(
-                  title: const Text("Excluir"),
-                  content: const Text("Deseja excluir essa turma?"),
-                  actions: [
-                    TextButton(onPressed: () {}, child: const Text("Não")),
-                    TextButton(
-                        onPressed: () async {
-                          Get.back();
-                          await TurmasStateDesktop.to
-                              .deleteTurma(cont.turmas[i].id);
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: const Text("Excluir"),
+                          content: const Text("Deseja excluir essa turma?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {}, child: const Text("Não")),
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  await Provider.of<TurmasStateDesktop>(context)
+                                      .deleteTurma(cont.turmas[i].id);
 
-                          TurmasStateDesktop.to
-                              .getTurmas()
-                              .then((value) => setState(() {}));
-                        },
-                        child: const Text("Sim"))
-                  ],
-                ));
+                                  Provider.of<TurmasStateDesktop>(context)
+                                      .getTurmas(context)
+                                      .then((value) => setState(() {}));
+                                },
+                                child: const Text("Sim"))
+                          ],
+                        ));
               },
               icon: const Icon(
                 Icons.delete,
@@ -51,10 +54,13 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
             onTap: () {
               if (cont.turmas[i].isAdmin) {
               } else {
-                Get.dialog(const AlertDialog(
-                  title: Text("Erro"),
-                  content: Text("Você não é um administrador dessa turma"),
-                ));
+                showDialog(
+                    context: context,
+                    builder: (context) => const AlertDialog(
+                          title: Text("Erro"),
+                          content:
+                              Text("Você não é um administrador dessa turma"),
+                        ));
               }
             },
             title: Text(

@@ -1,7 +1,6 @@
 import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({Key? key}) : super(key: key);
@@ -157,7 +156,10 @@ class _CadastroPageState extends State<CadastroPage> {
                                             passwordCont.text,
                                             nomeCont.text,
                                             context);
-                                        Get.offAndToNamed("/");
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            "/",
+                                            ModalRoute.withName("/"));
                                         setState(() {
                                           loading = false;
                                         });
@@ -181,7 +183,7 @@ class _CadastroPageState extends State<CadastroPage> {
                                       ),
                                       TextButton(
                                           onPressed: () {
-                                            Get.back();
+                                            Navigator.pop(context);
                                           },
                                           child: Text("Login",
                                               style: Theme.of(context)

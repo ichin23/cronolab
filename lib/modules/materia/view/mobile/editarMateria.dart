@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../shared/colors.dart';
 import '../../../turmas/turma.dart';
-import '../../../turmas/turmasServer.dart';
+
 import '../../materia.dart';
 
 String url = "https://cronolab-server.herokuapp.com";
@@ -20,132 +20,154 @@ editaMateria(BuildContext context, Materia materia, Turma turma,
   TextEditingController nome = TextEditingController();
   TextEditingController prof = TextEditingController();
   TextEditingController contato = TextEditingController();
-  var turmas = TurmasState.to;
+  // var turmas = Provider.of<TurmasState>(context);
   nome.text = materia.nome;
   prof.text = materia.prof.toString();
   contato.text = materia.contato.toString();
-  await Get.bottomSheet(StatefulBuilder(builder: (context, setState) {
-    return BottomSheet(onClosing: () {
-      setState(() {});
-    }, builder: (context) {
-      return SingleChildScrollView(
-          child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: Form(
-                      key: _formKey,
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        TextFormField(
-                          enabled: true,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          keyboardType: TextInputType.name,
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.next,
-                          focusNode: nomeFoc,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Digite algum valor";
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            // materiaFoc.requestFocus();
-                          },
-                          controller: nome,
-                          decoration: InputDecoration(
-                              label: const Text("Título"),
-                              icon: const Icon(Icons.border_color,
-                                  color: whiteColor),
-                              labelStyle:
-                                  Theme.of(context).textTheme.labelMedium,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              )),
-                        ),
-                        TextFormField(
-                          enabled: true,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          keyboardType: TextInputType.name,
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.next,
-                          focusNode: profFoc,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Digite algum valor";
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            // materiaFoc.requestFocus();
-                          },
-                          controller: prof,
-                          decoration: InputDecoration(
-                              label: const Text("Professor"),
-                              icon: const Icon(Icons.border_color,
-                                  color: whiteColor),
-                              labelStyle:
-                                  Theme.of(context).textTheme.labelMedium,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              )),
-                        ),
-                        TextFormField(
-                          enabled: true,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          keyboardType: TextInputType.name,
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputAction: TextInputAction.next,
-                          focusNode: contatoFoc,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Digite algum valor";
-                            }
-                            return null;
-                          },
-                          onFieldSubmitted: (value) {
-                            // materiaFoc.requestFocus();
-                          },
-                          controller: contato,
-                          decoration: InputDecoration(
-                              label: const Text("Contato"),
-                              icon: const Icon(Icons.border_color,
-                                  color: whiteColor),
-                              labelStyle:
-                                  Theme.of(context).textTheme.labelMedium,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              )),
-                        ),
-                        TextButton(
-                            onPressed: loading
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    FirebaseFirestore.instance
-                                        .collection("turmas")
-                                        .doc(turma.id)
-                                        .collection("materias")
-                                        .doc(materia.id)
-                                        .update({
-                                      "professor": prof.text,
-                                      "nome": nome.text,
-                                      "contato": contato.text,
-                                    });
+  await showModalBottomSheet(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: (context, setState) {
+            return BottomSheet(onClosing: () {
+              setState(() {});
+            }, builder: (context) {
+              return SingleChildScrollView(
+                  child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Form(
+                              key: _formKey,
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextFormField(
+                                      enabled: true,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                      keyboardType: TextInputType.name,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      textInputAction: TextInputAction.next,
+                                      focusNode: nomeFoc,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Digite algum valor";
+                                        }
+                                        return null;
+                                      },
+                                      onFieldSubmitted: (value) {
+                                        // materiaFoc.requestFocus();
+                                      },
+                                      controller: nome,
+                                      decoration: InputDecoration(
+                                          label: const Text("Título"),
+                                          icon: const Icon(Icons.border_color,
+                                              color: whiteColor),
+                                          labelStyle: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          )),
+                                    ),
+                                    TextFormField(
+                                      enabled: true,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                      keyboardType: TextInputType.name,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      textInputAction: TextInputAction.next,
+                                      focusNode: profFoc,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Digite algum valor";
+                                        }
+                                        return null;
+                                      },
+                                      onFieldSubmitted: (value) {
+                                        // materiaFoc.requestFocus();
+                                      },
+                                      controller: prof,
+                                      decoration: InputDecoration(
+                                          label: const Text("Professor"),
+                                          icon: const Icon(Icons.border_color,
+                                              color: whiteColor),
+                                          labelStyle: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          )),
+                                    ),
+                                    TextFormField(
+                                      enabled: true,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                      keyboardType: TextInputType.name,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      textInputAction: TextInputAction.next,
+                                      focusNode: contatoFoc,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Digite algum valor";
+                                        }
+                                        return null;
+                                      },
+                                      onFieldSubmitted: (value) {
+                                        // materiaFoc.requestFocus();
+                                      },
+                                      controller: contato,
+                                      decoration: InputDecoration(
+                                          label: const Text("Contato"),
+                                          icon: const Icon(Icons.border_color,
+                                              color: whiteColor),
+                                          labelStyle: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          )),
+                                    ),
+                                    TextButton(
+                                        onPressed: loading
+                                            ? null
+                                            : () async {
+                                                setState(() {
+                                                  loading = true;
+                                                });
+                                                FirebaseFirestore.instance
+                                                    .collection("turmas")
+                                                    .doc(turma.id)
+                                                    .collection("materias")
+                                                    .doc(materia.id)
+                                                    .update({
+                                                  "professor": prof.text,
+                                                  "nome": nome.text,
+                                                  "contato": contato.text,
+                                                });
 
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                    Get.back();
-                                    turmas.getTurmas();
-                                  },
-                            child: loading
-                                ? const CircularProgressIndicator()
-                                : const Text("Salvar"))
-                      ])))));
-    });
-  }));
+                                                setState(() {
+                                                  loading = false;
+                                                });
+                                                Navigator.pop(context);
+                                                // turmas.getTurmas(
+                                                //     Provider.of<TurmasLocal>(
+                                                //         context,
+                                                //         listen: false));
+                                              },
+                                        child: loading
+                                            ? const CircularProgressIndicator()
+                                            : const Text("Salvar"))
+                                  ])))));
+            });
+          }));
 }

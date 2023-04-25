@@ -3,7 +3,7 @@ import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -25,20 +25,22 @@ class LoginController {
       }
     } catch (e) {
       debugPrint(e.runtimeType.toString());
-      e.printError();
-      e.printInfo();
-      Get.dialog(AlertDialog(
-        title: const Text("Erro", style: fonts.labelDark),
-        content: const Text("Ocorreu um erro ao realizar o login"),
-        backgroundColor: darkPrimary,
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("OK"))
-        ],
-      ));
+      print(e);
+
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Erro", style: fonts.labelDark),
+                content: const Text("Ocorreu um erro ao realizar o login"),
+                backgroundColor: darkPrimary,
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("OK"))
+                ],
+              ));
     }
   }
 
@@ -47,8 +49,9 @@ class LoginController {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: senha);
     } catch (e) {
-      Get.dialog(
-        const AlertDialog(
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
           backgroundColor: backgroundDark,
           title: Text(
             "Erro no login",

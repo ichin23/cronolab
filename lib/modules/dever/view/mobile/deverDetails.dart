@@ -1,12 +1,12 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/shared/colors.dart' as colors;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
 
 class DeverDetails extends StatefulWidget {
-  const DeverDetails({Key? key}) : super(key: key);
-  //final Dever dever;
+  const DeverDetails(this.dever, {Key? key}) : super(key: key);
+  final Dever dever;
 
   @override
   State<DeverDetails> createState() => _DeverDetailsState();
@@ -18,7 +18,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   TextEditingController hora = TextEditingController();
   TextEditingController local = TextEditingController();
   // bool edit = false;
-  Dever dever = Get.arguments as Dever;
+  late Dever dever;
   bool editavel = false;
   InputDecoration fieldDecoration = InputDecoration(
       fillColor: colors.whiteColor.withOpacity(0.1),
@@ -34,6 +34,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   @override
   void initState() {
     super.initState();
+    dever = widget.dever;
     title.text = dever.title;
     data.text = dateStr.format(dever.data);
     hora.text = horaStr.format(dever.data);
@@ -52,7 +53,7 @@ class _DeverDetailsState extends State<DeverDetails> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Get.back();
+              Navigator.pop(context);
             },
             icon: const Icon(
               Icons.arrow_back_ios,
@@ -107,7 +108,7 @@ class _DeverDetailsState extends State<DeverDetails> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                    children:  [
                       Flexible(
                         child: SizedBox(
                           width: width * 0.7 - 50,

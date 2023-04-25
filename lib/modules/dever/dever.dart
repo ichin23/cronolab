@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../materia/materia.dart';
+import 'package:cronolab/modules/materia/materia.dart';
 
 class Dever {
   // var _firestore = FirebaseFirestore.instance.collection("");
@@ -17,45 +16,40 @@ class Dever {
       {this.id,
       required this.title,
       required this.data,
-      this.materia,
       this.materiaID,
       this.pontos,
       this.local,
-      this.status});
+      this.status, this.materia});
   Dever.fromJson(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
             title: document['title'].toString(),
-            materia: Materia.fromJson(document['materia'] as Map),
-            materiaID: (document["materia"]! as Map)["id"] as String,
+            materiaID: document["materia"] as String,
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
             pontos: double.tryParse(document['pontos'].toString()),
-            local: document["local"] != null
-                ? document["local"].toString()
-                : null);
+            local: document["local"].toString());
   Dever.fromJsonFirestore(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
             title: document['title'].toString(),
-            materia: Materia.fromJson(document['materia'] as Map),
-            materiaID: (document["materia"]! as Map)["id"] as String,
+            materiaID: document["materia"] as String,
             data: ((document['data'] as Timestamp).toDate()),
             pontos: double.tryParse(document['pontos'].toString()),
-            local: document["local"] != null
-                ? document["local"].toString()
-                : null);
+            local: document["local"].toString());
 
   Dever.fromJsonDB(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
             title: document['title'].toString(),
-            materia: Materia.fromJsonDB(document),
+
             status: document["status"] == null
                 ? false
                 : document['status'] == 1
                     ? true
                     : false,
+            materia: Materia.fromJsonDB(document),
+
             data:
                 DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
             pontos: double.tryParse(document['pontos'].toString()),

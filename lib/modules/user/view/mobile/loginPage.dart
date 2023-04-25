@@ -1,9 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
+import 'package:provider/provider.dart';
 import 'cadastroPage.dart';
 import 'esqueciSenha.dart';
 
@@ -127,7 +127,10 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextButton(
                                   onPressed: () {
-                                    Get.to(const EsqueciSenha());
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const EsqueciSenha()));
                                   },
                                   child: const Text("Esqueci minha senha")),
                             ],
@@ -189,7 +192,8 @@ class _LoginPageState extends State<LoginPage> {
                                             height: 30,
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(left: 15),
+                                            padding:
+                                                const EdgeInsets.only(left: 15),
                                             child: Text("Entrar com Google",
                                                 style: TextStyle(
                                                     color: Theme.of(context)
@@ -204,6 +208,11 @@ class _LoginPageState extends State<LoginPage> {
                                         var cancel = BotToast.showLoading();
                                         await LoginController()
                                             .loginGoogle(context);
+
+                                        await context.read<Turmas>().turmasFB.loadTurmasUser();
+                                        for (var turma in context.read<Turmas>().turmasFB.turmas){
+                                          context.read<Turmas>().turmasSQL.createFullTurma(turma);
+                                        }
                                         cancel();
                                       })),
                           const SizedBox(height: 20),
@@ -221,7 +230,10 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        Get.to(const CadastroPage());
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const CadastroPage()));
                                       },
                                       child: Text("Cadastre-se",
                                           style: TextStyle(

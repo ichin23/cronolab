@@ -1,4 +1,6 @@
 import 'package:cronolab/modules/user/controller/loginControllerDesktop.dart';
+import 'package:cronolab/modules/user/view/mobile/cadastroPage.dart';
+import 'package:cronolab/modules/user/view/mobile/esqueciSenha.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
@@ -144,7 +146,7 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                             children: [
                               TextButton(
                                   onPressed: () {
-                                    //TODO: Get.to(const EsqueciSenha());
+                                    Navigator.of(context).push(MaterialPageRoute(builder:(context)=> EsqueciSenha()));
                                   },
                                   child: const Text("Esqueci minha senha")),
                             ],
@@ -205,7 +207,8 @@ class _LoginPageDesktopState extends State<LoginPageDesktop> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        //TODO: Get.to(const CadastroPage());
+                                        Navigator.of(context).push(MaterialPageRoute(builder:(context)=> CadastroPage()));
+
                                       },
                                       child: const Text("Cadastre-se",
                                           style: TextStyle(

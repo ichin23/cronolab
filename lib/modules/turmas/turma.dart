@@ -3,12 +3,10 @@ import 'dart:io';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasLocal.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
-
-
 
 import '../materia/materia.dart';
 
@@ -17,21 +15,29 @@ class Turma {
   String id;
   bool isAdmin;
   List? deveres;
-  List<Materia> materias = [];
+  List<Materia> materia;
 
   Turma(
       {required this.nome,
       required this.id,
       this.deveres,
+      this.materia = const [],
       this.isAdmin = false});
 
-  Turma.fromJson(Map<String, dynamic> json)
+  Turma.fromFirebase(DocumentSnapshot turma)
       : this(
-          nome: json['nome'].toString(),
-          id: json["id"].toString(),
+          nome: (turma.data() as Map)['nome'].toString(),
+          id: turma.id,
 
           // deveres: json['deveres'] as List,
         );
+
+  Turma.fromSQL(Map turma, [List<Materia>? materias])
+      : this(
+            nome: turma['nome'].toString(),
+            id: turma["id"],
+            materia: materias ?? [],
+            isAdmin: turma["admin"] == 1 ? true : false);
 
   setAdmin() {
     isAdmin = true;
@@ -41,10 +47,15 @@ class Turma {
     return {'nome': nome, 'id': id, "admin": isAdmin ? 1 : 0};
   }
 
-  set setMaterias(List<Materia> materiasList) => {materias = materiasList};
+  set setMaterias(List<Materia> materiasList) => {materia = materiasList};
 
-  sairTurma() async{
-    await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).collection("turmas").doc(id).delete();
+  sairTurma() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("turmas")
+        .doc(id)
+        .delete();
   }
 
   deleteTurma() async {
@@ -70,7 +81,7 @@ class Turma {
     await FirebaseFirestore.instance.collection("turmas").doc(id).delete();
   }
 
-  Future deleteDever(String idDever) async {
+  Future deleteDever(BuildContext context, String idDever) async {
     await FirebaseFirestore.instance
         .collection("turmas")
         .doc(id)
@@ -79,7 +90,7 @@ class Turma {
         .delete();
     if (Platform.isAndroid) {
       //TODO: Delete on local
-      await TurmasLocal.to.deleteDever(idDever);
+      // await Provider.of<TurmasLocal>(context).deleteDever(idDever);
     }
   }
 
@@ -114,11 +125,12 @@ class Turma {
 
   Future update() async {}
 
-  Future<List?> getAtvDB({List? filters}) async {
-    return TurmasLocal.to.getDeveres(id, filter: filters);
-  }
+  // Future<List?> getAtvDB(BuildContext context, {List? filters}) async {
+  //   return Provider.of<TurmasLocal>(context, listen: false)
+  //       .getDeveres(id, filter: filters);
+  // }
 
-  Future<List?> getAtividades([filterToday = true]) async {
+  Future<List?> getAtividades([bool filterToday = true]) async {
     try {
       var list = [];
 
@@ -137,26 +149,13 @@ class Turma {
           var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
 
-          var mat = (await FirebaseFirestore.instance
-              .collection("turmas")
-              .doc(id)
-              .collection("materias")
-              .doc(deverToAdd['materia'])
-              .get());
-          var matToAdd = mat.data()!;
-          matToAdd["id"] = mat.id;
-          deverToAdd["materia"] = matToAdd;
-
           deverToAdd["data"] =
               (deverToAdd["data"] as Timestamp).toDate().millisecondsSinceEpoch;
 
           list.add(deverToAdd);
           if (deveres != null) {
             var deverData = Dever.fromJson(deverToAdd);
-            if (Platform.isAndroid || Platform.isIOS) {
-              await TurmasLocal.to.addDever(deverData, id);
-            }
-            deveres?.add(deverData);
+            deveres!.add(deverData);
           } else {
             deveres = [Dever.fromJson(deverToAdd)];
           }
@@ -173,24 +172,13 @@ class Turma {
         for (var dever in deveresQuery.docs) {
           var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
-          var mat = (await FirebaseFirestore.instance
-              .collection("turmas")
-              .doc(id)
-              .collection("materias")
-              .doc(deverToAdd['materia'])
-              .get());
-          var matToAdd = mat.data()!;
-          matToAdd["id"] = mat.id;
-          deverToAdd["materia"] = matToAdd;
           (deverToAdd["data"] as Timestamp).toDate().millisecondsSinceEpoch;
 
           list.add(deverToAdd);
           if (deveres != null) {
             var deverData = Dever.fromJson(deverToAdd);
-            if (Platform.isAndroid || Platform.isIOS) {
-              await TurmasLocal.to.addDever(deverData, id);
-            }
-            deveres?.add(deverData);
+
+            deveres!.add(deverData);
           } else {
             deveres = [Dever.fromJson(deverToAdd)];
           }
@@ -203,7 +191,8 @@ class Turma {
     }
   }
 
-  Future<List?> getAtividadesDesk([filterToday = true]) async {
+  Future<List?> getAtividadesDesk(BuildContext context,
+      [filterToday = true]) async {
     try {
       debugPrint("inint");
       var list = [];
@@ -241,7 +230,8 @@ class Turma {
           if (deveres != null) {
             var deverData = Dever.fromJson(deverToAdd);
             if (Platform.isAndroid || Platform.isIOS) {
-              await TurmasLocal.to.addDever(deverData, id);
+              //TODO: await Provider.of<TurmasLocal>(context).addDever(deverData, id);
+
             }
             deveres?.add(deverData);
           } else {
@@ -275,7 +265,7 @@ class Turma {
           if (deveres != null) {
             var deverData = Dever.fromJson(deverToAdd);
             if (Platform.isAndroid || Platform.isIOS) {
-              await TurmasLocal.to.addDever(deverData, id);
+              //TODO: await Provider.of<TurmasLocal>(context).addDever(deverData, id);
             }
             deveres?.add(deverData);
           } else {

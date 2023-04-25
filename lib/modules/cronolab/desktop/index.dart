@@ -7,7 +7,7 @@ import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class HomePageDesktop extends StatefulWidget {
   const HomePageDesktop({Key? key}) : super(key: key);
@@ -24,7 +24,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
   @override
   void initState() {
     super.initState();
-    TurmasStateDesktop.to.getTurmas();
+    Provider.of<TurmasStateDesktop>(context).getTurmas(context);
   }
 
   @override
@@ -33,7 +33,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
+          title:
+              Consumer<TurmasStateDesktop>(builder: (context, turmas, child) {
             return Text(
               "Cronolab" +
                   (turmas.turmaAtual != null
@@ -43,7 +44,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
             );
           }),
           centerTitle: true,
-          leading: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
+          leading:
+              Consumer<TurmasStateDesktop>(builder: (context, turmas, child) {
             return InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () async {
@@ -64,8 +66,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             onTap: () {},
                             child: const Text("Minha conta",
                                 style: fonts.whiteFont)),
-                        PopupMenuItem(child:
-                            GetBuilder<DeveresController>(builder: (deveres) {
+                        PopupMenuItem(child: Consumer<DeveresController>(
+                            builder: (context, deveres, child) {
                           return MouseRegion(
                             onHover: (ev) async {
                               var val = await showMenu(
@@ -89,7 +91,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                             e);
 
                                                         deveres.buildCalendar(
-                                                            DateTime.now());
+                                                            DateTime.now(),
+                                                            context);
                                                       },
                                                       child: Container(
                                                         decoration:
@@ -122,9 +125,9 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                               if (val is Turma) {
                                 turmas.changeTurmaAtual(val);
 
-                                deveres.buildCalendar(DateTime.now());
+                                deveres.buildCalendar(DateTime.now(), context);
                               }
-                              Get.back();
+                              Navigator.pop(context);
                             },
                             child: Row(
                               children: const [
@@ -141,7 +144,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         }))
                       ]);
                   if (val == "perfil") {
-                    Get.toNamed("/perfil");
+                    Navigator.pushNamed(context, "/perfil");
                   }
                 },
                 onTapDown: (tap) {
@@ -156,7 +159,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
             IconButton(
               icon: const Icon(Icons.refresh, color: hoverDark),
               onPressed: () {
-                TurmasStateDesktop.to.getTurmas();
+                Provider.of<TurmasStateDesktop>(context).getTurmas(context);
               },
             )
           ],
@@ -166,7 +169,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                   bottomRight: Radius.circular(10))),
         ),
         backgroundColor: backgroundDark,
-        body: GetBuilder<TurmasStateDesktop>(builder: (turmas) {
+        body: Consumer<TurmasStateDesktop>(builder: (context, turmas, child) {
           return turmas.loading
               ? const Center(child: CircularProgressIndicator())
               : Row(
@@ -176,8 +179,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             ? Container(
                                 padding: const EdgeInsets.all(5),
                                 width: size.width * 0.35,
-                                child: GetBuilder<DeveresController>(
-                                    builder: (deveres) {
+                                child: Consumer<DeveresController>(
+                                    builder: (context, deveres, child) {
                                   return Stack(
                                     children: [
                                       GridView.builder(
@@ -210,7 +213,9 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                     deveres.diaAtual?.data ??
                                                         DateTime.now())
                                                 .then((value) {
-                                              TurmasStateDesktop.to.getTurmas();
+                                              Provider.of<TurmasStateDesktop>(
+                                                      context)
+                                                  .getTurmas(context);
                                             });
                                           },
                                           backgroundColor: primaryDark,

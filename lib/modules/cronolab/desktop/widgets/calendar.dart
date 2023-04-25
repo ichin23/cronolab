@@ -1,11 +1,8 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
-import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
-import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar(this.width, this.height, {Key? key}) : super(key: key);
@@ -36,7 +33,7 @@ class CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    DeveresController.to.buildCalendar(DateTime.now());
+    //TODO: DeveresController.to.buildCalendar(DateTime.now());
   }
 
   @override
@@ -46,7 +43,8 @@ class CalendarState extends State<Calendar> {
     var paddingWidth = MediaQuery.of(context).padding.left +
         MediaQuery.of(context).padding.right;
     var size = MediaQuery.of(context).size;
-    return GetBuilder<DeveresController>(
+    return Container();
+    /*TODO: return Builder<DeveresController>(
       builder: (deveres) => Stack(
         children: [
           Container(
@@ -260,7 +258,7 @@ class CalendarState extends State<Calendar> {
           ),
         ],
       ),
-    );
+    );*/
   }
 
   Future<void> cliqueDireito(

@@ -2,15 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../shared/colors.dart';
-
 class Updater {
-  init() async {
+  init(BuildContext context) async {
     double appVersion = 2.35;
     // await GetVersion.projectVersion;
 
@@ -26,24 +23,29 @@ class Updater {
       var apk = await File((await getApplicationDocumentsDirectory()).path +
               "newVersion.apk")
           .writeAsBytes(newFile.bodyBytes);
-      Get.snackbar(
-        "Novidades no App",
-        "Deseja instalar uma nova atualização?",
+      //SnackBar update
+      ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+        content: Column(
+          children: [
+            Text("Novidades no App"),
+            Text("Deseja instalar uma nova atualização?"),
+          ],
+        ),
+
         margin: const EdgeInsets.only(right: 8, bottom: 8, left: 8),
         duration: const Duration(seconds: 20),
-        snackPosition: SnackPosition.BOTTOM,
-        colorText: Colors.white,
-        mainButton: TextButton(
-          style: TextButton.styleFrom(backgroundColor: primaryDark),
-          child: const Text(
+
+
+        action: SnackBarAction(
+          textColor:Colors.white,
+          label:
             "SIM",
-            style: TextStyle(color: Colors.white),
-          ),
+
           onPressed: () {
             OpenFile.open(apk.path);
           },
         ),
-      );
+      ));
 
       // debugPrint(newFile.body);
     }

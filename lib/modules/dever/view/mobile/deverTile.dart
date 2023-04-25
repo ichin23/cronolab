@@ -1,14 +1,16 @@
-import 'package:cronolab/modules/cronolab/mobile/controller/indexController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:cronolab/modules/turmas/turmasServer.dart';
+import 'package:cronolab/modules/materia/materia.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DeverTile extends StatefulWidget {
   final Function()? notifyParent;
+
   const DeverTile(this.dever,
       {Key? key, required this.notifyParent, required this.index})
       : super(key: key);
@@ -21,10 +23,11 @@ class DeverTile extends StatefulWidget {
 
 class _DeverTileState extends State<DeverTile> {
   List<PopupMenuItem> popMenu = [];
+
   @override
   void initState() {
     super.initState();
-    var turmas = TurmasLocal.to;
+    //var turmas = Provider.of<Turmas>(context, listen:false);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popMenu.add(
@@ -33,24 +36,25 @@ class _DeverTileState extends State<DeverTile> {
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center),
           onTap: () async {
-            await turmas.setDeverStatus(
-                widget.dever.id!, !widget.dever.status!);
-            Get.find<IndexController>().refreshDb();
+            // await turmas.setDeverStatus(
+            //     widget.dever.id!, !widget.dever.status!);
+            // Provider.of<IndexController>(context).refreshDb(context);
           },
         ),
       );
-      if (turmas.turmaAtual!.isAdmin) {
+      if (context.read<Turmas>().turmaAtual!.isAdmin) {
         popMenu.add(
           PopupMenuItem(
             child: Text("Excluir",
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              await turmas.turmaAtual!
-                  .deleteDever(widget.dever.id!)
-                  .then((value) {
-                Get.find<IndexController>().refreshDb();
-              });
+              await context.read<Turmas>().turmasSQL!.deleteDever(widget.dever);
+
+              await context.read<Turmas>().getData();
+              if (widget.notifyParent != null) {
+                widget.notifyParent!();
+              }
             },
           ),
         );
@@ -60,7 +64,7 @@ class _DeverTileState extends State<DeverTile> {
 
   @override
   Widget build(BuildContext context) {
-    var turmas = TurmasState.to;
+    // var turmas = Provider.of<TurmasState>(context);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     TapDownDetails tapDetails = TapDownDetails();
@@ -83,7 +87,7 @@ class _DeverTileState extends State<DeverTile> {
       onTap: () {
         //debugPrint(
         //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
-        Get.toNamed("/dever", arguments: widget.dever);
+        Navigator.pushNamed(context, "/dever", arguments: widget.dever);
       },
       onLongPress: () {
         showMenu(
@@ -101,50 +105,65 @@ class _DeverTileState extends State<DeverTile> {
       },
       child: Container(
         margin: const EdgeInsets.all(5),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            // gradient: LinearGradient(
-            //     colors: [Colors.red[300]!, Colors.red[700]!],
-            //     begin: Alignment.topLeft,
-            //     end: Alignment.bottomRight),
-            color: widget.dever.status!
-                ? const Color.fromRGBO(182, 181, 181, 1)
-                : data.difference(DateTime.now()).inDays < 1
-                    ? const Color(0xffFFD1D0)
-                    : data.difference(DateTime.now()).inDays < 5
-                        ? const Color(0xFFFBF5C5)
-                        : const Color(0xffBDF6E3),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Hero(
-                tag: "data${widget.index.toString()}",
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(dateStr.format(widget.dever.data),
-                          style: TextStyle(color: corText, fontSize: 15)),
-                      Text(hourStr.format(widget.dever.data),
-                          style: TextStyle(color: corText, fontSize: 15)),
-                    ]),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Hero(
-                    tag: "title${widget.index.toString()}",
-                    child: Text(widget.dever.title,
-                        style: TextStyle(
-                            color: corText,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800)),
-                  ),
-                  Text(widget.dever.materia!.nome,
-                      style: TextStyle(color: corText, fontSize: 17)),
-                  /* Text(
+        child: Consumer<Turmas>(builder: (context, turmas, child) {
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              // gradient: LinearGradient(
+              //     colors: [Colors.red[300]!, Colors.red[700]!],
+              //     begin: Alignment.topLeft,
+              //     end: Alignment.bottomRight),
+              color: widget.dever.status ?? false
+                  ? const Color.fromRGBO(182, 181, 181, 1)
+                  : data.difference(DateTime.now()).inDays < 1
+                      ? const Color(0xffFFD1D0)
+                      : data.difference(DateTime.now()).inDays < 5
+                          ? const Color(0xFFFBF5C5)
+                          : const Color(0xffBDF6E3),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Hero(
+                  tag: "data${widget.index.toString()}",
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(dateStr.format(widget.dever.data),
+                            style: TextStyle(color: corText, fontSize: 15)),
+                        Text(hourStr.format(widget.dever.data),
+                            style: TextStyle(color: corText, fontSize: 15)),
+                      ]),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: "title${widget.index.toString()}",
+                      child: Text(widget.dever.title,
+                          style: TextStyle(
+                              color: corText,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800)),
+                    ),
+                    Text(widget.dever.materia?.nome ?? "----",
+                        style: TextStyle(color: corText, fontSize: 17)),
+                    /* Text(
+                          (int.parse(widget.dever.pontos
+                                          .toString()
+                                          .split(".")[1]) ==
+                                      0
+                                  ? widget.dever.pontos!.toStringAsFixed(0)
+                                  : widget.dever.pontos.toString()) +
+                              " pontos",
+                          sty le: TextStyle(color: corText)),*/
+                  ],
+                ),
+                Container(),
+                Hero(
+                  tag: "pontos${widget.index.toString()}",
+                  child: Text(
                       (int.parse(widget.dever.pontos
                                       .toString()
                                       .split(".")[1]) ==
@@ -152,45 +171,34 @@ class _DeverTileState extends State<DeverTile> {
                               ? widget.dever.pontos!.toStringAsFixed(0)
                               : widget.dever.pontos.toString()) +
                           " pontos",
-                      sty le: TextStyle(color: corText)),*/
-                ],
-              ),
-              Container(),
-              Hero(
-                tag: "pontos${widget.index.toString()}",
-                child: Text(
-                    (int.parse(widget.dever.pontos.toString().split(".")[1]) ==
-                                0
-                            ? widget.dever.pontos!.toStringAsFixed(0)
-                            : widget.dever.pontos.toString()) +
-                        " pontos",
-                    style: TextStyle(color: corText)),
-              ),
+                      style: TextStyle(color: corText)),
+                ),
 
-              // Container(
-              //     width: width * 0.1,
-              //     child: Column(children: [
-              //       Text(data.day.toString() +
-              //           "/" +
-              //           data.month.toString())
-              //     ])),
-            ],
-            // title: Text(dever.title),
-            // subtitle: Text(dever.materia),
-            // trailing: Text(dever.pontos.toString() + " pts"),
-            // leading: Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Text(data.day.toString() +
-            //         "/" +
-            //         data.month.toString()),
-            //     Text(data.hour.toString() +
-            //         ":" +
-            //         data.minute.toString()),
-            //   ],
-            // ),
-          ),
-        ),
+                // Container(
+                //     width: width * 0.1,
+                //     child: Column(children: [
+                //       Text(data.day.toString() +
+                //           "/" +
+                //           data.month.toString())
+                //     ])),
+              ],
+              // title: Text(dever.title),
+              // subtitle: Text(dever.materia),
+              // trailing: Text(dever.pontos.toString() + " pts"),
+              // leading: Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Text(data.day.toString() +
+              //         "/" +
+              //         data.month.toString()),
+              //     Text(data.hour.toString() +
+              //         ":" +
+              //         data.minute.toString()),
+              //   ],
+              // ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -199,12 +207,13 @@ class _DeverTileState extends State<DeverTile> {
 class Original extends StatelessWidget {
   const Original(this.dever, {Key? key}) : super(key: key);
   final Dever dever;
+
   @override
   Widget build(BuildContext context) {
     var data = dever.data;
     return ListTile(
       title: Text(dever.title),
-      subtitle: Text(dever.materia!.nome),
+      subtitle: Text(dever.materiaID.toString()),
       trailing: Text(dever.pontos.toString() + " pts"),
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -1,18 +1,17 @@
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'dia.dart';
 
-class DeveresController extends GetxController {
-  static DeveresController get to => Get.find();
-
+class DeveresController with ChangeNotifier {
   Dia? _diaAtual;
 
   Dia? get diaAtual => _diaAtual;
   set diaAtual(Dia? newDia) {
     _diaAtual = newDia;
-    update();
+    notifyListeners();
   }
 
   DateTime hoje = DateTime.now();
@@ -30,7 +29,7 @@ class DeveresController extends GetxController {
   get deveresToShow => _deveresToShow;
   set deveresToShow(dev) {
     _deveresToShow = dev;
-    update();
+    notifyListeners();
   }
 
   changeWeekStart(int day) {
@@ -45,7 +44,7 @@ class DeveresController extends GetxController {
   List week = [];
   List<List<Dia?>> weeks = [];
   DateFormat hourStr = DateFormat("Hm");
-  buildCalendar(DateTime newData) {
+  buildCalendar(DateTime newData, BuildContext context) {
     data = newData;
     weeks.clear();
     dia1Pronto = false;
@@ -54,7 +53,7 @@ class DeveresController extends GetxController {
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     diaAtual = null;
-    var turmas = TurmasStateDesktop.to.turmaAtual;
+    var turmas = Provider.of<TurmasStateDesktop>(context).turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
       /*  debugPrint('''
@@ -73,7 +72,8 @@ class DeveresController extends GetxController {
                       dever.data.day == diaI.day &&
                       dever.data.month == diaI.month &&
                       dever.data.year == diaI.year)
-                  .toList().toString());
+                  .toList()
+                  .toString());
               return Dia(
                   diaI,
                   turmas.deveres!
@@ -83,8 +83,10 @@ class DeveresController extends GetxController {
                           dever.data.year == diaI.year)
                       .toList());
             } else {
-              debugPrint(diaI.subtract(
-                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)).toString());
+              debugPrint(diaI
+                  .subtract(
+                      Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1))
+                  .toString());
               return Dia(
                 diaI.subtract(
                     Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
@@ -131,6 +133,6 @@ class DeveresController extends GetxController {
       }
     }
 
-    update();
+    notifyListeners();
   }
 }
