@@ -407,9 +407,9 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                             //     .turmaAtual!
                                             //     .id);
                                             // await turmas.turmaAtual!.addDever(
-                                            await turmas.turmasSQL.createDever(
+                                            await turmas.turmasFB.createDever(
                                               Dever(
-                                                id: FirebaseFirestore.instance.collection("dever").doc().id,
+                                                //id: FirebaseFirestore.instance.collection("dever").doc().id,
                                                   data: DateTime(
                                                       dia!.year,
                                                       dia!.month,
@@ -418,11 +418,23 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                       hora!.minute),
                                                   materiaID: materiaSelect!.id,
                                                   title: titulo.text,
+                                                  ultimaModificacao: DateTime.now(),
+
                                                   pontos:
                                                       double.parse(pontos.text),
                                                   local: local.text),
                                               turmas.turmaAtual!.id
                                             );
+                                            var lastUpdate = (await turmas.turmasSQL.getUpdate());
+                                            var newDeveres = await turmas.turmasFB.refreshTurma(turmas.turmaAtual!.id, Timestamp.fromDate(lastUpdate));
+
+
+                                            for (var dever in newDeveres){
+                                              await turmas.turmasSQL.createDever(dever, turmas.turmaAtual!.id);
+                                            }
+
+                                            await turmas.getData();
+
                                             // FirestoreApp().getData(Dever(
                                             //     data: Timestamp
                                             //         .fromDate(DateTime(

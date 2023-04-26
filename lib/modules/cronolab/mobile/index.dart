@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/cronolab/mobile/structure/errosGet.dart';
 import 'package:cronolab/modules/cronolab/mobile/structure/getDeveres.dart';
 import 'package:cronolab/modules/dever/view/mobile/cadastraDever.dart';
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   var internet = await InternetConnectionChecker().hasConnection;
 
                   if (internet) {
-                    await turmas.turmasFB.loadTurmasUser();
+                    await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
                   }
 
                 },
@@ -149,6 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Icon(Icons.add, color: darkPrimary),
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () async {
+
+
                   await cadastra(context, turmas, () {
                     setState(() {});
                   });

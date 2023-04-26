@@ -93,21 +93,21 @@ class _GetDeveresState extends State<GetDeveres> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   color:
-                                      //  controllerPage
-                                      //             .listFilter !=
-                                      //         null
-                                      //     ? controllerPage.listFilter![
-                                      //                     0] !=
-                                      //                 null ||
-                                      //             controllerPage.listFilter![
-                                      //                     1] !=
-                                      //                 null
-                                      //         ? Theme.of(
-                                      //                 context)
-                                      //             .primaryColor
-                                      // :
+
+                                                  listFilter !=
+                                              null
+                                          ? listFilter![
+                                                          0] !=
+                                                      null ||
+                                                  listFilter![
+                                                          1] !=
+                                                      null
+                                              ? Theme.of(
+                                                      context)
+                                                  .primaryColor
+                                      :
                                       Colors.transparent
-                                  // : Colors.transparent
+                                   : Colors.transparent
                                   ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -115,42 +115,42 @@ class _GetDeveresState extends State<GetDeveres> {
                                 children: [
                                   Icon(Icons.filter_list,
                                       color:
-                                          // controllerPage
-                                          //             .listFilter !=
-                                          //         null
-                                          //     ? controllerPage.listFilter![
-                                          //                     0] !=
-                                          //                 null ||
-                                          //             controllerPage.listFilter![
-                                          //                     1] !=
-                                          //                 null
-                                          //         ? Theme.of(
-                                          //                 context)
-                                          //             .backgroundColor
-                                          // :
+
+                                                      listFilter !=
+                                                  null
+                                              ? listFilter![
+                                                              0] !=
+                                                          null ||
+                                                      listFilter![
+                                                              1] !=
+                                                          null
+                                                  ? Theme.of(
+                                                          context)
+                                                      .backgroundColor
+                                          :
                                           Theme.of(context).primaryColor
-                                      // : Theme.of(context)
-                                      //     .primaryColor,
+                                       : Theme.of(context)
+                                          .primaryColor,
                                       ),
                                   Text(
                                     "Filtro",
                                     style: TextStyle(
                                         color:
-                                            // controllerPage
-                                            //             .listFilter !=
-                                            //         null
-                                            //     ? controllerPage.listFilter![0] !=
-                                            //                 null ||
-                                            //             controllerPage.listFilter![1] !=
-                                            //                 null
-                                            //         ? Theme.of(
-                                            //                 context)
-                                            //             .backgroundColor
-                                            // :
+
+                                                        listFilter !=
+                                                    null
+                                                ? listFilter![0] !=
+                                                            null ||
+                                                        listFilter![1] !=
+                                                            null
+                                                    ? Theme.of(
+                                                            context)
+                                                        .backgroundColor
+                                            :
                                             Theme.of(context).primaryColor
-                                        // : Theme.of(
-                                        //         context)
-                                        //     .primaryColor
+                                        : Theme.of(
+                                                context)
+                                            .primaryColor
                                         ),
                                   ),
                                 ],

@@ -209,10 +209,10 @@ class _LoginPageState extends State<LoginPage> {
                                         await LoginController()
                                             .loginGoogle(context);
 
-                                        await context.read<Turmas>().turmasFB.loadTurmasUser();
-                                        for (var turma in context.read<Turmas>().turmasFB.turmas){
-                                          context.read<Turmas>().turmasSQL.createFullTurma(turma);
-                                        }
+                                        //await context.read<Turmas>().turmasFB.loadTurmasUser();
+                                        // for (var turma in context.read<Turmas>().turmasFB.turmas){
+                                        //   context.read<Turmas>().turmasSQL.createFullTurma(turma);
+                                        // }
                                         cancel();
                                       })),
                           const SizedBox(height: 20),

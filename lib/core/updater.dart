@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 class Updater {
   init(BuildContext context) async {
-    double appVersion = 2.35;
+    double appVersion = 3.01;
     // await GetVersion.projectVersion;
 
     var response = await http.get(

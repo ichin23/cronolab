@@ -128,6 +128,12 @@ class _DeverDetailsState extends State<DeverDetails> {
           ]),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+
+        },
+      )
+      ,
     );
   }
 }

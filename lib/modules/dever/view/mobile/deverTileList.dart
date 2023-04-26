@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -32,6 +33,17 @@ class _DeverTileListState extends State<DeverTileList> {
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center),
           onTap: () async {
+            if(widget.dever.status==true){
+              await context.read<Turmas>().turmasSQL!.updateDever(widget.dever..status= false);
+            }else{
+              await context.read<Turmas>().turmasSQL!.updateDever(widget.dever..status= true);
+            }
+
+
+            await context.read<Turmas>().getData();
+            if (widget.notifyParent != null) {
+              widget.notifyParent!();
+            }
             // await turmas.setDeverStatus(
             //     widget.dever.id!, !widget.dever.status!);
             // Provider.of<IndexController>(context).refreshDb(context);
@@ -45,8 +57,11 @@ class _DeverTileListState extends State<DeverTileList> {
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              await context.read<Turmas>().turmasSQL!.deleteDever(widget.dever);
-
+              var date= Timestamp.fromDate((await context.read<Turmas>().turmasFB!.deleteDever(widget.dever, context.read<Turmas>().turmaAtual!.id )).toDate().subtract(Duration(minutes: 3)));
+              var newDeveres =await context.read<Turmas>().turmasFB!.refreshTurma(context.read<Turmas>().turmaAtual!.id , date);
+              for(var dever in newDeveres){
+                await context.read<Turmas>().turmasSQL.createDever(dever, context.read<Turmas>().turmaAtual!.id);
+              }
               await context.read<Turmas>().getData();
               if (widget.notifyParent != null) {
                 widget.notifyParent!();

@@ -32,14 +32,20 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  var loading = false;
   Future loadFromFirebase(Turmas turmas) async {
+    //if(loading)return;
+    loading=true;
+
     var internet = await InternetConnectionChecker().hasConnection;
 
     if (!internet) {
       return Future.error(CronolabException("Sem Internet", 100));
     }
-    await turmas.turmasFB.loadTurmasUser();
+    await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
     await turmas.saveFBData();
+    turmas.getData();
+    loading=false;
   }
 
   @override
@@ -164,7 +170,7 @@ class _MainAppState extends State<MainApp> {
                                     ? const HomePageDesktop()
                                     : Builder(builder: (context) {
                                         return FutureBuilder(
-                                            future: loadFromFirebase(
+                                            future:  loadFromFirebase(
                                                 context.read<Turmas>()),
                                             builder: (context, snap) {
                                               print(snap.error);

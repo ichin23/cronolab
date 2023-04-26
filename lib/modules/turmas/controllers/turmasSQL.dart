@@ -5,11 +5,24 @@ import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/shared/models/cronolabExceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TurmasSQL with ChangeNotifier {
   List<Turma> turmas = [];
   Turma? turmaAtual;
+
+  setUpdate(DateTime lastUpdate) async {
+    SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    await sharedPrefs!
+        .setInt("ultimaModificacao", lastUpdate.microsecondsSinceEpoch);
+  }
+
+  Future<DateTime> getUpdate() async {
+    SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    return await DateTime.fromMicrosecondsSinceEpoch(
+        sharedPrefs!.getInt("ultimaModificacao") ?? 0);
+  }
 
   TurmasSQL() {
     init();
@@ -20,7 +33,8 @@ class TurmasSQL with ChangeNotifier {
 
   init() async {
     db = await openDatabase(join(await getDatabasesPath(), "cronolab.db"),
-        version: 1, onCreate: _onCreate, onConfigure: _onConfigure);
+        version: 2, onCreate: _onCreate, onConfigure: _onConfigure);
+
     debugPrint("Banco iniciado");
   }
 
@@ -30,7 +44,7 @@ class TurmasSQL with ChangeNotifier {
     await db.execute("CREATE TABLE turma(id VARCHAR(50) NOT NULL PRIMARY KEY,"
         " nome TEXT, admin INTEGER );");
     await db.execute("CREATE TABLE dever(id VARCHAR(50) NOT NULL PRIMARY KEY,"
-        " title TEXT, data INTEGER, status INTEGER DEFAULT 0,"
+        " title TEXT, data INTEGER, ultimaModificacao  INTEGER, status INTEGER DEFAULT 0,"
         " materiaID VARCHAR(50), turmaID VARCHAR(50), local TEXT, pontos REAL,"
         " FOREIGN KEY (materiaID) REFERENCES materia(id) ON DELETE CASCADE,"
         " FOREIGN KEY (turmaID) REFERENCES turma(id) ON DELETE CASCADE);");
@@ -66,7 +80,29 @@ class TurmasSQL with ChangeNotifier {
     }
   }
 
+  Future<bool> turmaExist(String turmaID) async {
+    var turma =
+        await db!.query("turma", where: "turma.id = ?", whereArgs: [turmaID]);
+    if (turma.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   materiaExist() {}
+
+  Future<bool> deverExist(String deverID, String turmaID) async {
+    await checkInit();
+
+    var dever = await db!.query("dever",
+        where: "dever.id = ? AND dever.turmaID = ?",
+        whereArgs: [deverID, turmaID]);
+
+    if (dever.isEmpty) {
+      return false;
+    }
+    return true;
+  }
 
   Future<List<Turma>> getTurmasData() async {
     await checkInit();
@@ -89,6 +125,9 @@ class TurmasSQL with ChangeNotifier {
           materias.add(Materia.fromJsonDB(materia));
         }
 
+        materias.sort((a, b)=>a.nome.compareTo(b.nome));
+
+
         if (!turmaNaLista(turma["id"].toString())) {
           turmas.add(Turma(
               nome: turma["nome"].toString(),
@@ -103,16 +142,20 @@ class TurmasSQL with ChangeNotifier {
   }
 
   Future<void> createFullTurma(Turma newTurma) async {
-    await createTurma(newTurma);
-    for (var materia in newTurma.materia) {
-      await createMateria(materia, newTurma.id);
-    }
+    var exist = await turmaExist(newTurma.id);
 
-    if (newTurma.deveres == null) return;
+      await createTurma(newTurma);
+      for (var materia in newTurma.materia) {
+        await createMateria(materia, newTurma.id);
+      }
+      print("Turmas Full: ${newTurma.deveres.toString()}");
+      if (newTurma.deveres == null) return;
 
-    for (var dever in newTurma.deveres!) {
-      await createDever(dever, newTurma.id);
-    }
+      for (var dever in newTurma.deveres!) {
+        await createDever(dever, newTurma.id);
+      }
+
+    setUpdate(DateTime.now());
   }
 
   createTurma(Turma newTurma) async {
@@ -144,25 +187,23 @@ class TurmasSQL with ChangeNotifier {
   }
 
   createDever(Dever dever, String turmaID) async {
-    try {
-      await checkInit();
+    var exist = await deverExist(dever.id!, turmaID);
 
+    if (exist) {
+      if(dever.deletado==true){
+        await deleteDever(dever);
+      }
+    }
+
+    await checkInit();
+    if(dever.deletado!=true) {
       var data = dever.toJsonDB();
       data["turmaID"] = turmaID;
-      //var deverExist = await checkDeverExist(dever.id!);
 
-      //if (true) {
       data["status"] = 0;
 
       await db!
           .insert("dever", data, conflictAlgorithm: ConflictAlgorithm.ignore);
-      // } else {
-      //   var id = data["id"];
-      //   data.remove("id");
-      //   db!.update("dever", data, where: "dever.id=?", whereArgs: [id]);
-      // }
-    } catch (e) {
-      //e.printError();
     }
   }
 
@@ -188,7 +229,22 @@ class TurmasSQL with ChangeNotifier {
         await createMateria(materia, turma.id);
       }
     }
+
+    materias.sort((a, b)=>a.nome.compareTo(b.nome));
     return Turma.fromSQL(queryTurma[0], materias);
+  }
+  Future<DateTime> readUltimaModificacao(String turmaID)async{
+    await checkInit();
+    var result = await db!.rawQuery("SELECT MAX(ultimaModificacao) AS maior FROM dever WHERE turmaID = ?", [turmaID]  );
+
+
+    if(result.isEmpty || result.first["maior"] ==null){
+      return DateTime.fromMicrosecondsSinceEpoch(0);
+    }else{
+      int resultInt = result.first["maior"] as int;
+      var date = DateTime.fromMillisecondsSinceEpoch(resultInt);return date;
+
+    }
   }
 
   Future<Materia?> readMateria(String materiaID) async {
@@ -206,8 +262,10 @@ class TurmasSQL with ChangeNotifier {
     await checkInit();
     List args = [turmaID];
     String defaultQuery =
-        "SELECT dever.id, dever.title, dever.data, dever.status, dever.materiaID, dever.local, dever.pontos, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?";
+        "SELECT dever.id, dever.title, dever.ultimaModificacao, dever.data, dever.status, dever.materiaID, dever.local, dever.pontos, materia.nome, materia.professor, materia.contato FROM dever INNER JOIN materia ON dever.materiaID = materia.id WHERE dever.turmaID = ?";
+    defaultQuery += " AND dever.data > ?";
 
+    args.add(DateTime.now().millisecondsSinceEpoch);
     if (filters != null) {
       if (filters[0] != null) {
         switch (filters[0]) {
@@ -232,23 +290,15 @@ class TurmasSQL with ChangeNotifier {
                 .add(const Duration(days: 5))
                 .millisecondsSinceEpoch);
             break;
-          default:
-            defaultQuery += " AND dever.data > ?";
-            args.add(DateTime.now().microsecondsSinceEpoch);
-            break;
         }
       }
       if (filters[1] != null) {
         defaultQuery += " AND dever.materiaID=?";
         args.add(filters[1]);
       }
-    } else {
-      defaultQuery += " AND dever.data > ?";
-
-      args.add(DateTime.now().millisecondsSinceEpoch);
     }
 
-    defaultQuery += " ORDER BY status,data";
+    defaultQuery += " ORDER BY status, data";
 
     var query = await db!.rawQuery(defaultQuery, args);
     // var query =
@@ -257,7 +307,6 @@ class TurmasSQL with ChangeNotifier {
     List<Dever> deveres = [];
     for (var dever in query) {
       deveres.add(Dever.fromJsonDB(dever));
-      ;
     }
     return deveres;
   }
@@ -266,7 +315,11 @@ class TurmasSQL with ChangeNotifier {
 
   updateMateria() {}
 
-  updateDever() {}
+  updateDever(Dever dever) async {
+    await checkInit();
+    await db!.update("dever", dever.toJsonDB(),
+        where: "dever.id =?", whereArgs: [dever.id]);
+  }
 
   deleteTurma(Turma turma) async {
     await checkInit();

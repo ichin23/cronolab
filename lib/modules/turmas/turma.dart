@@ -17,6 +17,7 @@ class Turma {
   List? deveres;
   List<Materia> materia;
 
+
   Turma(
       {required this.nome,
       required this.id,

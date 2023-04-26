@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
+import 'package:cronolab/modules/turmas/controllers/turmasSQL.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,10 @@ class TurmasFirebase with ChangeNotifier {
   List<Turma> turmas = [];
   bool loadingTurmas = false;
 
-   Future loadTurmasUser() async {
+  Future loadTurmasUser(TurmasSQL turmasSQL) async {
+    //if(loadingTurmas)return;
     loadingTurmas = true;
+    var deverID="";
     notifyListeners();
     try {
       var turmasQuery = await _firestore
@@ -21,7 +24,7 @@ class TurmasFirebase with ChangeNotifier {
           .doc(_auth.currentUser!.uid)
           .collection("turmas")
           .get();
-      turmas=[];
+      turmas = [];
       for (var turma in turmasQuery.docs) {
         Turma? turmaClass = (await _firestore
                 .collection("turmas")
@@ -31,13 +34,23 @@ class TurmasFirebase with ChangeNotifier {
                     toFirestore: (turma, option) => turma.toJson())
                 .get())
             .data();
+
         if (turmaClass != null) {
           var materias = await getMaterias(turma.id);
-          var isAdmin = await _firestore.collection("turmas").doc(turmaClass.id).collection("admins").doc(_auth.currentUser!.uid).get();
-          var deveres = await getDeveres(turma.id);
-          if(isAdmin.exists){
+          var isAdmin = await _firestore
+              .collection("turmas")
+              .doc(turmaClass.id)
+              .collection("admins")
+              .doc(_auth.currentUser!.uid)
+              .get();
+
+          var maior = await turmasSQL.readUltimaModificacao(turma.id);
+          var deveres = await getDeveres(turma.id, Timestamp.fromDate(maior));
+
+          if (isAdmin.exists) {
             turmaClass.setAdmin();
           }
+
           turmaClass.deveres = deveres;
           turmaClass.materia = materias;
 
@@ -49,14 +62,21 @@ class TurmasFirebase with ChangeNotifier {
         }
       }
       notifyListeners();
-
-      // turmas = turmasQuery.docs.map((e) => e.data()).toList();
-      print(turmas);
-      notifyListeners();
     } on Exception catch (e) {
       debugPrint(e.toString());
+      //debugPrint(dever.id);
       rethrow;
     }
+  }
+
+  Future<List> refreshTurma(String turmaID, Timestamp lastUpdate, )async{
+    var updatedData = await _firestore.collection("turmas").doc(turmaID).collection("deveres").where("ultimaModificacao", isGreaterThan: lastUpdate ).get();
+
+    var newDeveres = [];
+    for (var dever in updatedData.docs){
+     newDeveres.add( Dever.fromJsonFirestore(dever.data(), dever.id));
+    }
+    return newDeveres;
   }
 
   getMaterias(String turmaID) async {
@@ -69,32 +89,42 @@ class TurmasFirebase with ChangeNotifier {
     for (var materia in materiasQuery.docs) {
       var data = materia.data();
       data["id"] = materia.id;
-      debugPrint(materia.data().toString());
       materias.add(Materia.fromJson(data));
     }
 
     return materias;
   }
 
-  Future<List<Dever>> getDeveres(String turmaID) async {
+  Future<List<Dever>> getDeveres(String turmaID, Timestamp ultimaMod) async {
     var deveresQuery = await _firestore
         .collection("turmas")
         .doc(turmaID)
-        .collection("deveres").orderBy("data")
+        .collection("deveres")
+        .where("ultimaModificacao", isGreaterThanOrEqualTo: ultimaMod)
+      .orderBy("ultimaModificacao")
+        //.orderBy("data")
         .get();
     List<Dever> deveres = [];
     for (var dever in deveresQuery.docs) {
-      debugPrint(dever.data().toString());
+      debugPrint(dever.id);
       var data = dever.data();
-      data["id"] = dever.id;
-      deveres.add(Dever.fromJsonFirestore(data));
+
+      deveres.add(Dever.fromJsonFirestore(data, dever.id));
     }
     debugPrint(deveres.toString());
     return deveres;
   }
-  
-  createDever(Dever dever){
-    _firestore.collection("turmas");
-    
+
+  createDever(Dever dever,String turmaID) {
+    _firestore.collection("turmas").doc(turmaID).collection("deveres").add(dever.toJsonFB());
+  }
+
+  Future<Timestamp> deleteDever(Dever dever, String turmaID)async {
+    var date = Timestamp.now();
+    await _firestore.collection("turmas").doc(turmaID).collection("deveres").doc(dever.id).update({
+      "deletado": true,
+      "ultimaModificacao": date,
+    });
+    return date;
   }
 }
