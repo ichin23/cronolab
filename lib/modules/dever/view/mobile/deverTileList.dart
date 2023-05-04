@@ -34,9 +34,9 @@ class _DeverTileListState extends State<DeverTileList> {
               textAlign: TextAlign.center),
           onTap: () async {
             if(widget.dever.status==true){
-              await context.read<Turmas>().turmasSQL!.updateDever(widget.dever..status= false);
+              await context.read<Turmas>().turmasSQL.updateDever(widget.dever..status= false);
             }else{
-              await context.read<Turmas>().turmasSQL!.updateDever(widget.dever..status= true);
+              await context.read<Turmas>().turmasSQL.updateDever(widget.dever..status= true);
             }
 
 
@@ -55,10 +55,9 @@ class _DeverTileListState extends State<DeverTileList> {
           PopupMenuItem(
             child: Text("Excluir",
                 style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center),
-            onTap: () async {
-              var date= Timestamp.fromDate((await context.read<Turmas>().turmasFB!.deleteDever(widget.dever, context.read<Turmas>().turmaAtual!.id )).toDate().subtract(Duration(minutes: 3)));
-              var newDeveres =await context.read<Turmas>().turmasFB!.refreshTurma(context.read<Turmas>().turmaAtual!.id , date);
+                textAlign: TextAlign.center),            onTap: () async {
+              var date= Timestamp.fromDate((await context.read<Turmas>().turmasFB.deleteDever(widget.dever, context.read<Turmas>().turmaAtual!.id )).toDate().subtract(Duration(minutes: 3)));
+              var newDeveres =await context.read<Turmas>().turmasFB.refreshTurma(context.read<Turmas>().turmaAtual!.id , date);
               for(var dever in newDeveres){
                 await context.read<Turmas>().turmasSQL.createDever(dever, context.read<Turmas>().turmaAtual!.id);
               }
@@ -86,9 +85,9 @@ class _DeverTileListState extends State<DeverTileList> {
             : data.difference(DateTime.now()).inDays < 5
                 ? const Color(0xFF817938)
                 : const Color(0xff3A8138);
-    DateFormat dateStr = DateFormat("dd/MM");
+
     DateFormat dataStr = DateFormat("dd/MM - HH:mm");
-    DateFormat hourStr = DateFormat("HH:mm");
+
 
     return GestureDetector(
       onTapDown: (tapDetail) {
@@ -97,7 +96,7 @@ class _DeverTileListState extends State<DeverTileList> {
       onTap: () {
         //debugPrint(
         //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
-        Navigator.pushNamed(context, "/dever", arguments: widget.dever);
+        Navigator.pushNamed(context, "/dever", arguments: {"dever": widget.dever, "index": widget.index});
       },
       onLongPress: () {
         showMenu(

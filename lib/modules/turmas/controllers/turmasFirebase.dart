@@ -16,7 +16,7 @@ class TurmasFirebase with ChangeNotifier {
   Future loadTurmasUser(TurmasSQL turmasSQL) async {
     //if(loadingTurmas)return;
     loadingTurmas = true;
-    var deverID="";
+    var deverID = "";
     notifyListeners();
     try {
       var turmasQuery = await _firestore
@@ -27,12 +27,12 @@ class TurmasFirebase with ChangeNotifier {
       turmas = [];
       for (var turma in turmasQuery.docs) {
         Turma? turmaClass = (await _firestore
-                .collection("turmas")
-                .doc(turma.id)
-                .withConverter<Turma>(
-                    fromFirestore: (doc, options) => Turma.fromFirebase(doc),
-                    toFirestore: (turma, option) => turma.toJson())
-                .get())
+            .collection("turmas")
+            .doc(turma.id)
+            .withConverter<Turma>(
+            fromFirestore: (doc, options) => Turma.fromFirebase(doc),
+            toFirestore: (turma, option) => turma.toJson())
+            .get())
             .data();
 
         if (turmaClass != null) {
@@ -69,12 +69,59 @@ class TurmasFirebase with ChangeNotifier {
     }
   }
 
-  Future<List> refreshTurma(String turmaID, Timestamp lastUpdate, )async{
-    var updatedData = await _firestore.collection("turmas").doc(turmaID).collection("deveres").where("ultimaModificacao", isGreaterThan: lastUpdate ).get();
+  Future<List<Map>> getAdmins(String turmaID) async {
+    var adminsFB = (await _firestore
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("admins")
+        .get());
+    List<Map> admins = [];
+    for (var admin in adminsFB.docs) {
+      Map data = (await _firestore
+          .collection("users")
+          .doc(admin.id).get()).data() ?? {};
+      data!["id"] = admin.id;
+      admins.add(data);
+    }
+    return admins;
+  }
+
+  Future<List<Map>> getParticipantes(String turmaID) async {
+    var participantesFB = (await _firestore
+        .collectionGroup("turmas")
+        .where("id", isEqualTo: turmaID)
+        .get());
+    List<Map> participantes = [];
+    for (var participante in participantesFB.docs) {
+      var id = participante.reference.path.split("/")[1];
+      Map data = {"id": id};
+      var dataFB = (await _firestore
+          .collection("users")
+          .doc(id).get());
+
+      if (dataFB.data() != null) {
+        data.addAll(dataFB.data()!);
+      }
+
+      participantes.add(data);
+    }
+
+
+    return participantes;
+  }
+
+  Future<List> refreshTurma(String turmaID,
+      Timestamp lastUpdate,) async {
+    var updatedData = await _firestore
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("deveres")
+        .where("ultimaModificacao", isGreaterThan: lastUpdate)
+        .get();
 
     var newDeveres = [];
-    for (var dever in updatedData.docs){
-     newDeveres.add( Dever.fromJsonFirestore(dever.data(), dever.id));
+    for (var dever in updatedData.docs) {
+      newDeveres.add(Dever.fromJsonFirestore(dever.data(), dever.id));
     }
     return newDeveres;
   }
@@ -101,8 +148,8 @@ class TurmasFirebase with ChangeNotifier {
         .doc(turmaID)
         .collection("deveres")
         .where("ultimaModificacao", isGreaterThanOrEqualTo: ultimaMod)
-      .orderBy("ultimaModificacao")
-        //.orderBy("data")
+        .orderBy("ultimaModificacao")
+    //.orderBy("data")
         .get();
     List<Dever> deveres = [];
     for (var dever in deveresQuery.docs) {
@@ -115,16 +162,54 @@ class TurmasFirebase with ChangeNotifier {
     return deveres;
   }
 
-  createDever(Dever dever,String turmaID) {
-    _firestore.collection("turmas").doc(turmaID).collection("deveres").add(dever.toJsonFB());
+  createDever(Dever dever, String turmaID) {
+    _firestore
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("deveres")
+        .add(dever.toJsonFB());
   }
 
-  Future<Timestamp> deleteDever(Dever dever, String turmaID)async {
+  updateDever(String turmaID, String deverID,
+      Map<String, Object?> update) async {
+    await _firestore
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("deveres")
+        .doc(deverID)
+        .update(update);
+  }
+
+  Future<Timestamp> deleteDever(Dever dever, String turmaID) async {
     var date = Timestamp.now();
-    await _firestore.collection("turmas").doc(turmaID).collection("deveres").doc(dever.id).update({
+    await _firestore
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("deveres")
+        .doc(dever.id)
+        .update({
       "deletado": true,
       "ultimaModificacao": date,
     });
     return date;
+  }
+
+  addAdmin(String userID, Turma turma) async {
+    if (turma.isAdmin) {
+      await _firestore.collection("turmas").doc(turma.id)
+          .collection("admins")
+          .doc(userID)
+          .set(
+          {});
+    }
+  }
+
+  removeAdmin(String userID, Turma turma) async {
+    if (turma.isAdmin) {
+      await _firestore.collection("turmas").doc(turma.id)
+          .collection("admins")
+          .doc(userID)
+          .delete();
+    }
   }
 }

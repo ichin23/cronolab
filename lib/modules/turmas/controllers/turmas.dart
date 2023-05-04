@@ -11,20 +11,22 @@ class Turmas with ChangeNotifier {
   Turma? turmaAtual;
   List<Dever>? deveresAtuais;
 
-    Future<List> getData()async{
+    Future<List> getData([List? listFilter])async{
       try {
         await turmasSQL.getTurmasData();
 
-        //await turmasSQL.readTurma(turma)
         if(turmasSQL.turmas.isEmpty){
           throw CronolabException("Nenhuma turma cadastrada!",11 );
         }
 
         turmaAtual=turmasSQL.turmas.first;
-        var deveres = await turmasSQL.readDeveres(turmaAtual!.id);
+        var deveres = await turmasSQL.readDeveres(turmaAtual!.id, listFilter);
         if(deveres==null){
           throw CronolabException("Nenhum dever encontrado!", 12);
+        }else{
+          deveresAtuais=deveres;
         }
+
         notifyListeners();
         return deveres;
       }on CronolabException catch (e){
@@ -45,6 +47,8 @@ class Turmas with ChangeNotifier {
         await turmasSQL.createFullTurma(turma);
       }
     }
+
+
 
     changeTurmaAtual(Turma newTurma){
       turmaAtual=newTurma;

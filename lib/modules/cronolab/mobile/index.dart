@@ -110,37 +110,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               })),
           SliverFillRemaining(
-              child: Consumer<Turmas>(builder: (context, turmas, child) {
-            return Refresh(
-                onRefresh: () async {
-                  dataTurmas=turmas.getData();
-                  var internet = await InternetConnectionChecker().hasConnection;
+              child: Refresh(
+                  onRefresh: () async {
+                    dataTurmas=context.read<Turmas>().getData();
+                    var internet = await InternetConnectionChecker().hasConnection;
 
-                  if (internet) {
-                    await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
-                  }
+                    if (internet) {
+                      await context.read<Turmas>().turmasFB.loadTurmasUser(context.read<Turmas>().turmasSQL);
+                    }
 
-                },
-                child: FutureBuilder<List?>(
-                    future: dataTurmas,
-                    builder: (context, snapshot) {
-                      debugPrint("ConnectionState: " +
-                          snapshot.connectionState.toString());
+                  },
+                  child: FutureBuilder<List?>(
+                      future: dataTurmas,
+                      builder: (context, snapshot) =>Consumer<Turmas>(
+    builder: (context, turmas, _){
+                        debugPrint("ConnectionState: " +
+                            snapshot.connectionState.toString());
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return ErrosGet(snapshot.error as CronolabException);
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.done) {
-                        return GetDeveres(turmas);
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.none) {
-                        return const Center(child: Text("Erro Desconhecido"));
-                      }
-                      return Container();
-                    }));
-          }))
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return ErrosGet(snapshot.error as CronolabException);
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          return GetDeveres(turmas);
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.none) {
+                          return const Center(child: Text("Erro Desconhecido"));
+                        }
+                        return Container();
+                      }))))
         ]),
         floatingActionButton:
             Consumer<Turmas>(builder: (context, turmas, child) {

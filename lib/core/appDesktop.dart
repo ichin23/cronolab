@@ -118,7 +118,7 @@ class _MainAppDesktopState extends State<MainAppDesktop> {
                 : const PerfilPage(),
         "/minhasTurmas": (context) => const GerenciarTurmas(),
         "/suasInfos": (context) => const SuasInformacoes(),
-        "/turma": (context) => const EditarTurma(),
+        //"/turma": (context) => const EditarTurma(),
         // "/dever": (context) => const DeverDetails(),
       },
     );

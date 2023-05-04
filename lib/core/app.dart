@@ -6,13 +6,14 @@ import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
-
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/models/cronolabExceptions.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _MainAppState extends State<MainApp> {
     }
     await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
     await turmas.saveFBData();
-    turmas.getData();
+    await turmas.getData();
     loading=false;
   }
 
@@ -234,10 +235,12 @@ class _MainAppState extends State<MainApp> {
              return  MaterialPageRoute(builder: (context)=> SuasInformacoes());
               break;
             case "/turma":
-              return MaterialPageRoute(builder: (context)=> EditarTurma());
+              if(args is Turma)
+              return MaterialPageRoute(builder: (context)=> EditarTurma(args));
               break;
             case "/dever":
-              return MaterialPageRoute(builder: (context)=> DeverDetails(args! as Dever));
+              if(args is Map)
+              return MaterialPageRoute(builder: (context)=> DeverDetails(args["dever"], args["index"]));
               break;
           }
         },

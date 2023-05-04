@@ -1,5 +1,7 @@
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -79,8 +81,8 @@ Future<List> filterDever(BuildContext context, {List? oldList}) async {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:  [
-                         ...Provider.of<Turmas>(context)
+                      children: [
+                        ...Provider.of<Turmas>(context)
                             .turmaAtual!
                             .materia
                             .map((e) => GestureDetector(
@@ -121,11 +123,29 @@ Future<List> filterDever(BuildContext context, {List? oldList}) async {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("OK"))
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(textStyle: TextStyle(fontSize:16)),
+                          onPressed: () {
+                            list = [null, null];
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Limpar")),
+
+                      SizedBox(width: 20),
+                      TextButton(
+                          style: ButtonStyle(
+                              //textStyle: MaterialStatePropertyAll(buttonTextDark),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(primaryDark)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("OK", style: buttonTextDark,)),
+                    ],
+                  )
                 ],
               );
             }),

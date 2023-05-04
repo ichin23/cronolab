@@ -49,7 +49,7 @@ class _DeverTileState extends State<DeverTile> {
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              await context.read<Turmas>().turmasSQL!.deleteDever(widget.dever);
+              await context.read<Turmas>().turmasSQL.deleteDever(widget.dever);
 
               await context.read<Turmas>().getData();
               if (widget.notifyParent != null) {

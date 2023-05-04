@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,6 +21,9 @@ class LoginController {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
+      var user = FirebaseAuth.instance.currentUser;
+      await FirebaseFirestore.instance.collection("users").doc(user!.uid).set(
+          {"nome": user.displayName, "email":user.email });
       if (!kIsWeb) {
         OneSignal().setExternalUserId(FirebaseAuth.instance.currentUser!.uid);
       }

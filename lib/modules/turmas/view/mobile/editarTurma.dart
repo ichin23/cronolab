@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ import '../../../materia/view/mobile/editarMateria.dart';
 import '../../turma.dart';
 
 class EditarTurma extends StatefulWidget {
-  const EditarTurma({Key? key}) : super(key: key);
+  EditarTurma(this.turma, {Key? key}) : super(key: key);
+  Turma turma;
 
   @override
   State<EditarTurma> createState() => _EditarTurmaState();
@@ -27,10 +29,12 @@ class _EditarTurmaState extends State<EditarTurma>
   bool privada = false;
   bool loading = false;
 
+
+
   @override
   void initState() {
     super.initState();
-
+    turma = widget.turma;
     controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
     animation = Tween<double>(begin: 100, end: 0).animate(controller)
@@ -41,8 +45,6 @@ class _EditarTurmaState extends State<EditarTurma>
         setState(() {});
       });
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
-
-
       nome.text = turma.nome;
       codigo.text = turma.id;
     });
@@ -57,11 +59,6 @@ class _EditarTurmaState extends State<EditarTurma>
 
   @override
   Widget build(BuildContext context) {
-    turma = ModalRoute.of(context)!.settings.arguments as Turma;
-    print(turma.materia);
-    // var turmas = Provider.of<TurmasLocal>(context);
-    // var turmasState = Provider.of<TurmasState>(context);
-    // widget.turma.materias.add("");
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -192,11 +189,13 @@ class _EditarTurmaState extends State<EditarTurma>
                                   TextEditingController materia =
                                       TextEditingController();
 
-                                  addMateria(context, turma.id, (){}).then((value) async
-                                   {
-                                     await context.read<Turmas>().getData();
+                                  addMateria(context, turma.id, () {})
+                                      .then((value) async {
+                                    await context.read<Turmas>().getData();
                                     // await turmas.getTurmas();
-                                    turma = await context.read<Turmas>().getTurmaByID(turma.id)!;
+                                    turma = await context
+                                        .read<Turmas>()
+                                        .getTurmaByID(turma.id)!;
 
                                     setState(() {});
                                   });
@@ -209,7 +208,22 @@ class _EditarTurmaState extends State<EditarTurma>
               ),
             ),
             const SizedBox(height: 15),
-            Row(
+            ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GerenciarAdmins(turma)));
+              },
+              tileColor: color.whiteColor.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              title: Text("Administradores",
+                  style: Theme.of(context).textTheme.labelMedium),
+              trailing: Icon(Icons.arrow_forward_ios, color: color.whiteColor),
+            ),
+            const SizedBox(height: 15),
+            /*Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
@@ -254,7 +268,7 @@ class _EditarTurmaState extends State<EditarTurma>
                     child: Text("Salvar",
                         style: Theme.of(context).textTheme.headlineMedium)),
               ],
-            )
+            )*/
             // : Container()
           ]),
         ),
