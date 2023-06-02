@@ -33,6 +33,16 @@ class _ViewUsersState extends State<ViewUsers> {
                     icon: Icon(Icons.add),
                     color: primaryDark,
                     onPressed: () async {
+                      if(widget.admins.length>=3){
+                        await showDialog(
+                          context:context,
+                          builder: (context)=>AlertDialog(
+                            title: Text("Não é possível adicionar"),
+                            content: Text("A turma já atingiu o limite de 3 administradores!"),
+                          )
+                        );
+                        return;
+                      }
                       await showDialog(
                           context: context,
                           builder: (context) => AlertDialog(

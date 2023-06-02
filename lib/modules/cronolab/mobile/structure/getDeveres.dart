@@ -3,6 +3,7 @@ import 'package:cronolab/modules/dever/view/mobile/deverTile.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverTileList.dart';
 import 'package:cronolab/modules/dever/view/mobile/filterDever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,8 +39,10 @@ class _GetDeveresState extends State<GetDeveres> {
                                 .toString());
                             if (defaultView.index == ShowView.Grid.index) {
                               defaultView = ShowView.List;
+                              FirebaseAnalytics.instance.logEvent(name: "home_view",parameters: {"layout": "list"});
                             } else {
                               defaultView = ShowView.Grid;
+                              FirebaseAnalytics.instance.logEvent(name: "home_view",parameters: {"layout": "grid"});
                             }
                             debugPrint(defaultView.toString());
                             setState(() {});

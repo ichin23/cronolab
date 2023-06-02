@@ -13,6 +13,7 @@ import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/models/cronolabExceptions.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -52,6 +53,8 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    FirebaseAnalytics.instance.logAppOpen();
+
   }
 
   @override
