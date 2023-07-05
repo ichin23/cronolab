@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -33,12 +34,17 @@ class _DeverTileListState extends State<DeverTileList> {
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center),
           onTap: () async {
-            if(widget.dever.status==true){
-              await context.read<Turmas>().turmasSQL.updateDever(widget.dever..status= false);
-            }else{
-              await context.read<Turmas>().turmasSQL.updateDever(widget.dever..status= true);
+            if (widget.dever.status == true) {
+              await context
+                  .read<Turmas>()
+                  .turmasSQL
+                  .updateDever(widget.dever..status = false);
+            } else {
+              await context
+                  .read<Turmas>()
+                  .turmasSQL
+                  .updateDever(widget.dever..status = true);
             }
-
 
             await context.read<Turmas>().getData();
             if (widget.notifyParent != null) {
@@ -55,11 +61,24 @@ class _DeverTileListState extends State<DeverTileList> {
           PopupMenuItem(
             child: Text("Excluir",
                 style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center),            onTap: () async {
-              var date= Timestamp.fromDate((await context.read<Turmas>().turmasFB.deleteDever(widget.dever, context.read<Turmas>().turmaAtual!.id )).toDate().subtract(Duration(minutes: 3)));
-              var newDeveres =await context.read<Turmas>().turmasFB.refreshTurma(context.read<Turmas>().turmaAtual!.id , date);
-              for(var dever in newDeveres){
-                await context.read<Turmas>().turmasSQL.createDever(dever, context.read<Turmas>().turmaAtual!.id);
+                textAlign: TextAlign.center),
+            onTap: () async {
+              var date = Timestamp.fromDate((await context
+                      .read<Turmas>()
+                      .turmasFB
+                      .deleteDever(
+                          widget.dever, context.read<Turmas>().turmaAtual!.id))
+                  .toDate()
+                  .subtract(const Duration(minutes: 3)));
+              var newDeveres = await context
+                  .read<Turmas>()
+                  .turmasFB
+                  .refreshTurma(context.read<Turmas>().turmaAtual!.id, date);
+              for (var dever in newDeveres) {
+                await context
+                    .read<Turmas>()
+                    .turmasSQL
+                    .createDever(dever, context.read<Turmas>().turmaAtual!.id);
               }
               await context.read<Turmas>().getData();
               if (widget.notifyParent != null) {
@@ -88,7 +107,6 @@ class _DeverTileListState extends State<DeverTileList> {
 
     DateFormat dataStr = DateFormat("dd/MM - HH:mm");
 
-
     return GestureDetector(
       onTapDown: (tapDetail) {
         tapDetails = tapDetail;
@@ -96,7 +114,10 @@ class _DeverTileListState extends State<DeverTileList> {
       onTap: () {
         //debugPrint(
         //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
-        Navigator.pushNamed(context, "/dever", arguments: {"dever": widget.dever, "index": widget.index});
+        if (!kIsWeb) {
+          Navigator.pushNamed(context, "/dever",
+              arguments: {"dever": widget.dever, "index": widget.index});
+        }
       },
       onLongPress: () {
         showMenu(

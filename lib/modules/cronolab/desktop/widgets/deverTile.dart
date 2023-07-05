@@ -1,5 +1,4 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -48,20 +47,20 @@ class _DeverTileState extends State<DeverTile> {
 
         Navigator.pushNamed(context, "/dever", arguments: widget.dever);
       },
-      onLongPress: () {
-        showMenu(
-          color: backgroundDark,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          context: context,
-          position: RelativeRect.fromLTRB(
-              tapDetails.globalPosition.dx,
-              tapDetails.globalPosition.dy,
-              width - tapDetails.globalPosition.dx,
-              height - tapDetails.globalPosition.dy),
-          items: [...popMenu],
-        );
-      },
+      // onLongPress: () {
+      //   showMenu(
+      //     color: backgroundDark,
+      //     shape:
+      //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      //     context: context,
+      //     position: RelativeRect.fromLTRB(
+      //         tapDetails.globalPosition.dx,
+      //         tapDetails.globalPosition.dy,
+      //         width - tapDetails.globalPosition.dx,
+      //         height - tapDetails.globalPosition.dy),
+      //     items: [...popMenu],
+      //   );
+      // },
       child: Container(
         margin: const EdgeInsets.all(5),
         child: Container(
@@ -97,25 +96,14 @@ class _DeverTileState extends State<DeverTile> {
                           color: corText,
                           fontSize: 20,
                           fontWeight: FontWeight.w800)),
-                  Text(widget.dever.materiaID.toString(),
+                  Text(
+                      widget.dever.materia?.nome ??
+                          widget.dever.materiaID.toString(),
                       style: TextStyle(color: corText, fontSize: 17)),
-                  /* Text(
-                      (int.parse(widget.dever.pontos
-                                      .toString()
-                                      .split(".")[1]) ==
-                                  0
-                              ? widget.dever.pontos!.toStringAsFixed(0)
-                              : widget.dever.pontos.toString()) +
-                          " pontos",
-                      sty le: TextStyle(color: corText)),*/
                 ],
               ),
               Container(),
-              Text(
-                  (int.parse(widget.dever.pontos.toString().split(".")[1]) == 0
-                          ? widget.dever.pontos!.toStringAsFixed(0)
-                          : widget.dever.pontos.toString()) +
-                      " pontos",
+              Text((widget.dever.pontos.toString()) + " pontos",
                   style: TextStyle(color: corText)),
 
               // Container(

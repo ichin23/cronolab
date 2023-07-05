@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
-import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
-import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -37,7 +37,7 @@ class _MainAppState extends State<MainApp> {
   var loading = false;
   Future loadFromFirebase(Turmas turmas) async {
     //if(loading)return;
-    loading=true;
+    loading = true;
 
     var internet = await InternetConnectionChecker().hasConnection;
 
@@ -47,14 +47,13 @@ class _MainAppState extends State<MainApp> {
     await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
     await turmas.saveFBData();
     await turmas.getData();
-    loading=false;
+    loading = false;
   }
 
   @override
   void initState() {
     super.initState();
     FirebaseAnalytics.instance.logAppOpen();
-
   }
 
   @override
@@ -62,17 +61,8 @@ class _MainAppState extends State<MainApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Turmas()),
-        // ChangeNotifierProxyProvider<TurmasFirebase, TurmasSQL>(
-        //   create: (context) => TurmasSQL(),
-        //   update: (_, firebase, sql) {
-        //     sql?.checkNew(firebase);
-        //     return sql ?? TurmasSQL();
-        //   },
-        // ),
-        // ChangeNotifierProvider(create: (context) => TurmasState()),
-        // ChangeNotifierProvider(create: (context) => IndexController()),
-        // ChangeNotifierProvider(create: (context) => DeveresController()),
-        // ChangeNotifierProvider(create: (context) => TurmasStateDesktop()),
+        ChangeNotifierProvider(create: (context) => DeveresController()),
+        ChangeNotifierProvider(create: (context) => TurmasStateDesktop()),
       ],
       child: MaterialApp(
         builder: BotToastInit(),
@@ -81,12 +71,7 @@ class _MainAppState extends State<MainApp> {
         title: "Cronolab",
         theme: ThemeData(
             fontFamily: "Inter",
-            backgroundColor: backgroundDark,
             useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: secondaryDark,
-              primary: primaryDark,
-            ),
             scrollbarTheme: ScrollbarThemeData(
                 thumbVisibility: MaterialStateProperty.all(true),
                 thickness: MaterialStateProperty.all(10),
@@ -95,7 +80,6 @@ class _MainAppState extends State<MainApp> {
                 radius: const Radius.circular(10),
                 minThumbLength: 100),
             primaryColor: primaryDark,
-            errorColor: redDark,
             buttonTheme: ButtonThemeData(
                 splashColor: darkPrimary,
                 padding:
@@ -155,7 +139,11 @@ class _MainAppState extends State<MainApp> {
                 titleTextStyle: TextStyle(
                     color: Colors.black45,
                     fontSize: 18,
-                    fontWeight: FontWeight.w800))),
+                    fontWeight: FontWeight.w800)),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: secondaryDark,
+              primary: primaryDark,
+            ).copyWith(background: backgroundDark).copyWith(error: redDark)),
         //initialRoute: "/",
         onGenerateRoute: (settings) {
           var args = settings.arguments;
@@ -163,89 +151,110 @@ class _MainAppState extends State<MainApp> {
           switch (settings.name) {
             case "/":
               return MaterialPageRoute(
-          builder: (context)=> StreamBuilder<User?>(
-                      stream: FirebaseAuth.instance.authStateChanges(),
-                      builder: (context, stream) {
-                        if (stream.connectionState != ConnectionState.waiting) {
-                          if (stream.data != null) {
-                            return kIsWeb
-                                ? const HomePageDesktop()
-                                : Platform.isLinux || Platform.isWindows
-                                    ? const HomePageDesktop()
-                                    : Builder(builder: (context) {
-                                        return FutureBuilder(
-                                            future:  loadFromFirebase(
-                                                context.read<Turmas>()),
-                                            builder: (context, snap) {
-                                              print(snap.error);
-                                              return Stack(
-                                                children: [
-                                                  HomeScreen(),
-                                                  Positioned(
-                                                      bottom: 10,
-                                                      left: 10,
-                                                      child: snap.connectionState ==
-                                                              ConnectionState
-                                                                  .waiting
-                                                          ? Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              child:
-                                                                  CircularProgressIndicator())
-                                                          : snap.hasError
-                                                              ? Icon(
-                                                                  Icons
-                                                                      .signal_wifi_connected_no_internet_4_outlined,
-                                                                  color: primaryDark
-                                                                      .withOpacity(
-                                                                          0.7),
-                                                                )
-                                                              : Container())
-                                                ],
-                                              );
-                                            });
-                                      });
-                            //       : Container();
-                            // });
-                          } else {
-                            return kIsWeb
-                                ? const LoginPageDesktop()
-                                : Platform.isLinux || Platform.isWindows
-                                    ? const LoginPageDesktop()
-                                    : const LoginPage();
-                          }
-                        } else {
-                          return Scaffold(
-                            body: Center(
-                                child: Image.asset("assets/image/logo.png")),
-                          );
-                        }
-                      },
-                    ),
+                builder: (context) => StreamBuilder<User?>(
+                  stream: FirebaseAuth.instance.authStateChanges(),
+                  builder: (context, stream) {
+                    if (stream.connectionState != ConnectionState.waiting) {
+                      if (stream.data != null) {
+                        return kIsWeb
+                            ? Builder(builder: (context) {
+                                return FutureBuilder(
+                                    future: context
+                                        .read<TurmasStateDesktop>()
+                                        .getTurmas(context),
+                                    builder: (context, snap) {
+                                      return snap.connectionState ==
+                                              ConnectionState.done
+                                          ? const HomePageDesktop()
+                                          : const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                    });
+                              })
+                            : Builder(builder: (context) {
+                                return FutureBuilder(
+                                    future: loadFromFirebase(
+                                        context.read<Turmas>()),
+                                    builder: (context, snap) {
+                                      print(snap.error);
+                                      return Stack(
+                                        children: [
+                                          const HomeScreen(),
+                                          Positioned(
+                                              bottom: 10,
+                                              left: 10,
+                                              child: snap.connectionState ==
+                                                      ConnectionState.waiting
+                                                  ? const SizedBox(
+                                                      width: 30,
+                                                      height: 30,
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : snap.hasError
+                                                      ? Icon(
+                                                          Icons
+                                                              .signal_wifi_connected_no_internet_4_outlined,
+                                                          color: primaryDark
+                                                              .withOpacity(0.7),
+                                                        )
+                                                      : Container())
+                                        ],
+                                      );
+                                    });
+                              });
+                        //       : Container();
+                        // });
+                      } else {
+                        return
+                            // kIsWeb
+                            // ? const LoginPageDesktop()
+                            // : Platform.isLinux || Platform.isWindows
+                            //     ? const LoginPageDesktop()
+                            //     :
+                            const LoginPage();
+                      }
+                    } else {
+                      return Scaffold(
+                        body:
+                            Center(child: Image.asset("assets/image/logo.png")),
+                      );
+                    }
+                  },
+                ),
               );
 
             case "/perfil":
-              return MaterialPageRoute(builder: (context)=> kIsWeb
-                  ? const PerfilPageDesktop()
-                  : Platform.isLinux || Platform.isWindows
+              return MaterialPageRoute(
+                  builder: (context) => kIsWeb
                       ? const PerfilPageDesktop()
-                      : const PerfilPage());
+                      : Platform.isLinux || Platform.isWindows
+                          ? const PerfilPageDesktop()
+                          : const PerfilPage());
               break;
             case "/minhasTurmas":
-              return  MaterialPageRoute(builder: (context)=> GerenciarTurmas());
+              return MaterialPageRoute(
+                  builder: (context) => const GerenciarTurmas());
               break;
             case "/suasInfos":
-             return  MaterialPageRoute(builder: (context)=> SuasInformacoes());
+              return MaterialPageRoute(
+                  builder: (context) => const SuasInformacoes());
               break;
             case "/turma":
-              if(args is Turma)
-              return MaterialPageRoute(builder: (context)=> EditarTurma(args));
+              if (args is Turma) {
+                return MaterialPageRoute(
+                    builder: (context) => EditarTurma(args));
+              }
               break;
             case "/dever":
-              if(args is Map)
-              return MaterialPageRoute(builder: (context)=> DeverDetails(args["dever"], args["index"]));
+              if (args is Map) {
+                return MaterialPageRoute(
+                    builder: (context) =>
+                        DeverDetails(args["dever"], args["index"]));
+              }
               break;
           }
+          return null;
         },
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:firedart/auth/user_gateway.dart';
-import 'package:firedart/firedart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SuasInfosDesktop extends StatefulWidget {
@@ -16,7 +15,7 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
   TextEditingController email = TextEditingController();
   User? user;
   getUser() async {
-    user = await FirebaseAuth.instance.getUser();
+    user = FirebaseAuth.instance.currentUser;
     nome.text = user!.displayName ?? "";
     email.text = user!.email ?? "";
   }

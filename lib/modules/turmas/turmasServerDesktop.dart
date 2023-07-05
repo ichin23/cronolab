@@ -1,21 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:firedart/firedart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TurmasStateDesktop with ChangeNotifier {
   List<Turma> turmas = [];
   Turma? turmaAtual;
-  var db = Firestore.instance;
+  var db = FirebaseFirestore.instance;
   bool loading = false;
   String turmasColle = "turmas";
   String usersColle = "users";
 
   Future<Turma?> refreshTurma(String id) async {
-    var response =
-        await db.collection(turmasColle).document(id).get().then((value) {
-      var result = value.map;
-      result["id"] = value.id;
+    var response = await db.collection(turmasColle).doc(id).get().then((value) {
+      var result = value.data();
+      result!["id"] = value.id;
       return result;
     });
     return null;
@@ -34,7 +36,11 @@ class TurmasStateDesktop with ChangeNotifier {
   initTurma(String code, BuildContext context) async {
     changeLoading = true;
 
-    var result = await db.collection(turmasColle).document(code).exists;
+    var result = await db
+        .collection(turmasColle)
+        .doc(code)
+        .get()
+        .then((value) => value.exists);
     var exist = false;
     if (result) {
       exist = true;
@@ -64,19 +70,19 @@ class TurmasStateDesktop with ChangeNotifier {
                       onPressed: () async {
                         await db
                             .collection(turmasColle)
-                            .document(code)
+                            .doc(code)
                             .set({"nome": code});
                         await db
                             .collection(usersColle)
-                            .document(FirebaseAuth.instance.userId)
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
                             .collection("turmas")
-                            .document(code)
+                            .doc(code)
                             .set({'id': code});
                         await db
                             .collection(turmasColle)
-                            .document(code)
+                            .doc(code)
                             .collection("admins")
-                            .document(FirebaseAuth.instance.userId)
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
                             .set({});
                         Navigator.pop(context);
                       },
@@ -86,9 +92,9 @@ class TurmasStateDesktop with ChangeNotifier {
     } else {
       await db
           .collection(usersColle)
-          .document(FirebaseAuth.instance.userId)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("turmas")
-          .document(code)
+          .doc(code)
           .set({'id': code});
     }
 
@@ -100,9 +106,9 @@ class TurmasStateDesktop with ChangeNotifier {
 
     await db
         .collection(usersColle)
-        .document(FirebaseAuth.instance.userId)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("turmas")
-        .document(code)
+        .doc(code)
         .delete();
     changeLoading = false;
   }
@@ -110,34 +116,36 @@ class TurmasStateDesktop with ChangeNotifier {
   Future getTurmas(BuildContext context) async {
     try {
       changeLoading = true;
-      notifyListeners();
       debugPrint("GetTurmas");
       var minhasTurmas = await db
           .collection(usersColle)
-          .document(FirebaseAuth.instance.userId)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("turmas")
           .get();
       debugPrint(minhasTurmas.toString());
       turmas.clear();
-      for (var turmaQuery in minhasTurmas.toList()) {
+      for (var turmaQuery in minhasTurmas.docs) {
         Map<String, dynamic> turma = {
           "id": turmaQuery.id,
           "nome": turmaQuery.id
         };
+        var turmaAdd = Turma.fromFirebase(turmaQuery);
 
         var admin = await db
             .collection(turmasColle)
-            .document(turmaQuery.id)
+            .doc(turmaQuery.id)
             .collection("admins")
-            .document(FirebaseAuth.instance.userId)
-            .exists;
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .get()
+            .then((value) => value.exists);
+
         debugPrint(admin.toString());
         if (admin) {
           turma["admin"] = true;
         }
         var materias = await db
             .collection(turmasColle)
-            .document(turma["id"])
+            .doc(turma["id"])
             .collection("materias")
             .get();
         List<Materia> listMat = [];
@@ -145,11 +153,11 @@ class TurmasStateDesktop with ChangeNotifier {
         // var turmaAdd = Turma.fromJson(turma);
 
         if (turma["admin"] == true) {
-          // turmaAdd.setAdmin();
+          turmaAdd.setAdmin();
         }
 
-        for (var materia in materias.toList()) {
-          var materiaData = materia.map;
+        for (var materia in materias.docs) {
+          var materiaData = materia.data();
           materiaData["id"] = materia.id;
 
           var materiaClass = Materia.fromJson(materiaData);
@@ -157,25 +165,26 @@ class TurmasStateDesktop with ChangeNotifier {
           listMat.add(materiaClass);
         }
 
-        // turmaAdd.setMaterias = listMat;
+        turmaAdd.setMaterias = listMat;
 
-        // turmas.add(turmaAdd);
+        turmas.add(turmaAdd);
         debugPrint(turmas.toString());
       }
       if (turmas.isNotEmpty) {
         turmaAtual = turmas[0];
         debugPrint(turmaAtual!.id);
         await turmaAtual!.getAtividadesDesk(context);
+        context
+            .read<DeveresController>()
+            .buildCalendar(DateTime.now(), context);
         changeLoading = false;
-        notifyListeners();
+        //notifyListeners();
         return turmas;
       }
 
       changeLoading = false;
       notifyListeners();
     } catch (e) {
-      print(e);
-
       print(e);
     }
   }

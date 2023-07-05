@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
-import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
-import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/loginPage.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
-import 'package:firedart/firedart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +29,7 @@ class _MainAppDesktopState extends State<MainAppDesktop> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return MaterialApp(
       builder: BotToastInit(),
       navigatorObservers: [BotToastNavigatorObserver()],
@@ -67,29 +66,20 @@ class _MainAppDesktopState extends State<MainAppDesktop> {
           ),
       initialRoute: "/",
       routes: {
-        "/": (context) => StreamBuilder<bool>(
-              stream: FirebaseAuth.instance.signInState.asBroadcastStream(),
+        "/": (context) => StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, stream) {
                 debugPrint(stream.data.toString());
                 debugPrint(stream.connectionState.toString());
                 if (stream.connectionState != ConnectionState.waiting) {
                   if (stream.data != null) {
-                    if (stream.data!) {
+                    if (stream.data != null) {
                       return kIsWeb
-                          ? const HomePageDesktop()
-                          : Platform.isLinux || Platform.isWindows
-                              ? const HomePageDesktop()
-                              :
-                              // FutureBuilder(
-                              //     future:
-                              //         Provider.of<TurmasLocal>(context).init(),
-                              //     builder: (context, snap) {
-                              //       return snap.connectionState ==
-                              //               ConnectionState.done
-                              //           ?
-                              const HomeScreen();
-                      //       : Container();
-                      // });
+                          ? (size.width < 1000 || size.height < 600)
+                              ? const Center(
+                                  child: Text("Amigo, eu não sou responsivo"))
+                              : const HomePageDesktop()
+                          : const HomeScreen();
                     } else {
                       return kIsWeb
                           ? const LoginPageDesktop()

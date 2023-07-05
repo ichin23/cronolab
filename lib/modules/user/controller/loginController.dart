@@ -11,7 +11,14 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 class LoginController {
   Future loginGoogle(BuildContext context) async {
     try {
-      final GoogleSignInAccount? account = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? account = await GoogleSignIn(
+              scopes: [
+            'email',
+            'https://www.googleapis.com/auth/contacts.readonly',
+          ],
+              clientId:
+                  "286245196387-g2p299n53kb6t1am4qdbsk51rmevtll5.apps.googleusercontent.com")
+          .signInSilently();
       final GoogleSignInAuthentication? googleAuth =
           await account?.authentication;
       // Create a new credential
@@ -22,8 +29,10 @@ class LoginController {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       var user = FirebaseAuth.instance.currentUser;
-      await FirebaseFirestore.instance.collection("users").doc(user!.uid).set(
-          {"nome": user.displayName, "email":user.email });
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user!.uid)
+          .set({"nome": user.displayName, "email": user.email});
       if (!kIsWeb) {
         OneSignal().setExternalUserId(FirebaseAuth.instance.currentUser!.uid);
       }

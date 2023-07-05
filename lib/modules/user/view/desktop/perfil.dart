@@ -3,7 +3,7 @@ import 'package:cronolab/modules/user/view/desktop/configuracoes/minhasTurmas.da
 import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
 import 'package:cronolab/shared/components/myInput.dart';
-import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

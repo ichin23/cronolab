@@ -4,7 +4,6 @@ import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
-import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -179,12 +178,11 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                 .toJson();
                             deverJson["data"] =
                                 (deverJson["data"] as Timestamp).toDate();
-                            await Firestore.instance
+                            await FirebaseFirestore.instance
                                 .collection("turmas")
-                                .document(
-                                    Provider.of<TurmasStateDesktop>(context)
-                                        .turmaAtual!
-                                        .id)
+                                .doc(Provider.of<TurmasStateDesktop>(context)
+                                    .turmaAtual!
+                                    .id)
                                 .collection("deveres")
                                 .add(deverJson)
                                 .then((value) {

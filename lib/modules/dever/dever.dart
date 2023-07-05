@@ -23,17 +23,17 @@ class Dever {
       this.local,
       this.status,
       this.materia,
-      this.ultimaModificacao, this.deletado});
+      this.ultimaModificacao,
+      this.deletado});
 
   Dever.fromJson(Map<String, Object?> document)
       : this(
             id: document["id"] as String,
             title: document['title'].toString(),
+            materia: document["materiaClass"] as Materia,
             materiaID: document["materia"] as String,
-            ultimaModificacao: DateTime.fromMillisecondsSinceEpoch(
-                (document["ultimaModificacao"] as int?) ?? 0),
-            data:
-                DateTime.fromMillisecondsSinceEpoch((document['data'] as int)),
+            ultimaModificacao: ((document["ultimaModificacao"] as DateTime?)),
+            data: (document['data'] as DateTime),
             pontos: double.tryParse(document['pontos'].toString()),
             local: document["local"].toString());
 
@@ -78,7 +78,7 @@ class Dever {
     };
   }
 
-  Map<String, Object?> toJsonFB(){
+  Map<String, Object?> toJsonFB() {
     return {
       'title': title,
       'data': Timestamp.fromDate(data),
@@ -86,7 +86,6 @@ class Dever {
       'ultimaModificacao': Timestamp.fromDate(ultimaModificacao!),
       "local": local,
       'pontos': pontos,
-
     };
   }
 

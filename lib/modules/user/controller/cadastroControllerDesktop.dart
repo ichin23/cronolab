@@ -1,13 +1,14 @@
 import 'package:cronolab/shared/colors.dart';
-import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CadastroController {
   Future siginEmail(
       String email, String password, String nome, BuildContext context) async {
     try {
-      await FirebaseAuth.instance.signUp(email, password);
-      FirebaseAuth.instance.updateProfile(displayName: nome);
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      FirebaseAuth.instance.currentUser!.updateDisplayName(nome);
     } catch (e) {
       debugPrint(e.toString());
       if (e.toString().contains("email-already-in-use")) {

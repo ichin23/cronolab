@@ -1,8 +1,11 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
+import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar(this.width, this.height, {Key? key}) : super(key: key);
@@ -43,11 +46,12 @@ class CalendarState extends State<Calendar> {
     var paddingWidth = MediaQuery.of(context).padding.left +
         MediaQuery.of(context).padding.right;
     var size = MediaQuery.of(context).size;
-    return Container();
-    /*TODO: return Builder<DeveresController>(
-      builder: (deveres) => Stack(
+
+    return Consumer<DeveresController>(
+      builder: (context, deveres, _) => Stack(
         children: [
           Container(
+            constraints: const BoxConstraints(minHeight: 550, minWidth: 800),
             padding: const EdgeInsets.all(15),
             child: Column(
               children: [
@@ -74,13 +78,13 @@ class CalendarState extends State<Calendar> {
                             } else {
                               mes -= 1;
                             }
-                            deveres.buildCalendar(DateTime(ano, mes));
+                            deveres.buildCalendar(DateTime(ano, mes), context);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_back_ios)),
                       InkWell(
                         onTap: () {
-                          deveres.buildCalendar(DateTime.now());
+                          deveres.buildCalendar(DateTime.now(), context);
                           setState(() {});
                         },
                         child: Text(
@@ -91,7 +95,8 @@ class CalendarState extends State<Calendar> {
                       IconButton(
                           onPressed: () {
                             deveres.buildCalendar(
-                                deveres.data.add(const Duration(days: 30)));
+                                deveres.data.add(const Duration(days: 30)),
+                                context);
                             setState(() {});
                           },
                           icon: const Icon(Icons.arrow_forward_ios)),
@@ -141,8 +146,9 @@ class CalendarState extends State<Calendar> {
                                                                     .click,
                                                             onEnter: (ev) {
                                                               if (f != null) {
-                                                                debugPrint(
-                                                                    f.deveres.toString());
+                                                                debugPrint(f
+                                                                    .deveres
+                                                                    .toString());
                                                                 if (f.deveres
                                                                     .isNotEmpty) {
                                                                   deveres.deveresToShow =
@@ -191,19 +197,9 @@ class CalendarState extends State<Calendar> {
                                                                   alignment:
                                                                       Alignment
                                                                           .center,
-                                                                  height: (widget.height -
-                                                                          80 -
-                                                                          80) /
-                                                                      deveres
-                                                                          .weeks
-                                                                          .length,
-                                                                  width: (widget
-                                                                              .height -
-                                                                          80 -
-                                                                          80) /
-                                                                      deveres
-                                                                          .weeks
-                                                                          .length,
+                                                                  height: 60,
+                                                                  width: 60,
+                                                                  
                                                                   decoration: BoxDecoration(
                                                                       borderRadius: BorderRadius.circular(5),
                                                                       border: f == deveres.diaAtual
@@ -211,7 +207,15 @@ class CalendarState extends State<Calendar> {
                                                                               color: primaryDark,
                                                                             )
                                                                           : null,
-                                                                      color: f != null ? const Color(0xff3C353C) : Colors.transparent),
+                                                                      color: f != null
+                                                                          ? f.deveres.isNotEmpty
+                                                                              ? (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
+                                                                                  ? const Color.fromARGB(255, 247, 150, 148)
+                                                                                  : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
+                                                                                      ? const Color.fromARGB(255, 245, 218, 147)
+                                                                                      : const Color.fromARGB(255, 159, 245, 170)
+                                                                              : const Color(0xff3C353C)
+                                                                          : Colors.transparent),
                                                                   child: f != null
                                                                       ? Column(
                                                                           mainAxisAlignment:
@@ -226,19 +230,19 @@ class CalendarState extends State<Calendar> {
                                                                                       : Colors.white,
                                                                                   fontSize: 40),
                                                                             ),
-                                                                            f.deveres.isNotEmpty
-                                                                                ? Container(
-                                                                                    width: 10,
-                                                                                    height: 10,
-                                                                                    decoration: BoxDecoration(
-                                                                                        color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
-                                                                                            ? const Color.fromARGB(255, 247, 150, 148)
-                                                                                            : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
-                                                                                                ? const Color.fromARGB(255, 245, 218, 147)
-                                                                                                : const Color.fromARGB(255, 159, 245, 170),
-                                                                                        shape: BoxShape.circle),
-                                                                                  )
-                                                                                : Container(),
+                                                                            // f.deveres.isNotEmpty
+                                                                            //     ? Container(
+                                                                            //         width: 10,
+                                                                            //         height: 10,
+                                                                            //         decoration: BoxDecoration(
+                                                                            //             color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
+                                                                            //                 ? const Color.fromARGB(255, 247, 150, 148)
+                                                                            //                 : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
+                                                                            //                     ? const Color.fromARGB(255, 245, 218, 147)
+                                                                            //                     : const Color.fromARGB(255, 159, 245, 170),
+                                                                            //             shape: BoxShape.circle),
+                                                                            //       )
+                                                                            //     : Container(),
                                                                           ],
                                                                         )
                                                                       : Container()),
@@ -258,7 +262,7 @@ class CalendarState extends State<Calendar> {
           ),
         ],
       ),
-    );*/
+    );
   }
 
   Future<void> cliqueDireito(

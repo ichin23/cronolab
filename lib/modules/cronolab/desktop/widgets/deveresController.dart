@@ -53,15 +53,16 @@ class DeveresController with ChangeNotifier {
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     diaAtual = null;
-    var turmas = Provider.of<TurmasStateDesktop>(context).turmaAtual;
+    var turmas =
+        Provider.of<TurmasStateDesktop>(context, listen: false).turmaAtual;
 
     while (diaI.isBefore(ultimoDia)) {
-      /*  debugPrint('''
+      debugPrint('''
         DiaI:$diaI
         UltimoDia: $ultimoDia
         PrimeiroDia: $primeiroDia
         Dia1Pronto: $dia1Pronto
-      '''); */
+      ''');
       weeks.add(List.generate(7, (index) {
         if (turmas != null && turmas.deveres != null) {
           if (!dia1Pronto) {

@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../materia/materia.dart';
@@ -17,7 +16,6 @@ class Turma {
   List? deveres;
   List<Materia> materia;
 
-
   Turma(
       {required this.nome,
       required this.id,
@@ -27,7 +25,7 @@ class Turma {
 
   Turma.fromFirebase(DocumentSnapshot turma)
       : this(
-          nome: (turma.data() as Map)['nome'].toString(),
+          nome: (turma.data() as Map)['nome'] ?? turma.id,
           id: turma.id,
 
           // deveres: json['deveres'] as List,
@@ -199,9 +197,9 @@ class Turma {
       var list = [];
 
       if (filterToday) {
-        var deveresQuer = await Firestore.instance
+        var deveresQuer = await FirebaseFirestore.instance
             .collection("turmas")
-            .document(id)
+            .doc(id)
             .collection("deveres")
             .where('data', isGreaterThan: DateTime.now())
             .orderBy("data")
@@ -210,55 +208,46 @@ class Turma {
         debugPrint(deveresQuer.toString());
         list = [];
         deveres = [];
-        for (var dever in deveresQuer) {
-          var deverToAdd = dever.map;
+        for (var dever in deveresQuer.docs) {
+          var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
 
-          var mat = (await Firestore.instance
-              .collection("turmas")
-              .document(id)
-              .collection("materias")
-              .document(deverToAdd['materia'])
-              .get());
-          var matToAdd = mat.map;
-          matToAdd["id"] = mat.id;
-          deverToAdd["materia"] = matToAdd;
-
-          deverToAdd["data"] =
-              (deverToAdd["data"] as DateTime).millisecondsSinceEpoch;
+          Materia materiaClass =
+              materia.where((e) => e.id == dever["materia"]).first;
+          deverToAdd["materiaClass"] = materiaClass;
+          deverToAdd["ultimaModificacao"] =
+              (deverToAdd["ultimaModificacao"] as Timestamp).toDate();
+          deverToAdd["data"] = (deverToAdd["data"] as Timestamp).toDate();
 
           list.add(deverToAdd);
           if (deveres != null) {
             var deverData = Dever.fromJson(deverToAdd);
-            if (Platform.isAndroid || Platform.isIOS) {
-              //TODO: await Provider.of<TurmasLocal>(context).addDever(deverData, id);
 
-            }
             deveres?.add(deverData);
           } else {
             deveres = [Dever.fromJson(deverToAdd)];
           }
         }
       } else {
-        var deveresQuery = await Firestore.instance
+        var deveresQuery = await FirebaseFirestore.instance
             .collection("turmas")
-            .document(id)
+            .doc(id)
             .collection("deveres")
             .orderBy("data")
             .get();
         list = [];
         deveres = [];
-        for (var dever in deveresQuery) {
-          var deverToAdd = dever.map;
+        for (var dever in deveresQuery.docs) {
+          var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
-          var mat = (await Firestore.instance
+          var mat = (await FirebaseFirestore.instance
               .collection("turmas")
-              .document(id)
+              .doc(id)
               .collection("materias")
-              .document(deverToAdd['materia'])
+              .doc(deverToAdd['materia'])
               .get());
-          var matToAdd = mat.map;
-          matToAdd["id"] = mat.id;
+          var matToAdd = mat.data();
+          matToAdd!["id"] = mat.id;
           deverToAdd["materia"] = matToAdd;
           (deverToAdd["data"] as DateTime).millisecondsSinceEpoch;
 
