@@ -199,7 +199,6 @@ class CalendarState extends State<Calendar> {
                                                                           .center,
                                                                   height: 60,
                                                                   width: 60,
-                                                                  
                                                                   decoration: BoxDecoration(
                                                                       borderRadius: BorderRadius.circular(5),
                                                                       border: f == deveres.diaAtual
@@ -227,7 +226,9 @@ class CalendarState extends State<Calendar> {
                                                                                   color: f.data.isAfter(deveres.ultimoDia) || f.data.isBefore(deveres.primeiroDia) || (f.data.month == deveres.hoje.month && f.data.isBefore(deveres.hoje.subtract(const Duration(days: 1))))
                                                                                       // || f.data.isBefore(diaI)
                                                                                       ? Colors.white24
-                                                                                      : Colors.white,
+                                                                                      : f.deveres.isNotEmpty
+                                                                                          ? backgroundDark
+                                                                                          : Colors.white,
                                                                                   fontSize: 40),
                                                                             ),
                                                                             // f.deveres.isNotEmpty

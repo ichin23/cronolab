@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:cronolab/modules/cronolab/desktop/index.dart';
+import 'package:cronolab/modules/cronolab/desktop/load.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
@@ -157,21 +157,8 @@ class _MainAppState extends State<MainApp> {
                     if (stream.connectionState != ConnectionState.waiting) {
                       if (stream.data != null) {
                         return kIsWeb
-                            ? Builder(builder: (context) {
-                                return FutureBuilder(
-                                    future: context
-                                        .read<TurmasStateDesktop>()
-                                        .getTurmas(context),
-                                    builder: (context, snap) {
-                                      return snap.connectionState ==
-                                              ConnectionState.done
-                                          ? const HomePageDesktop()
-                                          : const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                    });
-                              })
+                            ? Builder(
+                                builder: (context) => const LoadDataDesktop())
                             : Builder(builder: (context) {
                                 return FutureBuilder(
                                     future: loadFromFirebase(

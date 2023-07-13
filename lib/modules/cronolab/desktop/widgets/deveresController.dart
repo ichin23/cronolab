@@ -68,13 +68,7 @@ class DeveresController with ChangeNotifier {
           if (!dia1Pronto) {
             if (index == changeWeekStart(diaI.weekday)) {
               dia1Pronto = true;
-              debugPrint(turmas.deveres!
-                  .where((dever) =>
-                      dever.data.day == diaI.day &&
-                      dever.data.month == diaI.month &&
-                      dever.data.year == diaI.year)
-                  .toList()
-                  .toString());
+
               return Dia(
                   diaI,
                   turmas.deveres!
@@ -84,10 +78,6 @@ class DeveresController with ChangeNotifier {
                           dever.data.year == diaI.year)
                       .toList());
             } else {
-              debugPrint(diaI
-                  .subtract(
-                      Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1))
-                  .toString());
               return Dia(
                 diaI.subtract(
                     Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
@@ -127,7 +117,6 @@ class DeveresController with ChangeNotifier {
           );
         }
       }));
-      debugPrint(weeks.toString());
 
       if (diaI.isAfter(ultimoDia) || diaI.isAtSameMomentAs(ultimoDia)) {
         break;

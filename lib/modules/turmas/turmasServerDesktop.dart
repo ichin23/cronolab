@@ -15,16 +15,38 @@ class TurmasStateDesktop with ChangeNotifier {
   String usersColle = "users";
 
   Future<Turma?> refreshTurma(String id) async {
-    var response = await db.collection(turmasColle).doc(id).get().then((value) {
-      var result = value.data();
-      result!["id"] = value.id;
-      return result;
-    });
-    return null;
+    var response = await db.collection(turmasColle).doc(id).get();
 
-    // Turma newTurma = Turma.fromJson(response);
+    Turma newTurma = Turma.fromFirebase(response);
 
-    // return newTurma;
+    var admin = await db
+        .collection(turmasColle)
+        .doc(id)
+        .collection("admins")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) => value.exists);
+
+    debugPrint(admin.toString());
+    if (admin) {
+      newTurma.setAdmin();
+    }
+    var materias =
+        await db.collection(turmasColle).doc(id).collection("materias").get();
+    List<Materia> listMat = [];
+
+    for (var materia in materias.docs) {
+      var materiaData = materia.data();
+      materiaData["id"] = materia.id;
+
+      var materiaClass = Materia.fromJson(materiaData);
+
+      listMat.add(materiaClass);
+    }
+
+    newTurma.setMaterias = listMat;
+
+    return newTurma;
   }
 
   changeTurmaAtual(Turma turma) {
@@ -36,19 +58,13 @@ class TurmasStateDesktop with ChangeNotifier {
   initTurma(String code, BuildContext context) async {
     changeLoading = true;
 
-    var result = await db
+    var existe = await db
         .collection(turmasColle)
         .doc(code)
         .get()
         .then((value) => value.exists);
-    var exist = false;
-    if (result) {
-      exist = true;
-    } else {
-      exist = false;
-    }
 
-    if (!exist) {
+    if (!existe) {
       await showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -193,5 +209,13 @@ class TurmasStateDesktop with ChangeNotifier {
     loading = load;
     debugPrint(loading.toString());
     notifyListeners();
+  }
+
+  createMateria(Materia materia, String idTurma) async {
+    await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(idTurma)
+        .collection("materias")
+        .add(materia.toJson());
   }
 }

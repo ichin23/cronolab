@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
@@ -180,7 +181,8 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                 (deverJson["data"] as Timestamp).toDate();
                             await FirebaseFirestore.instance
                                 .collection("turmas")
-                                .doc(Provider.of<TurmasStateDesktop>(context)
+                                .doc(context
+                                    .read<TurmasStateDesktop>()
                                     .turmaAtual!
                                     .id)
                                 .collection("deveres")
@@ -188,11 +190,14 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                 .then((value) {
                               debugPrint("Cadastrado");
                             });
-                            //TODO: TurmasStateDesktop.to.turmaAtual!
-                            //     .getAtividades()
-                            //     .then((value) =>
-                            //         DeveresController.to.buildCalendar(DateTime.now()))
-                            //     .then((value) => Get.back());
+                            context
+                                .read<TurmasStateDesktop>()
+                                .turmaAtual!
+                                .getAtividades()
+                                .then((value) => context
+                                    .read<DeveresController>()
+                                    .buildCalendar(DateTime.now(), context))
+                                .then((value) => Navigator.pop(context));
                           },
                           child: const Text("Cadastra"))
                     ],

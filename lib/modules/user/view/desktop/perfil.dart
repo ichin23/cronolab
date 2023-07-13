@@ -3,6 +3,7 @@ import 'package:cronolab/modules/user/view/desktop/configuracoes/minhasTurmas.da
 import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
 import 'package:cronolab/shared/components/myInput.dart';
+import 'package:cronolab/shared/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,8 +57,7 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
                                 },
                                 title: Text(
                                   pages.keys.toList()[i],
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: labelDark,
                                 ),
                               ),
                             ))),

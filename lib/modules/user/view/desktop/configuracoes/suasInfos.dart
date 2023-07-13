@@ -29,55 +29,61 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getUser(),
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return ListView(
-            controller: ScrollController(),
-            children: [
-              TextFormField(
-                controller: nome,
-                style: inputDark,
-                decoration: const InputDecoration(
-                    label: Text("Nome"), labelStyle: labelDark),
-              ),
-              InkWell(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => const AlertDialog(
-                            title: Text("Erro"),
-                            content: Text("Não é possível alterar o email"),
-                          ));
-                },
-                child: TextFormField(
-                    controller: email,
-                    style: inputDark,
-                    enabled: false,
-                    decoration: const InputDecoration(
-                        label: Text("Email"), labelStyle: labelDark)),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.1,
-                child: TextButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(primaryDark),
-                      textStyle: MaterialStateProperty.all(labelDark)),
-                  child: const Text(
-                    "Salvar",
-                    style: labelBlackDark,
-                  ),
-                  onPressed: () {},
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: FutureBuilder(
+          future: getUser(),
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return ListView(
+              controller: ScrollController(),
+              children: [
+                TextFormField(
+                  controller: nome,
+                  style: inputDark,
+                  decoration: const InputDecoration(
+                      label: Text("Nome"), labelStyle: labelDark),
                 ),
-              )
-            ],
-          );
-        });
+                const SizedBox(height: 8),
+                InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => const AlertDialog(
+                              title: Text("Erro"),
+                              content: Text("Não é possível alterar o email"),
+                            ));
+                  },
+                  child: TextFormField(
+                      controller: email,
+                      style: inputDark,
+                      enabled: false,
+                      decoration: const InputDecoration(
+                          label: Text("Email"), labelStyle: labelDark)),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.1,
+                  child: TextButton(
+                    style: ButtonStyle(
+                        maximumSize:
+                            MaterialStateProperty.all(const Size(200, 40)),
+                        backgroundColor: MaterialStateProperty.all(primaryDark),
+                        textStyle: MaterialStateProperty.all(labelDark)),
+                    child: const Text(
+                      "Salvar",
+                      style: labelBlackDark,
+                    ),
+                    onPressed: () {},
+                  ),
+                )
+              ],
+            );
+          }),
+    );
   }
 }

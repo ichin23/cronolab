@@ -41,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
             height: height - MediaQuery.of(context).padding.bottom,
             child: Center(
               child: SingleChildScrollView(
-                child: SizedBox(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 600),
                   /* padding: const EdgeInsets.fromLTRB(40, 100, 40, 20), */
                   width: width * 0.8,
                   height: MediaQuery.of(context).viewInsets.bottom == 0
@@ -153,13 +154,15 @@ class _LoginPageState extends State<LoginPage> {
                                             BorderRadius.circular(15))),
                                 child: loading
                                     ? CircularProgressIndicator(
-                                        color:
-                                            Theme.of(context).backgroundColor,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .background,
                                         strokeWidth: 3)
                                     : Text("Login",
                                         style: TextStyle(
                                             color: Theme.of(context)
-                                                .backgroundColor,
+                                                .colorScheme
+                                                .background,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800)),
                                 onPressed: () async {
@@ -197,7 +200,8 @@ class _LoginPageState extends State<LoginPage> {
                                             child: Text("Entrar com Google",
                                                 style: TextStyle(
                                                     color: Theme.of(context)
-                                                        .backgroundColor,
+                                                        .colorScheme
+                                                        .background,
                                                     fontSize: 20,
                                                     fontWeight:
                                                         FontWeight.w800)),

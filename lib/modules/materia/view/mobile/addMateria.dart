@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -69,6 +71,7 @@ Future addMateria(
                                                 BorderRadius.circular(20),
                                           )),
                                     ),
+                                    const SizedBox(height: 8),
                                     TextFormField(
                                       enabled: true,
                                       style: Theme.of(context)
@@ -101,6 +104,7 @@ Future addMateria(
                                                 BorderRadius.circular(20),
                                           )),
                                     ),
+                                    const SizedBox(height: 8),
                                     TextFormField(
                                       enabled: true,
                                       style: Theme.of(context)
@@ -133,51 +137,48 @@ Future addMateria(
                                                 BorderRadius.circular(20),
                                           )),
                                     ),
+                                    const SizedBox(height: 8),
                                     TextButton(
                                         onPressed: () async {
-                                          debugPrint("OKOK");
-                                          String url =
-                                              "https://cronolab-server.herokuapp.com";
                                           if (_formKey.currentState!
                                               .validate()) {
                                             setState(() {
                                               loading = true;
                                             });
                                             debugPrint("OKOK");
-                                            // await FirebaseFirestore.instance
-                                            //     .collection("turmas")
-                                            //     .doc(turmaID)
-                                            //     .collection("materias")
-
-                                          await context.read<Turmas>().turmasSQL
-                                                .createMateria(Materia(
-                                              FirebaseFirestore.instance
-                                                  .collection("turmas")
-                                                  .doc().id ,
-                                              nome.text,
-                                              prof.text,
-                                              contato.text
-                                            ),turmaID);
-
-                                                // var response = await http
-                                                //     .put(Uri.parse(url + "/class/materia"),
-                                                //         headers: {
-                                                //           "Content-Type":
-                                                //               "application/json",
-                                                //           "authorization": "Bearer " +
-                                                //               FirebaseAuth
-                                                //                   .instance.currentUser!.uid
-                                                //         },
-                                                //         body: jsonEncode({
-                                                //           "turmaID": turmaID,
-                                                //           "data": {
-                                                //             "nome": nome.text,
-                                                //             "professor": prof.text,
-                                                //             "contato": contato.text
-                                                //           }
-                                                //         }))
-
-                                                    Navigator.pop(context);
+                                            if (kIsWeb) {
+                                              await context
+                                                  .read<TurmasStateDesktop>()
+                                                  .createMateria(
+                                                      Materia(
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "turmas")
+                                                              .doc()
+                                                              .id,
+                                                          nome.text,
+                                                          prof.text,
+                                                          contato.text),
+                                                      turmaID);
+                                            } else {
+                                              await context
+                                                  .read<Turmas>()
+                                                  .turmasSQL
+                                                  .createMateria(
+                                                      Materia(
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "turmas")
+                                                              .doc()
+                                                              .id,
+                                                          nome.text,
+                                                          prof.text,
+                                                          contato.text),
+                                                      turmaID);
+                                            }
+                                            Navigator.pop(context);
 
                                             await setstate();
                                           }

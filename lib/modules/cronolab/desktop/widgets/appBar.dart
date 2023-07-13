@@ -1,5 +1,7 @@
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,28 +38,133 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                 Consumer<TurmasStateDesktop>(builder: (context, turmas, _) {
                   return Expanded(
                       child: Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    child: ListView.builder(
-                      itemCount: turmas.turmas.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, i) => MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                topRight: Radius.circular(5),
-                                bottomLeft: Radius.circular(0)),
-                            color: true ? primaryDark : Colors.transparent,
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: Text(
-                            turmas.turmas[i].nome,
-                            style: const TextStyle(color: backgroundDark),
-                          ),
-                        ),
-                      ),
-                    ),
+                    child:
+                        ListView(scrollDirection: Axis.horizontal, children: [
+                      ...turmas.turmas
+                          .map(
+                            (e) => Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              child: MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: InkWell(
+                                  onTap: () async {
+                                    context
+                                        .read<TurmasStateDesktop>()
+                                        .changeTurmaAtual(e);
+                                    await context
+                                        .read<TurmasStateDesktop>()
+                                        .turmaAtual!
+                                        .getAtividadesDesk(context);
+                                    context
+                                        .read<DeveresController>()
+                                        .buildCalendar(DateTime.now(), context);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5),
+                                          bottomLeft: Radius.circular(0)),
+                                      color: e.id == turmas.turmaAtual?.id
+                                          ? primaryDark
+                                          : Colors.transparent,
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      e.nome,
+                                      style: TextStyle(
+                                          color: e.id == turmas.turmaAtual?.id
+                                              ? backgroundDark
+                                              : branco50Dark),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      IconButton(
+                          onPressed: () {
+                            TextEditingController code =
+                                TextEditingController();
+                            bool loading = false;
+                            showDialog(
+                                context: context,
+                                builder: (context) => StatefulBuilder(
+                                        builder: (context, setstate) {
+                                      return AlertDialog(
+                                        content: Container(
+                                          constraints: const BoxConstraints(
+                                              minHeight: 100),
+                                          child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Text(
+                                                  "Digite o código da turma",
+                                                  style: labelDark,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                TextField(
+                                                  style: labelDark,
+                                                  controller: code,
+                                                  onSubmitted: (codeStr) async {
+                                                    loading = true;
+                                                    setstate(() {});
+                                                    await context
+                                                        .read<
+                                                            TurmasStateDesktop>()
+                                                        .initTurma(
+                                                            codeStr, context);
+
+                                                    loading = false;
+                                                    setstate(() {});
+                                                    Navigator.pop(context);
+                                                    await context
+                                                        .read<
+                                                            TurmasStateDesktop>()
+                                                        .getTurmas(context);
+                                                  },
+                                                ),
+                                                const SizedBox(height: 8),
+                                                TextButton(
+                                                  child: loading
+                                                      ? const CircularProgressIndicator()
+                                                      : const Text("Adicionar"),
+                                                  onPressed: loading
+                                                      ? null
+                                                      : () async {
+                                                          loading = true;
+                                                          setstate(() {});
+                                                          await context
+                                                              .read<
+                                                                  TurmasStateDesktop>()
+                                                              .initTurma(
+                                                                  code.text,
+                                                                  context);
+
+                                                          loading = false;
+                                                          setstate(() {});
+                                                          Navigator.pop(
+                                                              context);
+                                                          await context
+                                                              .read<
+                                                                  TurmasStateDesktop>()
+                                                              .getTurmas(
+                                                                  context);
+                                                        },
+                                                )
+                                              ]),
+                                        ),
+                                      );
+                                    }));
+                          },
+                          icon: const Icon(
+                            Icons.add,
+                            color: primaryDark,
+                          ))
+                    ]),
                   ));
                 }),
                 IconButton(
