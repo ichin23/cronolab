@@ -27,7 +27,7 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
             width: size.width,
             height: 46,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 InkWell(
                   onTap: () async {
@@ -39,12 +39,26 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                         .read<DeveresController>()
                         .buildCalendar(DateTime.now(), context);
                   },
-                  child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      child: const Text(
-                        "Cronolab",
-                        style: TextStyle(color: primaryDark),
-                      )),
+                  child: Consumer<TurmasStateDesktop>(
+                      builder: (context, turmas, _) {
+                    return Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                            color: turmas.turmaAtual == null
+                                ? primaryDark
+                                : Colors.transparent),
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(
+                          "Cronolab",
+                          style: TextStyle(
+                              color: turmas.turmaAtual == null
+                                  ? backgroundDark
+                                  : primaryDark),
+                        ));
+                  }),
                 ),
                 Consumer<TurmasStateDesktop>(builder: (context, turmas, _) {
                   return Expanded(

@@ -147,9 +147,9 @@ class _DeverTileListState extends State<DeverTileList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.6),
+              Container(
+                /*constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.6),*/
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

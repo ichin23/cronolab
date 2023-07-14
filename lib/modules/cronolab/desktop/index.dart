@@ -43,7 +43,9 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         ? turmas.turmaAtual?.deveres != null
                             ? Container(
                                 padding: const EdgeInsets.all(5),
-                                width: size.width * 0.35,
+                                width: size.width < 800
+                                    ? size.width * 0.9
+                                    : size.width * 0.35,
                                 child: Consumer<DeveresController>(
                                     builder: (context, deveres, child) {
                                   return Stack(
@@ -109,7 +111,9 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                         : turmas.turmas.isNotEmpty
                             ? Container(
                                 padding: const EdgeInsets.all(5),
-                                width: size.width * 0.35,
+                                width: size.width < 800
+                                    ? size.width
+                                    : size.width * 0.35,
                                 child: Consumer<DeveresController>(
                                     builder: (context, deveres, child) {
                                   return ListView.builder(
@@ -135,11 +139,13 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                   "Nenhuma turma cadastrada",
                                   style: fonts.labelDark,
                                 ))),
-                    Calendar(
-                      size.width * 0.62,
-                      size.height * 0.95 - 50,
-                      key: key,
-                    )
+                    size.width > 800
+                        ? Calendar(
+                            size.width * 0.62,
+                            size.height * 0.95 - 50,
+                            key: key,
+                          )
+                        : Container(),
                   ],
                 ),
               )

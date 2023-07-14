@@ -207,20 +207,20 @@ class TurmasStateDesktop with ChangeNotifier {
         turmas.add(turmaAdd);
         debugPrint(turmas.toString());
       }
-      if (turmas.isNotEmpty) {
-        turmaAtual = turmas[0];
-        debugPrint(turmaAtual!.id);
-        await turmaAtual!.getAtividadesDesk(context);
-        context
-            .read<DeveresController>()
-            .buildCalendar(DateTime.now(), context);
-        changeLoading = false;
-        //notifyListeners();
-        return turmas;
-      }
+      Future.forEach(
+          turmas,
+          (Turma turma) => turma.getAtividadesDesk(context).then((value) {
+                notifyListeners();
+              })).then((value) => context
+          .read<DeveresController>()
+          .buildCalendar(DateTime.now(), context));
 
+      context.read<DeveresController>().buildCalendar(DateTime.now(), context);
       changeLoading = false;
+      //notifyListeners();
+
       notifyListeners();
+      return turmas;
     } catch (e) {
       print(e);
     }
