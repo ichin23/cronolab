@@ -199,7 +199,7 @@ class CalendarState extends State<Calendar> {
                                                                           : null,
                                                                       color: f != null
                                                                           ? f.deveres.isNotEmpty
-                                                                              ? (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
+                                                                              ? (f.deveres[0] as Dever).data.difference(DateTime.now()).compareTo(const Duration(hours: 23, minutes: 59)) < 1
                                                                                   ? const Color.fromARGB(255, 247, 150, 148)
                                                                                   : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
                                                                                       ? const Color.fromARGB(255, 245, 218, 147)
