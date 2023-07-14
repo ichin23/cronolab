@@ -60,7 +60,6 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => Turmas()),
         ChangeNotifierProvider(create: (context) => DeveresController()),
         ChangeNotifierProvider(create: (context) => TurmasStateDesktop()),
       ],
@@ -144,7 +143,6 @@ class _MainAppState extends State<MainApp> {
               seedColor: secondaryDark,
               primary: primaryDark,
             ).copyWith(background: backgroundDark).copyWith(error: redDark)),
-        //initialRoute: "/",
         onGenerateRoute: (settings) {
           var args = settings.arguments;
 
@@ -190,16 +188,8 @@ class _MainAppState extends State<MainApp> {
                                       );
                                     });
                               });
-                        //       : Container();
-                        // });
                       } else {
-                        return
-                            // kIsWeb
-                            // ? const LoginPageDesktop()
-                            // : Platform.isLinux || Platform.isWindows
-                            //     ? const LoginPageDesktop()
-                            //     :
-                            const LoginPage();
+                        return const LoginPage();
                       }
                     } else {
                       return Scaffold(
@@ -218,15 +208,15 @@ class _MainAppState extends State<MainApp> {
                       : Platform.isLinux || Platform.isWindows
                           ? const PerfilPageDesktop()
                           : const PerfilPage());
-              break;
+
             case "/minhasTurmas":
               return MaterialPageRoute(
                   builder: (context) => const GerenciarTurmas());
-              break;
+
             case "/suasInfos":
               return MaterialPageRoute(
                   builder: (context) => const SuasInformacoes());
-              break;
+
             case "/turma":
               if (args is Turma) {
                 return MaterialPageRoute(

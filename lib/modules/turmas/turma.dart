@@ -13,7 +13,7 @@ class Turma {
   String nome;
   String id;
   bool isAdmin;
-  List? deveres;
+  List<Dever>? deveres;
   List<Materia> materia;
 
   Turma(
@@ -193,7 +193,6 @@ class Turma {
   Future<List?> getAtividadesDesk(BuildContext context,
       [filterToday = true]) async {
     try {
-      debugPrint("inint");
       var list = [];
 
       if (filterToday) {
@@ -205,9 +204,10 @@ class Turma {
             .orderBy("data")
             .get();
 
-        debugPrint(deveresQuer.toString());
+        debugPrint(deveresQuer.docs.length.toString());
         list = [];
-        deveres = [];
+        List<Dever> newDeveres = [];
+
         for (var dever in deveresQuer.docs) {
           var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
@@ -220,14 +220,12 @@ class Turma {
           deverToAdd["data"] = (deverToAdd["data"] as Timestamp).toDate();
 
           list.add(deverToAdd);
-          if (deveres != null) {
-            var deverData = Dever.fromJson(deverToAdd);
 
-            deveres?.add(deverData);
-          } else {
-            deveres = [Dever.fromJson(deverToAdd)];
-          }
+          var deverData = Dever.fromJson(deverToAdd);
+
+          newDeveres.add(deverData);
         }
+        deveres = newDeveres;
       } else {
         var deveresQuery = await FirebaseFirestore.instance
             .collection("turmas")
@@ -236,7 +234,7 @@ class Turma {
             .orderBy("data")
             .get();
         list = [];
-        deveres = [];
+        List<Dever> newDeveres = [];
         for (var dever in deveresQuery.docs) {
           var deverToAdd = dever.data();
           deverToAdd["id"] = dever.id;
@@ -252,17 +250,14 @@ class Turma {
           (deverToAdd["data"] as DateTime).millisecondsSinceEpoch;
 
           list.add(deverToAdd);
-          if (deveres != null) {
-            var deverData = Dever.fromJson(deverToAdd);
-            if (Platform.isAndroid || Platform.isIOS) {
-              //TODO: await Provider.of<TurmasLocal>(context).addDever(deverData, id);
-            }
-            deveres?.add(deverData);
-          } else {
-            deveres = [Dever.fromJson(deverToAdd)];
-          }
+
+          var deverData = Dever.fromJson(deverToAdd);
+
+          newDeveres.add(deverData);
         }
+        deveres = newDeveres;
       }
+      print("");
 
       return deveres;
     } catch (e) {

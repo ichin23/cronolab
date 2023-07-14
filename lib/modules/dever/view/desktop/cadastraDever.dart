@@ -177,6 +177,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                     pontos: double.parse(pontos.text),
                                     local: local.text)
                                 .toJson();
+                            deverJson["ultimaModificacao"] = Timestamp.now();
                             deverJson["data"] =
                                 (deverJson["data"] as Timestamp).toDate();
                             await FirebaseFirestore.instance

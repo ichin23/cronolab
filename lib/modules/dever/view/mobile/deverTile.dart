@@ -1,12 +1,9 @@
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DeverTile extends StatefulWidget {
   final Function()? notifyParent;
@@ -30,35 +27,40 @@ class _DeverTileState extends State<DeverTile> {
     //var turmas = Provider.of<Turmas>(context, listen:false);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      popMenu.add(
-        PopupMenuItem(
-          child: Text("Concluída",
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center),
-          onTap: () async {
-            // await turmas.setDeverStatus(
-            //     widget.dever.id!, !widget.dever.status!);
-            // Provider.of<IndexController>(context).refreshDb(context);
-          },
-        ),
-      );
-      if (context.read<Turmas>().turmaAtual!.isAdmin) {
+      /*  if (!kIsWeb) {
         popMenu.add(
           PopupMenuItem(
-            child: Text("Excluir",
+            child: Text("Concluída",
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              await context.read<Turmas>().turmasSQL.deleteDever(widget.dever);
-
-              await context.read<Turmas>().getData();
-              if (widget.notifyParent != null) {
-                widget.notifyParent!();
-              }
+              // await turmas.setDeverStatus(
+              //     widget.dever.id!, !widget.dever.status!);
+              // Provider.of<IndexController>(context).refreshDb(context);
             },
           ),
         );
-      }
+        if (context.read<Turmas>().turmaAtual!.isAdmin) {
+          popMenu.add(
+            PopupMenuItem(
+              child: Text("Excluir",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center),
+              onTap: () async {
+                await context
+                    .read<Turmas>()
+                    .turmasSQL
+                    .deleteDever(widget.dever);
+
+                await context.read<Turmas>().getData();
+                if (widget.notifyParent != null) {
+                  widget.notifyParent!();
+                }
+              },
+            ),
+          );
+        }
+      }*/
     });
   }
 
@@ -105,100 +107,61 @@ class _DeverTileState extends State<DeverTile> {
       },
       child: Container(
         margin: const EdgeInsets.all(5),
-        child: Consumer<Turmas>(builder: (context, turmas, child) {
-          return Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              // gradient: LinearGradient(
-              //     colors: [Colors.red[300]!, Colors.red[700]!],
-              //     begin: Alignment.topLeft,
-              //     end: Alignment.bottomRight),
-              color: widget.dever.status ?? false
-                  ? const Color.fromRGBO(182, 181, 181, 1)
-                  : data.difference(DateTime.now()).inDays < 1
-                      ? const Color(0xffFFD1D0)
-                      : data.difference(DateTime.now()).inDays < 5
-                          ? const Color(0xFFFBF5C5)
-                          : const Color(0xffBDF6E3),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Hero(
-                  tag: "data${widget.index.toString()}",
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(dateStr.format(widget.dever.data),
-                            style: TextStyle(color: corText, fontSize: 15)),
-                        Text(hourStr.format(widget.dever.data),
-                            style: TextStyle(color: corText, fontSize: 15)),
-                      ]),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Hero(
-                      tag: "title${widget.index.toString()}",
-                      child: Text(widget.dever.title,
-                          style: TextStyle(
-                              color: corText,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800)),
-                    ),
-                    Text(widget.dever.materia?.nome ?? "----",
-                        style: TextStyle(color: corText, fontSize: 17)),
-                    /* Text(
-                          (int.parse(widget.dever.pontos
-                                          .toString()
-                                          .split(".")[1]) ==
-                                      0
-                                  ? widget.dever.pontos!.toStringAsFixed(0)
-                                  : widget.dever.pontos.toString()) +
-                              " pontos",
-                          sty le: TextStyle(color: corText)),*/
-                  ],
-                ),
-                Container(),
-                Hero(
-                  tag: "pontos${widget.index.toString()}",
-                  child: Text(
-                      (int.parse(widget.dever.pontos
-                                      .toString()
-                                      .split(".")[1]) ==
-                                  0
-                              ? widget.dever.pontos!.toStringAsFixed(0)
-                              : widget.dever.pontos.toString()) +
-                          " pontos",
-                      style: TextStyle(color: corText)),
-                ),
-
-                // Container(
-                //     width: width * 0.1,
-                //     child: Column(children: [
-                //       Text(data.day.toString() +
-                //           "/" +
-                //           data.month.toString())
-                //     ])),
-              ],
-              // title: Text(dever.title),
-              // subtitle: Text(dever.materia),
-              // trailing: Text(dever.pontos.toString() + " pts"),
-              // leading: Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Text(data.day.toString() +
-              //         "/" +
-              //         data.month.toString()),
-              //     Text(data.hour.toString() +
-              //         ":" +
-              //         data.minute.toString()),
-              //   ],
-              // ),
-            ),
-          );
-        }),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: widget.dever.status ?? false
+                ? const Color.fromRGBO(182, 181, 181, 1)
+                : data.difference(DateTime.now()).inDays < 1
+                    ? const Color(0xffFFD1D0)
+                    : data.difference(DateTime.now()).inDays < 5
+                        ? const Color(0xFFFBF5C5)
+                        : const Color(0xffBDF6E3),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Hero(
+                tag: "data${widget.index.toString()}",
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(dateStr.format(widget.dever.data),
+                          style: TextStyle(color: corText, fontSize: 15)),
+                      Text(hourStr.format(widget.dever.data),
+                          style: TextStyle(color: corText, fontSize: 15)),
+                    ]),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Hero(
+                    tag: "title${widget.index.toString()}",
+                    child: Text(widget.dever.title,
+                        style: TextStyle(
+                            color: corText,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800)),
+                  ),
+                  Text(widget.dever.materia?.nome ?? "----",
+                      style: TextStyle(color: corText, fontSize: 17)),
+                ],
+              ),
+              Container(),
+              Hero(
+                tag: "pontos${widget.index.toString()}",
+                child: Text(
+                    (int.parse(widget.dever.pontos.toString().split(".")[1]) ==
+                                0
+                            ? widget.dever.pontos!.toStringAsFixed(0)
+                            : widget.dever.pontos.toString()) +
+                        " pontos",
+                    style: TextStyle(color: corText)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

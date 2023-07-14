@@ -2,6 +2,7 @@ import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart
 import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -34,17 +35,7 @@ class CalendarState extends State<Calendar> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    //TODO: DeveresController.to.buildCalendar(DateTime.now());
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var paddingHeight = MediaQuery.of(context).padding.top +
-        MediaQuery.of(context).padding.bottom;
-    var paddingWidth = MediaQuery.of(context).padding.left +
-        MediaQuery.of(context).padding.right;
     var size = MediaQuery.of(context).size;
 
     return Consumer<DeveresController>(
@@ -271,7 +262,9 @@ class CalendarState extends State<Calendar> {
     debugPrint(event.buttons.toString());
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton) {
-      cadastraDeverDesktop(context, atual.data);
+      await cadastraDeverDesktop(context, atual.data);
+      await context.read<TurmasStateDesktop>().refreshDeveres(context);
+      context.read<DeveresController>().buildCalendar(DateTime.now(), context);
     } else {
       if (deveres.diaAtual == atual) {
         deveres.diaAtual = null;

@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/material.dart';
 
@@ -53,25 +54,32 @@ class DeveresController with ChangeNotifier {
     ultimoDia = DateTime(primeiroDia.year, primeiroDia.month + 1, 0);
     diaI = primeiroDia;
     diaAtual = null;
-    var turmas =
-        Provider.of<TurmasStateDesktop>(context, listen: false).turmaAtual;
 
+    List<Dever> deveres = [];
+    var turmas = Provider.of<TurmasStateDesktop>(context, listen: false);
+
+    if (context.read<TurmasStateDesktop>().turmaAtual != null) {
+      deveres = turmas.turmaAtual!.deveres ?? [];
+    } else {
+      deveres = context.read<TurmasStateDesktop>().getAllDeveres();
+    }
     while (diaI.isBefore(ultimoDia)) {
-      debugPrint('''
+      /*debugPrint('''
         DiaI:$diaI
         UltimoDia: $ultimoDia
         PrimeiroDia: $primeiroDia
         Dia1Pronto: $dia1Pronto
-      ''');
+      ''');*/
+
       weeks.add(List.generate(7, (index) {
-        if (turmas != null && turmas.deveres != null) {
+        if (deveres.isNotEmpty) {
           if (!dia1Pronto) {
             if (index == changeWeekStart(diaI.weekday)) {
               dia1Pronto = true;
 
               return Dia(
                   diaI,
-                  turmas.deveres!
+                  deveres
                       .where((dever) =>
                           dever.data.day == diaI.day &&
                           dever.data.month == diaI.month &&
@@ -85,10 +93,10 @@ class DeveresController with ChangeNotifier {
             }
           } else {
             diaI = diaI.add(const Duration(days: 1));
-            //debugPrint("Dia1 Pronto");
+
             return Dia(
                 diaI,
-                turmas.deveres!
+                deveres
                     .where((dever) =>
                         dever.data.day == diaI.day &&
                         dever.data.month == diaI.month &&

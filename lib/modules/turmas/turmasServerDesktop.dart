@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
+import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,26 @@ class TurmasStateDesktop with ChangeNotifier {
   bool loading = false;
   String turmasColle = "turmas";
   String usersColle = "users";
+
+  refreshDeveres(BuildContext context) async {
+    if (turmaAtual == null) {
+      getAllDeveres();
+    } else {
+      await turmaAtual!.getAtividadesDesk(context);
+    }
+    notifyListeners();
+    return;
+  }
+
+  List<Dever> getAllDeveres() {
+    List<Dever> deveres = [];
+    for (var turma in turmas) {
+      deveres = [...?(turma.deveres), ...deveres];
+    }
+
+    deveres.sort((a, b) => a.data.compareTo(b.data));
+    return deveres;
+  }
 
   Future<Turma?> refreshTurma(String id) async {
     var response = await db.collection(turmasColle).doc(id).get();
@@ -49,7 +70,7 @@ class TurmasStateDesktop with ChangeNotifier {
     return newTurma;
   }
 
-  changeTurmaAtual(Turma turma) {
+  changeTurmaAtual(Turma? turma) {
     turmaAtual = turma;
     debugPrint("changre");
     notifyListeners();
@@ -207,8 +228,6 @@ class TurmasStateDesktop with ChangeNotifier {
 
   set changeLoading(bool load) {
     loading = load;
-    debugPrint(loading.toString());
-    notifyListeners();
   }
 
   createMateria(Materia materia, String idTurma) async {

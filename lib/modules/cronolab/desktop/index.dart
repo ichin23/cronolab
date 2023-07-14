@@ -40,7 +40,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                 child: Row(
                   children: [
                     turmas.turmaAtual != null
-                        ? turmas.turmaAtual!.deveres != null
+                        ? turmas.turmaAtual?.deveres != null
                             ? Container(
                                 padding: const EdgeInsets.all(5),
                                 width: size.width * 0.35,
@@ -53,16 +53,24 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                               const EdgeInsets.only(right: 15),
                                           itemCount: deveres.diaAtual != null
                                               ? deveres.diaAtual!.deveres.length
-                                              : turmas
-                                                  .turmaAtual!.deveres!.length,
+                                              : turmas.turmaAtual == null
+                                                  ? turmas
+                                                      .getAllDeveres()
+                                                      .length
+                                                  : turmas.turmaAtual!.deveres
+                                                      ?.length,
                                           itemBuilder: (context, i) =>
                                               DeverTileList(
-                                                  dever:
-                                                      deveres.diaAtual != null
-                                                          ? deveres.diaAtual!
-                                                              .deveres[i]
-                                                          : turmas.turmaAtual!
-                                                              .deveres![i],
+                                                  dever: deveres.diaAtual !=
+                                                          null
+                                                      ? deveres
+                                                          .diaAtual!.deveres[i]
+                                                      : turmas.turmaAtual ==
+                                                              null
+                                                          ? turmas.getAllDeveres()[
+                                                              i]
+                                                          : turmas.turmaAtual
+                                                              ?.deveres?[i],
                                                   index: i,
                                                   notifyParent: () {
                                                     setState(() {});
@@ -98,14 +106,35 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                   "Nenhuma atividade cadastrada",
                                   style: fonts.labelDark,
                                 )))
-                        : Container(
-                            padding: const EdgeInsets.all(5),
-                            width: size.width * 0.35,
-                            child: const Center(
-                                child: Text(
-                              "Nenhuma turma cadastrada",
-                              style: fonts.labelDark,
-                            ))),
+                        : turmas.turmas.isNotEmpty
+                            ? Container(
+                                padding: const EdgeInsets.all(5),
+                                width: size.width * 0.35,
+                                child: Consumer<DeveresController>(
+                                    builder: (context, deveres, child) {
+                                  return ListView.builder(
+                                      padding: const EdgeInsets.only(right: 15),
+                                      itemCount: deveres.diaAtual != null
+                                          ? deveres.diaAtual!.deveres.length
+                                          : turmas.getAllDeveres().length,
+                                      itemBuilder: (context, i) =>
+                                          DeverTileList(
+                                              dever: deveres.diaAtual != null
+                                                  ? deveres.diaAtual!.deveres[i]
+                                                  : turmas.getAllDeveres()[i],
+                                              index: i,
+                                              notifyParent: () {
+                                                setState(() {});
+                                              }));
+                                }))
+                            : Container(
+                                padding: const EdgeInsets.all(5),
+                                width: size.width * 0.35,
+                                child: const Center(
+                                    child: Text(
+                                  "Nenhuma turma cadastrada",
+                                  style: fonts.labelDark,
+                                ))),
                     Calendar(
                       size.width * 0.62,
                       size.height * 0.95 - 50,

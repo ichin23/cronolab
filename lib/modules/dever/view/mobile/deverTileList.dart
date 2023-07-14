@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DeverTileList extends StatefulWidget {
   const DeverTileList(
@@ -22,74 +19,74 @@ class DeverTileList extends StatefulWidget {
 class _DeverTileListState extends State<DeverTileList> {
   List<PopupMenuItem> popMenu = [];
 
-  @override
+  /* @override
   void initState() {
     super.initState();
     //var turmas = Provider.of<Turmas>(context, listen:false);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      popMenu.add(
-        PopupMenuItem(
-          child: Text("Concluída",
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center),
-          onTap: () async {
-            if (widget.dever.status == true) {
-              await context
-                  .read<Turmas>()
-                  .turmasSQL
-                  .updateDever(widget.dever..status = false);
-            } else {
-              await context
-                  .read<Turmas>()
-                  .turmasSQL
-                  .updateDever(widget.dever..status = true);
-            }
-
-            await context.read<Turmas>().getData();
-            if (widget.notifyParent != null) {
-              widget.notifyParent!();
-            }
-            // await turmas.setDeverStatus(
-            //     widget.dever.id!, !widget.dever.status!);
-            // Provider.of<IndexController>(context).refreshDb(context);
-          },
-        ),
-      );
-      if (context.read<Turmas>().turmaAtual!.isAdmin) {
+      if (!kIsWeb) {
         popMenu.add(
           PopupMenuItem(
-            child: Text("Excluir",
+            child: Text("Concluída",
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              var date = Timestamp.fromDate((await context
-                      .read<Turmas>()
-                      .turmasFB
-                      .deleteDever(
-                          widget.dever, context.read<Turmas>().turmaAtual!.id))
-                  .toDate()
-                  .subtract(const Duration(minutes: 3)));
-              var newDeveres = await context
-                  .read<Turmas>()
-                  .turmasFB
-                  .refreshTurma(context.read<Turmas>().turmaAtual!.id, date);
-              for (var dever in newDeveres) {
+              if (widget.dever.status == true) {
                 await context
                     .read<Turmas>()
                     .turmasSQL
-                    .createDever(dever, context.read<Turmas>().turmaAtual!.id);
+                    .updateDever(widget.dever..status = false);
+              } else {
+                await context
+                    .read<Turmas>()
+                    .turmasSQL
+                    .updateDever(widget.dever..status = true);
               }
+
               await context.read<Turmas>().getData();
               if (widget.notifyParent != null) {
                 widget.notifyParent!();
               }
+              // await turmas.setDeverStatus(
+              //     widget.dever.id!, !widget.dever.status!);
+              // Provider.of<IndexController>(context).refreshDb(context);
             },
           ),
         );
+        if (context.read<Turmas>().turmaAtual!.isAdmin) {
+          popMenu.add(
+            PopupMenuItem(
+              child: Text("Excluir",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center),
+              onTap: () async {
+                var date = Timestamp.fromDate((await context
+                        .read<Turmas>()
+                        .turmasFB
+                        .deleteDever(widget.dever,
+                            context.read<Turmas>().turmaAtual!.id))
+                    .toDate()
+                    .subtract(const Duration(minutes: 3)));
+                var newDeveres = await context
+                    .read<Turmas>()
+                    .turmasFB
+                    .refreshTurma(context.read<Turmas>().turmaAtual!.id, date);
+                for (var dever in newDeveres) {
+                  await context.read<Turmas>().turmasSQL.createDever(
+                      dever, context.read<Turmas>().turmaAtual!.id);
+                }
+                await context.read<Turmas>().getData();
+                if (widget.notifyParent != null) {
+                  widget.notifyParent!();
+                }
+              },
+            ),
+          );
+        }
       }
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
