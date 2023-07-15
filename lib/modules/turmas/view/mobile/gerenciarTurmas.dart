@@ -200,23 +200,13 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                               setstate(() {});
 
                                               await context.read<Turmas>().turmasSQL.createTurma(Turma(nome: code.text, id: code.text)..setAdmin());
-                                              context.read<Turmas>().getData();
+                                              await context.read<Turmas>().turmasFB.createTurma(Turma(nome: code.text, id: code.text)..setAdmin());
+                                              await context.read<Turmas>().getData();
 
-                                              // await turmas.initTurma(
-                                              //     code.text, context);
 
-                                              // await turmas.getTurmas(
-                                              //     context.read<TurmasLocal>());
-
-                                              // context
-                                              //     .read<TurmasLocal>()
-                                              //     .getTurmas()
-                                              //     .then((value) => setState(() {
-                                              //           loading = false;
-                                              //         }));
 
                                               Navigator.pop(context);
-                                              setState(() {});
+                                              setState(() {loading=false;});
                                             },
                                       child: loading
                                           ? CircularProgressIndicator(

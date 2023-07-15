@@ -13,7 +13,6 @@ import 'package:cronolab/modules/user/view/desktop/perfil.dart';
 import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/models/cronolabExceptions.dart';
-import 'package:cronolab/shared/models/mousePrevent.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
 import '../modules/user/view/mobile/perfil.dart';
@@ -36,6 +36,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   var loading = false;
+  List<SingleChildWidget> providers = [];
   Future loadFromFirebase(Turmas turmas) async {
     //if(loading)return;
     loading = true;
@@ -55,16 +56,19 @@ class _MainAppState extends State<MainApp> {
   void initState() {
     super.initState();
     FirebaseAnalytics.instance.logAppOpen();
+
+    providers = kIsWeb
+        ? [
+            ChangeNotifierProvider(create: (context) => DeveresController()),
+            ChangeNotifierProvider(create: (context) => TurmasStateDesktop())
+          ]
+        : [ChangeNotifierProvider(create: (context) => Turmas())];
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => DeveresController()),
-        ChangeNotifierProvider(create: (context) => TurmasStateDesktop()),
-        ChangeNotifierProvider(create: (context) => MousePrevent()),
-      ],
+      providers: providers,
       child: MaterialApp(
         builder: BotToastInit(),
         navigatorObservers: [BotToastNavigatorObserver()],

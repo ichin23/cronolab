@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarColor: primaryDark,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark));
-
   }
 
   @override
@@ -68,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : Theme.of(context).backgroundColor,
                         onTap: () async {
                           await turmas.changeTurmaAtual(turma);
+                          await turmas.getDeveres();
                           print(""
                                   "Turma: ${turmas.turmaAtual!.id}"
                                   "IsAdmin: " +
@@ -112,34 +112,41 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverFillRemaining(
               child: Refresh(
                   onRefresh: () async {
-                    dataTurmas=context.read<Turmas>().getData();
-                    var internet = await InternetConnectionChecker().hasConnection;
+                    dataTurmas = context.read<Turmas>().getData();
+                    var internet =
+                        await InternetConnectionChecker().hasConnection;
 
                     if (internet) {
-                      await context.read<Turmas>().turmasFB.loadTurmasUser(context.read<Turmas>().turmasSQL);
+                      await context
+                          .read<Turmas>()
+                          .turmasFB
+                          .loadTurmasUser(context.read<Turmas>().turmasSQL);
                     }
-
                   },
                   child: FutureBuilder<List?>(
                       future: dataTurmas,
-                      builder: (context, snapshot) =>Consumer<Turmas>(
-    builder: (context, turmas, _){
-                        debugPrint("ConnectionState: " +
-                            snapshot.connectionState.toString());
+                      builder: (context, snapshot) =>
+                          Consumer<Turmas>(builder: (context, turmas, _) {
+                            debugPrint("ConnectionState: " +
+                                snapshot.connectionState.toString());
 
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return ErrosGet(snapshot.error as CronolabException);
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          return GetDeveres(turmas);
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.none) {
-                          return const Center(child: Text("Erro Desconhecido"));
-                        }
-                        return Container();
-                      }))))
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return ErrosGet(
+                                  snapshot.error as CronolabException);
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return GetDeveres(turmas);
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.none) {
+                              return const Center(
+                                  child: Text("Erro Desconhecido"));
+                            }
+                            return Container();
+                          }))))
         ]),
         floatingActionButton:
             Consumer<Turmas>(builder: (context, turmas, child) {
@@ -149,8 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Icon(Icons.add, color: darkPrimary),
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () async {
-
-
                   await cadastra(context, turmas, () {
                     setState(() {});
                   });

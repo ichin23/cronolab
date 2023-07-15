@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/controllers/turmasSQL.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,14 +25,14 @@ class TurmasFirebase with ChangeNotifier {
           .doc(_auth.currentUser!.uid)
           .collection("turmas")
           .get();
-      turmas = [];
+      List<Turma> newTurmas = [];
       for (var turma in turmasQuery.docs) {
         Turma? turmaClass = (await _firestore
             .collection("turmas")
             .doc(turma.id)
             .withConverter<Turma>(
             fromFirestore: (doc, options) => Turma.fromFirebase(doc),
-            toFirestore: (turma, option) => turma.toJson())
+            toFirestore: (turmaTo, option) => turmaTo.toJson())
             .get())
             .data();
 
@@ -54,17 +55,14 @@ class TurmasFirebase with ChangeNotifier {
           turmaClass.deveres = deveres;
           turmaClass.materia = materias;
 
-          turmas.add(turmaClass);
-
-          if (turmas.length == 1) {
-            notifyListeners();
-          }
+          newTurmas.add(turmaClass);
         }
+
       }
+      turmas=newTurmas;
       notifyListeners();
     } on Exception catch (e) {
       debugPrint(e.toString());
-      //debugPrint(dever.id);
       rethrow;
     }
   }
@@ -160,6 +158,23 @@ class TurmasFirebase with ChangeNotifier {
     }
     debugPrint(deveres.toString());
     return deveres;
+  }
+
+  createTurma(Turma turma)async{
+    var exist = await _firestore.collection("turmas")
+        .doc(turma.id).get().then((e)=>e.exists);
+
+    if(!exist){
+      await _firestore.collection("turmas")
+          .doc(turma.id).set({"nome": turma.id});
+      await _firestore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).collection("turmas").doc(turma.id).set(
+          {"id":turma.id});
+      await addAdmin(FirebaseAuth.instance.currentUser!.uid, turma);
+    }else{
+      await _firestore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).collection("turmas").doc(turma.id).set(
+          {"id":turma.id});
+    }
+   
   }
 
   createDever(Dever dever, String turmaID) {

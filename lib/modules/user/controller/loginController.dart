@@ -11,14 +11,16 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 class LoginController {
   Future loginGoogle(BuildContext context) async {
     try {
-      final GoogleSignInAccount? account = await GoogleSignIn(
-              scopes: [
-            'email',
-            'https://www.googleapis.com/auth/contacts.readonly',
-          ],
-              clientId:
-                  "286245196387-g2p299n53kb6t1am4qdbsk51rmevtll5.apps.googleusercontent.com")
-          .signInSilently();
+      var google = GoogleSignIn(
+          scopes: ['email'],
+          clientId:
+              "286245196387-g2p299n53kb6t1am4qdbsk51rmevtll5.apps.googleusercontent.com");
+      final GoogleSignInAccount? account;
+      if (kIsWeb) {
+        account = await google.signInSilently();
+      } else {
+        account = await google.signIn();
+      }
       final GoogleSignInAuthentication? googleAuth =
           await account?.authentication;
       // Create a new credential

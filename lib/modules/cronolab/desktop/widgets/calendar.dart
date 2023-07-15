@@ -1,4 +1,4 @@
-import 'dart:html';
+//import 'dart:html' if (dart.library.html) 'dart:html';
 
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
@@ -6,6 +6,7 @@ import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +40,9 @@ class CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    document.onContextMenu.listen((event) => event.preventDefault());
+    if (kIsWeb) {
+      //document.onContextMenu.listen((event) => event.preventDefault());
+    }
   }
 
   @override
