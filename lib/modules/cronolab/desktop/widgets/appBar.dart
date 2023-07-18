@@ -191,14 +191,27 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                     ]),
                   ));
                 }),
-                IconButton(
-                  icon: const Icon(
-                    Icons.person,
-                    color: primaryDark,
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/perfil");
-                  },
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.help,
+                        color: primaryDark,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/ajuda");
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.person,
+                        color: primaryDark,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/perfil");
+                      },
+                    ),
+                  ],
                 )
               ],
             ))
