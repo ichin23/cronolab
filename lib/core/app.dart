@@ -152,7 +152,8 @@ class _MainAppState extends State<MainApp> {
             ).copyWith(background: backgroundDark).copyWith(error: redDark)),
         onGenerateRoute: (settings) {
           var args = settings.arguments;
-
+          FirebaseAnalytics.instance
+              .setCurrentScreen(screenName: settings.name);
           switch (settings.name) {
             case "/":
               return MaterialPageRoute(
