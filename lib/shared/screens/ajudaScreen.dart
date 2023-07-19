@@ -173,7 +173,7 @@ class _AjudaScreenState extends State<AjudaScreen> {
                                       });
                                     }
                                   }),
-                            const TextSpan()
+                            const TextSpan(text: ".")
                           ])),
                     ],
                   )),
