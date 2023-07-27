@@ -1,3 +1,4 @@
+import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
@@ -28,8 +29,6 @@ class _EditarTurmaState extends State<EditarTurma>
   late Turma turma;
   bool privada = false;
   bool loading = false;
-
-
 
   @override
   void initState() {
@@ -134,13 +133,24 @@ class _EditarTurmaState extends State<EditarTurma>
                       ? ListView.builder(
                           itemCount: turma.materia.length,
                           itemBuilder: (context, i) => ListTile(
-                              onTap: () {
-                                editaMateria(context, turma.materia[i], turma,
-                                    () => setState(() {}));
+                              onTap: () async {
+                                Materia? newMateria = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditarMateria(
+                                            turma.materia[i], turma.id)));
+                                // context
+                                //     .read<Turmas>()
+                                //     .updateMateria(turma.id, newMateria);
+                                if (newMateria != null) {
+                                  turma.materia[i] = newMateria;
+                                  setState(() {});
+                                }
                               },
                               leading: IconButton(
                                   icon: Icon(Icons.delete,
-                                      color: Theme.of(context).errorColor),
+                                      color:
+                                          Theme.of(context).colorScheme.error),
                                   onPressed: loading
                                       ? null
                                       : () async {
@@ -193,7 +203,7 @@ class _EditarTurmaState extends State<EditarTurma>
                                       .then((value) async {
                                     await context.read<Turmas>().getData();
                                     // await turmas.getTurmas();
-                                    turma = await context
+                                    turma = context
                                         .read<Turmas>()
                                         .getTurmaByID(turma.id)!;
 
@@ -220,7 +230,8 @@ class _EditarTurmaState extends State<EditarTurma>
                   borderRadius: BorderRadius.circular(15)),
               title: Text("Administradores",
                   style: Theme.of(context).textTheme.labelMedium),
-              trailing: Icon(Icons.arrow_forward_ios, color: color.whiteColor),
+              trailing:
+                  const Icon(Icons.arrow_forward_ios, color: color.whiteColor),
             ),
             const SizedBox(height: 15),
             /*Row(

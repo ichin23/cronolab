@@ -38,6 +38,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
               const AppBarDesktop(),
               Expanded(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     turmas.turmaAtual != null
                         ? turmas.turmaAtual?.deveres != null
@@ -77,24 +78,28 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                   notifyParent: () {
                                                     setState(() {});
                                                   })),
-                                      Positioned(
-                                        bottom: 5,
-                                        right: 20,
-                                        child: FloatingActionButton(
-                                          onPressed: () {
-                                            cadastraDeverDesktop(
-                                                    context,
-                                                    deveres.diaAtual?.data ??
-                                                        DateTime.now())
-                                                .then((value) {
-                                              Provider.of<TurmasStateDesktop>(
-                                                      context)
-                                                  .getTurmas(context);
-                                            });
-                                          },
-                                          backgroundColor: primaryDark,
-                                          child: const Icon(Icons.add,
-                                              color: darkPrimary),
+                                      Visibility(
+                                        visible:
+                                            turmas.turmaAtual?.isAdmin ?? false,
+                                        child: Positioned(
+                                          bottom: 5,
+                                          right: 20,
+                                          child: FloatingActionButton(
+                                            onPressed: () {
+                                              cadastraDeverDesktop(
+                                                      context,
+                                                      deveres.diaAtual?.data ??
+                                                          DateTime.now())
+                                                  .then((value) {
+                                                Provider.of<TurmasStateDesktop>(
+                                                        context)
+                                                    .getTurmas(context);
+                                              });
+                                            },
+                                            backgroundColor: primaryDark,
+                                            child: const Icon(Icons.add,
+                                                color: darkPrimary),
+                                          ),
                                         ),
                                       )
                                     ],

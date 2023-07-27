@@ -120,6 +120,20 @@ class Turma {
         .collection("materias")
         .doc(nome)
         .delete();
+    var deveres = await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(id)
+        .collection("deveres")
+        .where("materia", isEqualTo: nome)
+        .get();
+    for (var element in deveres.docs) {
+      await FirebaseFirestore.instance
+          .collection("turmas")
+          .doc(id)
+          .collection("deveres")
+          .doc(element.id)
+          .delete();
+    }
   }
 
   Future update() async {}

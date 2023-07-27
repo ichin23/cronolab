@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/turmas/turma.dart';
+import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DeverTileList extends StatefulWidget {
   const DeverTileList(
@@ -19,7 +25,7 @@ class DeverTileList extends StatefulWidget {
 class _DeverTileListState extends State<DeverTileList> {
   List<PopupMenuItem> popMenu = [];
 
-  /* @override
+  @override
   void initState() {
     super.initState();
     //var turmas = Provider.of<Turmas>(context, listen:false);
@@ -84,9 +90,29 @@ class _DeverTileListState extends State<DeverTileList> {
             ),
           );
         }
+      } else {
+        Turma? turma = context
+            .read<TurmasStateDesktop>()
+            .getTurmaByDever(widget.dever.id!);
+        if (turma?.isAdmin ?? false) {
+          popMenu.add(
+            PopupMenuItem(
+              child: Text("Excluir",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center),
+              onTap: () {
+                turma?.deleteDever(context, widget.dever.id!).then((value) {
+                  turma.getAtividadesDesk(context).then((value) => context
+                      .read<DeveresController>()
+                      .buildCalendar(DateTime.now(), context));
+                });
+              },
+            ),
+          );
+        }
       }
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +129,7 @@ class _DeverTileListState extends State<DeverTileList> {
                 : const Color(0xff3A8138);
 
     DateFormat dataStr = DateFormat("dd/MM - HH:mm");
+    DateFormat horaStr = DateFormat(" - HH:mm");
 
     return GestureDetector(
       onTapDown: (tapDetail) {
@@ -114,6 +141,19 @@ class _DeverTileListState extends State<DeverTileList> {
         if (!kIsWeb) {
           Navigator.pushNamed(context, "/dever",
               arguments: {"dever": widget.dever, "index": widget.index});
+        } else {
+          showMenu(
+            color: backgroundDark,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            context: context,
+            position: RelativeRect.fromLTRB(
+                tapDetails.globalPosition.dx,
+                tapDetails.globalPosition.dy,
+                width - tapDetails.globalPosition.dx,
+                height - tapDetails.globalPosition.dy),
+            items: [...popMenu],
+          );
         }
       },
       onLongPress: () {
@@ -172,8 +212,18 @@ class _DeverTileListState extends State<DeverTileList> {
                 children: [
                   Hero(
                     tag: "data${widget.index.toString()}",
-                    child: Text(dataStr.format(widget.dever.data),
+                    child: Text(
+                        (data.difference(DateTime.now()).inDays == 0
+                                ? "Hoje"
+                                : data
+                                        .difference(DateTime.now())
+                                        .inDays
+                                        .toString() +
+                                    " dias") +
+                            horaStr.format(data),
                         style: TextStyle(color: corText, fontSize: 14)),
+                    /* child: Text(dataStr.format(widget.dever.data),
+                        style: TextStyle(color: corText, fontSize: 14)), */
                   ),
                   Hero(
                     tag: "pontos${widget.index.toString()}",

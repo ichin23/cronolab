@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,8 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
   TextEditingController nome = TextEditingController();
   TextEditingController email = TextEditingController();
   User? user;
+  bool loading = false;
+
   getUser() async {
     user = FirebaseAuth.instance.currentUser;
     nome.text = user!.displayName ?? "";
@@ -70,15 +73,36 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
                   width: MediaQuery.of(context).size.width * 0.1,
                   child: TextButton(
                     style: ButtonStyle(
-                        maximumSize:
-                            MaterialStateProperty.all(const Size(200, 40)),
                         backgroundColor: MaterialStateProperty.all(primaryDark),
                         textStyle: MaterialStateProperty.all(labelDark)),
-                    child: const Text(
-                      "Salvar",
-                      style: labelBlackDark,
-                    ),
-                    onPressed: () {},
+                    child: loading
+                        ? const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: CircularProgressIndicator(
+                              color: backgroundDark,
+                            ),
+                          )
+                        : const Text(
+                            "Salvar",
+                            style: labelBlackDark,
+                          ),
+                    onPressed: () async {
+                      if (FirebaseAuth.instance.currentUser?.displayName !=
+                          nome.text) {
+                        setState(() {
+                          loading = true;
+                        });
+                        await FirebaseAuth.instance.currentUser
+                            ?.updateDisplayName(nome.text);
+                        await FirebaseFirestore.instance
+                            .collection("users")
+                            .doc(FirebaseAuth.instance.currentUser?.uid)
+                            .update({"nome": nome.text});
+                        setState(() {
+                          loading = false;
+                        });
+                      }
+                    },
                   ),
                 )
               ],

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -41,6 +42,9 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                           style: fonts.labelDark),
                       const SizedBox(height: 15),
                       TextFormField(
+                          maxLength: context
+                              .read<sett.Settings>()
+                              .settings["input"]["dever"]["titulo"],
                           controller: titulo,
                           validator: (value) {
                             if (value != null && value.isEmpty) {
@@ -50,6 +54,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                           },
                           style: fonts.labelDark,
                           decoration: InputDecoration(
+                              counterText: "",
                               label: const Text("Título"),
                               icon: const Icon(Icons.border_color,
                                   color: whiteColor),
@@ -90,6 +95,9 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       const SizedBox(height: 15),
                       TextFormField(
                           controller: pontos,
+                          maxLength: context
+                              .read<sett.Settings>()
+                              .settings["input"]["dever"]["valor"],
                           validator: (value) {
                             if (value != null && value.isEmpty) {
                               return "Digite um valor";
@@ -102,6 +110,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                 RegExp(r"^\d+(\.|,?)(\d{1,2})?"))
                           ],
                           decoration: InputDecoration(
+                              counterText: "",
                               label: const Text("Valor/Pontuação"),
                               icon: const Icon(Icons.border_color,
                                   color: whiteColor),
@@ -112,6 +121,9 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       const SizedBox(height: 15),
                       TextFormField(
                           controller: local,
+                          maxLength: context
+                              .read<sett.Settings>()
+                              .settings["input"]["dever"]["local"],
                           validator: (value) {
                             if (value != null && value.isEmpty) {
                               return "Digite um valor";
@@ -122,6 +134,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                           inputFormatters: const [],
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                              counterText: "",
                               label: const Text("Local"),
                               icon: const Icon(Icons.border_color,
                                   color: whiteColor),

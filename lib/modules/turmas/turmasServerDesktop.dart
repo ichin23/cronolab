@@ -138,6 +138,19 @@ class TurmasStateDesktop with ChangeNotifier {
     changeLoading = false;
   }
 
+  updateMateria(String turmaId, Materia materia) {
+    for (int i = 0; i < turmas.length; i++) {
+      if (turmas[i].id == turmaId) {
+        for (int j = 0; j < turmas[i].materia.length; j++) {
+          if (turmas[i].materia[j].id == materia.id) {
+            turmas[i].materia[j] = materia;
+          }
+        }
+      }
+    }
+    notifyListeners();
+  }
+
   deleteTurma(String code) async {
     changeLoading = true;
 
@@ -160,7 +173,7 @@ class TurmasStateDesktop with ChangeNotifier {
           .collection("turmas")
           .get();
       debugPrint(minhasTurmas.toString());
-      turmas.clear();
+      List<Turma> newTurmas = [];
       for (var turmaQuery in minhasTurmas.docs) {
         Map<String, dynamic> turma = {
           "id": turmaQuery.id,
@@ -204,26 +217,81 @@ class TurmasStateDesktop with ChangeNotifier {
 
         turmaAdd.setMaterias = listMat;
 
-        turmas.add(turmaAdd);
+        newTurmas.add(turmaAdd);
         debugPrint(turmas.toString());
       }
+      turmas = newTurmas;
       Future.forEach(
           turmas,
           (Turma turma) => turma.getAtividadesDesk(context).then((value) {
                 notifyListeners();
-              })).then((value) => context
-          .read<DeveresController>()
-          .buildCalendar(DateTime.now(), context));
+              })).then((value) {
+        if (context.mounted) {
+          context
+              .read<DeveresController>()
+              .buildCalendar(DateTime.now(), context);
+        }
+      });
 
-      context.read<DeveresController>().buildCalendar(DateTime.now(), context);
       changeLoading = false;
-      //notifyListeners();
 
       notifyListeners();
       return turmas;
     } catch (e) {
       print(e);
     }
+  }
+
+  Turma? getTurmaByDever(String deverID) {
+    for (var turma in turmas) {
+      if (turma.deveres!.where((element) => element.id == deverID).isNotEmpty) {
+        return turma;
+      }
+    }
+    return null;
+  }
+
+  Future<List<Map>> getAdmins(String turmaID) async {
+    var adminsFB = (await FirebaseFirestore.instance
+        .collection("turmas")
+        .doc(turmaID)
+        .collection("admins")
+        .get());
+    List<Map> admins = [];
+    for (var admin in adminsFB.docs) {
+      Map data = (await FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(admin.id)
+                  .get())
+              .data() ??
+          {};
+      data["id"] = admin.id;
+      admins.add(data);
+    }
+
+    return admins;
+  }
+
+  Future<List<Map>> getParticipantes(String turmaID) async {
+    var participantesFB = (await FirebaseFirestore.instance
+        .collectionGroup("turmas")
+        .where("id", isEqualTo: turmaID)
+        .get());
+    List<Map> participantes = [];
+    for (var participante in participantesFB.docs) {
+      var id = participante.reference.path.split("/")[1];
+      Map data = {"id": id};
+      var dataFB =
+          (await FirebaseFirestore.instance.collection("users").doc(id).get());
+
+      if (dataFB.data() != null) {
+        data.addAll(dataFB.data()!);
+      }
+
+      participantes.add(data);
+    }
+
+    return participantes;
   }
 
   set changeLoading(bool load) {

@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/shared/colors.dart' as colors;
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   TextEditingController hora = TextEditingController();
   TextEditingController local = TextEditingController();
 
-  GlobalKey<FormState> _form = GlobalKey<FormState>();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
   FocusNode titleNode = FocusNode();
   FocusNode dataNode = FocusNode();
@@ -39,6 +40,7 @@ class _DeverDetailsState extends State<DeverDetails> {
   InputDecoration fieldDecoration = InputDecoration(
       fillColor: colors.whiteColor.withOpacity(0.1),
       filled: true,
+      counterText: "",
       // suffix: Icon(Icons.person),
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
@@ -86,6 +88,8 @@ class _DeverDetailsState extends State<DeverDetails> {
               Text("Título", style: Theme.of(context).textTheme.labelMedium),
               TextField(
                   decoration: fieldDecoration,
+                  maxLength: context.read<sett.Settings>().settings["input"]
+                      ["dever"]["titulo"],
                   readOnly: !editavel,
                   style: Theme.of(context).textTheme.labelLarge,
                   controller: title,
@@ -101,7 +105,8 @@ class _DeverDetailsState extends State<DeverDetails> {
                               context: context,
                               initialDate: dever.data,
                               firstDate: DateTime.now(),
-                              lastDate: DateTime.now().add(Duration(days: 365)));
+                              lastDate: DateTime.now()
+                                  .add(const Duration(days: 365)));
 
                           if (newDate != null) {
                             newDate = newDate.add(Duration(
@@ -146,6 +151,8 @@ class _DeverDetailsState extends State<DeverDetails> {
               Text("Local", style: Theme.of(context).textTheme.labelMedium),
               TextFormField(
                   decoration: fieldDecoration,
+                  maxLength: context.read<sett.Settings>().settings["input"]
+                      ["dever"]["local"],
                   readOnly: !editavel,
                   style: Theme.of(context).textTheme.labelLarge,
                   controller: local,
@@ -161,28 +168,31 @@ class _DeverDetailsState extends State<DeverDetails> {
                     borderRadius: BorderRadius.circular(15),
                     color: colors.whiteColor.withOpacity(0.1),
                   ),
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: SizedBox(
-                            width: width * 0.7 - 50,
-                            child: Text("Matéria: ${dever.materia!.nome}",
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: SizedBox(
+                                width: width * 0.7 - 50,
+                                child: Text("Matéria: ${dever.materia!.nome}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text("Professor: ${dever.materia!.prof}",
                                 style: Theme.of(context).textTheme.labelMedium),
-                          ),
+                            const SizedBox(height: 10),
+                            Text("Contato: ${dever.materia!.contato}",
+                                style: Theme.of(context).textTheme.labelMedium)
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        Text("Professor: ${dever.materia!.prof}",
-                            style: Theme.of(context).textTheme.labelMedium),
-                        const SizedBox(height: 10),
-                        Text("Contato: ${dever.materia!.contato}",
-                            style: Theme.of(context).textTheme.labelMedium)
-                      ],
-                    ),
-                  ]))
+                      ]))
             ]),
           ),
         ),
@@ -213,15 +223,15 @@ class _DeverDetailsState extends State<DeverDetails> {
 
                       titleNode.requestFocus();
                       titleNode.unfocus();
-                      await turmas.turmasFB
-                          .updateDever(
+                      await turmas.turmasFB.updateDever(
                           turmas.turmaAtual!.id, dever.id!, update);
-                      var novosDeveres =await turmas.turmasFB.refreshTurma(turmas.turmaAtual!.id,
-                          Timestamp.fromDate(
-                              await turmas.turmasSQL.readUltimaModificacao(
-                                  turmas.turmaAtual!.id)));
-                      for (var dever in novosDeveres){
-                        await turmas.turmasSQL.createDever(dever, turmas.turmaAtual!.id);
+                      var novosDeveres = await turmas.turmasFB.refreshTurma(
+                          turmas.turmaAtual!.id,
+                          Timestamp.fromDate(await turmas.turmasSQL
+                              .readUltimaModificacao(turmas.turmaAtual!.id)));
+                      for (var dever in novosDeveres) {
+                        await turmas.turmasSQL
+                            .createDever(dever, turmas.turmaAtual!.id);
                       }
                       await turmas.getData();
                       Navigator.pop(context);

@@ -10,9 +10,10 @@ import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
-import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
+
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/models/cronolabExceptions.dart';
+import 'package:cronolab/shared/models/settings.dart';
 import 'package:cronolab/shared/screens/ajudaScreen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
@@ -24,13 +25,14 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '../modules/turmas/view/mobile/gerenciarTurmas.dart';
+import '../modules/user/view/loginPage.dart';
 import '../modules/user/view/mobile/perfil.dart';
 import '../modules/user/view/mobile/suasInfos.dart';
 import '../shared/fonts.dart';
 
 class MainApp extends StatefulWidget {
-  const MainApp({Key? key}) : super(key: key);
-
+  const MainApp(this.settings, {Key? key}) : super(key: key);
+  final Settings settings;
   @override
   State<MainApp> createState() => _MainAppState();
 }
@@ -60,10 +62,14 @@ class _MainAppState extends State<MainApp> {
 
     providers = kIsWeb
         ? [
+            ChangeNotifierProvider(create: (context) => widget.settings),
             ChangeNotifierProvider(create: (context) => DeveresController()),
             ChangeNotifierProvider(create: (context) => TurmasStateDesktop())
           ]
-        : [ChangeNotifierProvider(create: (context) => Turmas())];
+        : [
+            ChangeNotifierProvider(create: (context) => widget.settings),
+            ChangeNotifierProvider(create: (context) => Turmas())
+          ];
   }
 
   @override
@@ -152,61 +158,68 @@ class _MainAppState extends State<MainApp> {
             ).copyWith(background: backgroundDark).copyWith(error: redDark)),
         onGenerateRoute: (settings) {
           var args = settings.arguments;
-          FirebaseAnalytics.instance
-              .setCurrentScreen(screenName: settings.name);
+          FirebaseAnalytics.instance.logScreenView(screenName: settings.name);
           switch (settings.name) {
             case "/":
               return MaterialPageRoute(
-                builder: (context) => StreamBuilder<User?>(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (context, stream) {
-                    if (stream.connectionState != ConnectionState.waiting) {
-                      if (stream.data != null) {
-                        return kIsWeb
-                            ? Builder(
-                                builder: (context) => const LoadDataDesktop())
-                            : Builder(builder: (context) {
-                                return FutureBuilder(
-                                    future: loadFromFirebase(
-                                        context.read<Turmas>()),
-                                    builder: (context, snap) {
-                                      print(snap.error);
-                                      return Stack(
-                                        children: [
-                                          const HomeScreen(),
-                                          Positioned(
-                                              bottom: 10,
-                                              left: 10,
-                                              child: snap.connectionState ==
-                                                      ConnectionState.waiting
-                                                  ? const SizedBox(
-                                                      width: 30,
-                                                      height: 30,
-                                                      child:
-                                                          CircularProgressIndicator())
-                                                  : snap.hasError
-                                                      ? Icon(
-                                                          Icons
-                                                              .signal_wifi_connected_no_internet_4_outlined,
-                                                          color: primaryDark
-                                                              .withOpacity(0.7),
-                                                        )
-                                                      : Container())
-                                        ],
-                                      );
+                builder: (context) => FutureBuilder(
+                    future: context.read<Settings>().getSettings(),
+                    builder: (context, sett) {
+                      return StreamBuilder<User?>(
+                        stream: FirebaseAuth.instance.authStateChanges(),
+                        builder: (context, stream) {
+                          if (stream.connectionState !=
+                              ConnectionState.waiting) {
+                            if (stream.data != null) {
+                              return kIsWeb
+                                  ? Builder(
+                                      builder: (context) =>
+                                          const LoadDataDesktop())
+                                  : Builder(builder: (context) {
+                                      return FutureBuilder(
+                                          future: loadFromFirebase(
+                                              context.read<Turmas>()),
+                                          builder: (context, snap) {
+                                            print(snap.error);
+                                            return Stack(
+                                              children: [
+                                                const HomeScreen(),
+                                                Positioned(
+                                                    bottom: 10,
+                                                    left: 10,
+                                                    child: snap.connectionState ==
+                                                            ConnectionState
+                                                                .waiting
+                                                        ? const SizedBox(
+                                                            width: 30,
+                                                            height: 30,
+                                                            child:
+                                                                CircularProgressIndicator())
+                                                        : snap.hasError
+                                                            ? Icon(
+                                                                Icons
+                                                                    .signal_wifi_connected_no_internet_4_outlined,
+                                                                color: primaryDark
+                                                                    .withOpacity(
+                                                                        0.7),
+                                                              )
+                                                            : Container())
+                                              ],
+                                            );
+                                          });
                                     });
-                              });
-                      } else {
-                        return const LoginPage();
-                      }
-                    } else {
-                      return Scaffold(
-                        body:
-                            Center(child: Image.asset("assets/image/logo.png")),
+                            } else {
+                              return const LoginPage();
+                            }
+                          } else {
+                            return Scaffold(
+                              body: Center(
+                                  child: Image.asset("assets/image/logo.png")),
+                            );
+                          }
+                        },
                       );
-                    }
-                  },
-                ),
+                    }),
               );
 
             case "/perfil":

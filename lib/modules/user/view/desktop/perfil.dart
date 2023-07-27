@@ -36,31 +36,36 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
           children: [
             Column(
               children: [
-                Container(
-                    height: size.height * 0.85,
-                    padding: const EdgeInsets.all(8),
-                    width: size.width * 0.15,
-                    child: ListView.builder(
-                        itemCount: pages.length,
-                        itemBuilder: (context, i) => MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                tileColor: index == i
-                                    ? Theme.of(context).hoverColor
-                                    : Colors.transparent,
-                                onTap: () {
-                                  setState(() {
-                                    index = i;
-                                  });
-                                },
-                                title: Text(
-                                  pages.keys.toList()[i],
-                                  style: labelDark,
+                Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(8),
+                      width: size.width * 0.15,
+                      child: ListView.builder(
+                          itemCount: pages.length,
+                          itemBuilder: (context, i) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    tileColor: index == i
+                                        ? Theme.of(context).hoverColor
+                                        : Colors.transparent,
+                                    onTap: () {
+                                      setState(() {
+                                        index = i;
+                                      });
+                                    },
+                                    title: Text(
+                                      pages.keys.toList()[i],
+                                      style: labelDark,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ))),
+                              ))),
+                ),
                 Container(
                     child: TextButton(
                   child: const Text("Sair"),

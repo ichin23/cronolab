@@ -280,7 +280,8 @@ class CalendarState extends State<Calendar> {
 
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton &&
-        context.read<TurmasStateDesktop>().turmaAtual != null) {
+        context.read<TurmasStateDesktop>().turmaAtual != null &&
+        (context.read<TurmasStateDesktop>().turmaAtual?.isAdmin ?? false)) {
       await cadastraDeverDesktop(context, atual.data);
       await context.read<TurmasStateDesktop>().refreshDeveres(context);
       context.read<DeveresController>().buildCalendar(DateTime.now(), context);

@@ -9,8 +9,8 @@ class CadastroController {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       FirebaseAuth.instance.currentUser!.updateDisplayName(nome);
-    } catch (e) {
-      debugPrint(e.toString());
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.code);
       if (e.toString().contains("email-already-in-use")) {
         showDialog(
           context: context,
@@ -21,6 +21,19 @@ class CadastroController {
               style: TextStyle(color: whiteColor),
             ),
             content: Text("Esse email já é usado por outra conta",
+                style: TextStyle(color: whiteColor)),
+          ),
+        );
+      } else if (e.toString().contains("weak-password")) {
+        showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
+            backgroundColor: backgroundDark,
+            title: Text(
+              "Erro no cadastro",
+              style: TextStyle(color: whiteColor),
+            ),
+            content: Text("A senha precisa ter ao menos 6 caracteres",
                 style: TextStyle(color: whiteColor)),
           ),
         );
