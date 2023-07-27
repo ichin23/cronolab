@@ -91,8 +91,8 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                       deveres.diaAtual?.data ??
                                                           DateTime.now())
                                                   .then((value) {
-                                                Provider.of<TurmasStateDesktop>(
-                                                        context)
+                                                context
+                                                    .read<TurmasStateDesktop>()
                                                     .getTurmas(context);
                                               });
                                             },

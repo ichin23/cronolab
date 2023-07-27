@@ -2,7 +2,6 @@ import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/minhasTurmas.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/novaSenha.dart';
 import 'package:cronolab/modules/user/view/desktop/configuracoes/suasInfos.dart';
-import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -81,48 +80,6 @@ class _PerfilPageDesktopState extends State<PerfilPageDesktop> {
           ],
         ),
       ),
-      floatingActionButton: index == 1
-          ? FloatingActionButton(
-              isExtended: true,
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) =>
-                        StatefulBuilder(builder: (context, setState) {
-                          return AlertDialog(
-                            title: Text("Entrar na turma",
-                                style: Theme.of(context).textTheme.titleMedium),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                MyField(
-                                  nome: _turmaCode,
-                                  label: const Text("Código da turma"),
-                                ),
-                                TextButton(
-                                    onPressed: () async {
-                                      await Provider.of<TurmasStateDesktop>(
-                                              context)
-                                          .initTurma(_turmaCode.text, context);
-
-                                      await Provider.of<TurmasStateDesktop>(
-                                              context)
-                                          .getTurmas(context)
-                                          .then((value) => setState(() {}));
-                                      Navigator.pop(context);
-                                      _turmaCode.text = "";
-                                    },
-                                    child: const Text("Entrar"))
-                              ],
-                            ),
-                          );
-                        }));
-              },
-              child: Provider.of<TurmasStateDesktop>(context).loading
-                  ? const CircularProgressIndicator()
-                  : const Icon(Icons.add),
-            )
-          : null,
     );
   }
 }

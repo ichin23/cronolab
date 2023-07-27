@@ -2,6 +2,7 @@ import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
+import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -112,77 +113,90 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                             TextEditingController code =
                                 TextEditingController();
                             bool loading = false;
+
                             showDialog(
                                 context: context,
-                                builder: (context) => StatefulBuilder(
+                                builder: (context) => turmas.turmas.length <
+                                        context.read<Settings>().limTurmas
+                                    ? StatefulBuilder(
                                         builder: (context, setstate) {
-                                      return AlertDialog(
+                                        return AlertDialog(
+                                          content: Container(
+                                            constraints: const BoxConstraints(
+                                                minHeight: 100),
+                                            child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Text(
+                                                    "Digite o código da turma",
+                                                    style: labelDark,
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  TextField(
+                                                    style: labelDark,
+                                                    controller: code,
+                                                    onSubmitted:
+                                                        (codeStr) async {
+                                                      loading = true;
+                                                      setstate(() {});
+                                                      await context
+                                                          .read<
+                                                              TurmasStateDesktop>()
+                                                          .initTurma(
+                                                              codeStr, context);
+
+                                                      loading = false;
+                                                      setstate(() {});
+                                                      Navigator.pop(context);
+                                                      await context
+                                                          .read<
+                                                              TurmasStateDesktop>()
+                                                          .getTurmas(context);
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  TextButton(
+                                                    child: loading
+                                                        ? const CircularProgressIndicator()
+                                                        : const Text(
+                                                            "Adicionar"),
+                                                    onPressed: loading
+                                                        ? null
+                                                        : () async {
+                                                            loading = true;
+                                                            setstate(() {});
+                                                            await context
+                                                                .read<
+                                                                    TurmasStateDesktop>()
+                                                                .initTurma(
+                                                                    code.text,
+                                                                    context);
+
+                                                            loading = false;
+                                                            setstate(() {});
+                                                            Navigator.pop(
+                                                                context);
+                                                            await context
+                                                                .read<
+                                                                    TurmasStateDesktop>()
+                                                                .getTurmas(
+                                                                    context);
+                                                          },
+                                                  )
+                                                ]),
+                                          ),
+                                        );
+                                      })
+                                    : AlertDialog(
                                         content: Container(
-                                          constraints: const BoxConstraints(
-                                              minHeight: 100),
-                                          child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Text(
-                                                  "Digite o código da turma",
-                                                  style: labelDark,
-                                                ),
-                                                const SizedBox(height: 8),
-                                                TextField(
-                                                  style: labelDark,
-                                                  controller: code,
-                                                  onSubmitted: (codeStr) async {
-                                                    loading = true;
-                                                    setstate(() {});
-                                                    await context
-                                                        .read<
-                                                            TurmasStateDesktop>()
-                                                        .initTurma(
-                                                            codeStr, context);
-
-                                                    loading = false;
-                                                    setstate(() {});
-                                                    Navigator.pop(context);
-                                                    await context
-                                                        .read<
-                                                            TurmasStateDesktop>()
-                                                        .getTurmas(context);
-                                                  },
-                                                ),
-                                                const SizedBox(height: 8),
-                                                TextButton(
-                                                  child: loading
-                                                      ? const CircularProgressIndicator()
-                                                      : const Text("Adicionar"),
-                                                  onPressed: loading
-                                                      ? null
-                                                      : () async {
-                                                          loading = true;
-                                                          setstate(() {});
-                                                          await context
-                                                              .read<
-                                                                  TurmasStateDesktop>()
-                                                              .initTurma(
-                                                                  code.text,
-                                                                  context);
-
-                                                          loading = false;
-                                                          setstate(() {});
-                                                          Navigator.pop(
-                                                              context);
-                                                          await context
-                                                              .read<
-                                                                  TurmasStateDesktop>()
-                                                              .getTurmas(
-                                                                  context);
-                                                        },
-                                                )
-                                              ]),
+                                          child: const Text(
+                                            "Você já atingiu o limite de turmas!",
+                                            style: labelDark,
+                                          ),
                                         ),
-                                      );
-                                    }));
+                                      ));
                           },
                           icon: const Icon(
                             Icons.add,

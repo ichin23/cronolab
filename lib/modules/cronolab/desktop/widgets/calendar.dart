@@ -236,6 +236,7 @@ class CalendarState extends State<Calendar> {
                                                                                         : f.deveres.isNotEmpty
                                                                                             ? backgroundDark
                                                                                             : Colors.white,
+                                                                                    fontWeight: FontWeight.w800,
                                                                                     fontSize: f == deveres.diaAtual ? 36 : 40),
                                                                               ),
                                                                               // f.deveres.isNotEmpty

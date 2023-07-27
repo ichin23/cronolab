@@ -175,7 +175,11 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                 child: Column(
                   children: [
                     Text(
-                      "Matérias",
+                      "Matérias (" +
+                          turma.materia.length.toString() +
+                          "/" +
+                          context.read<sett.Settings>().limMaterias.toString() +
+                          ")",
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(height: 15),
@@ -189,61 +193,44 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                         child: Stack(
                           children: [
                             turma.materia.isNotEmpty
-                                ? Column(
-                                    children: [
-                                      Text(
-                                        turma.materia.length.toString() +
-                                            "/" +
+                                ? Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: ListView.builder(
+                                      itemCount: turma.materia.length,
+                                      itemBuilder: (context, i) => ListTile(
+                                          onTap: () async {
+                                            Materia? newMateria =
+                                                await editarMateria(context,
+                                                    turma.materia[i], turma);
+                                            /*   Materia? newMateria =
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditarMateria(
+                                                            turma.materia[i],
+                                                            turma.id))); */
+                                            if (newMateria == null) return;
                                             context
-                                                .read<sett.Settings>()
-                                                .settings["turmas"]
-                                                    ["quantMaterias"]
-                                                .toString(),
-                                        style: labelDark,
-                                        textAlign: TextAlign.end,
-                                      ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: turma.materia.length,
-                                          itemBuilder: (context, i) => ListTile(
-                                              onTap: () async {
-                                                Materia? newMateria =
-                                                    await editarMateria(
-                                                        context,
-                                                        turma.materia[i],
-                                                        turma);
-                                                /*   Materia? newMateria =
-                                                    await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                EditarMateria(
-                                                                    turma.materia[i],
-                                                                    turma.id))); */
-                                                if (newMateria == null) return;
-                                                context
-                                                    .read<TurmasStateDesktop>()
-                                                    .updateMateria(
-                                                        turma.id, newMateria);
+                                                .read<TurmasStateDesktop>()
+                                                .updateMateria(
+                                                    turma.id, newMateria);
 
-                                                turma.materia[i] = newMateria;
-                                                setState(() {});
-                                              },
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15)),
-                                              trailing: Icon(Icons.edit,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
-                                              title: Text(turma.materia[i].nome,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .labelMedium)),
-                                        ),
-                                      ),
-                                    ],
+                                            turma.materia[i] = newMateria;
+                                            setState(() {});
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          trailing: Icon(Icons.edit,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                          title: Text(turma.materia[i].nome,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium)),
+                                    ),
                                   )
                                 : Center(
                                     child: Text(
@@ -262,21 +249,35 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                         : () {
                                             TextEditingController materia =
                                                 TextEditingController();
-
-                                            addMateria(context, turma.id, () {})
-                                                .then((value) async {
-                                              var newTurma = await context
+                                            if (turma.materia.length <
+                                                context
+                                                    .read<sett.Settings>()
+                                                    .limMaterias) {
+                                              addMateria(
+                                                      context, turma.id, () {})
+                                                  .then((value) async {
+                                                var newTurma = await context
+                                                    .read<TurmasStateDesktop>()
+                                                    .refreshTurma(turma.id);
+                                                if (newTurma != null) {
+                                                  turma = newTurma;
+                                                }
+                                                setState(() {});
+                                              });
+                                              context
                                                   .read<TurmasStateDesktop>()
-                                                  .refreshTurma(turma.id);
-                                              if (newTurma != null) {
-                                                turma = newTurma;
-                                              }
+                                                  .getTurmas(context);
                                               setState(() {});
-                                            });
-                                            context
-                                                .read<TurmasStateDesktop>()
-                                                .getTurmas(context);
-                                            setState(() {});
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      const AlertDialog(
+                                                        content: Text(
+                                                            "Você atingiu o limite de matérias nessa turma",
+                                                            style: labelDark),
+                                                      ));
+                                            }
                                           },
                                     child: loading
                                         ? const CircularProgressIndicator()
