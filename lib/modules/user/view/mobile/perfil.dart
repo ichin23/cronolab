@@ -1,4 +1,5 @@
 // import 'package:cronolab/modules/turmas/turmasLocal.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:provider/provider.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({Key? key}) : super(key: key);
@@ -49,44 +51,49 @@ class _PerfilPageState extends State<PerfilPage> {
                     Container(
                       padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                       child: FutureBuilder(
-                        future: InternetConnectionChecker().hasConnection,
-                        builder: (context, snapCheck) {
-                          return Row(
-                            children: [
-                              snapCheck.data == true &&
-                              FirebaseAuth.instance.currentUser!.photoURL != null
-                                  ? SizedBox(
-                                      height: 90,
-                                      width: 90,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Image.network(FirebaseAuth
-                                            .instance.currentUser!.photoURL!),
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: const EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                          boxShadow: const [
-                                            BoxShadow(blurRadius: 10),
-                                            BoxShadow()
-                                          ],
-                                          color: Theme.of(context).primaryColor,
-                                          borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(
-                                              color:
-                                                  Theme.of(context).primaryColor)),
-                                      child: const Icon(
-                                        Icons.person,
-                                        size: 40,
-                                        color: whiteColor,
-                                      )),
-                              const SizedBox(width: 30),
-                              Text(
-                                snap.data!.displayName.toString(),
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              /*  TextButton(
+                          future: InternetConnectionChecker().hasConnection,
+                          builder: (context, snapCheck) {
+                            return Row(
+                              children: [
+                                snapCheck.data == true &&
+                                        FirebaseAuth.instance.currentUser!
+                                                .photoURL !=
+                                            null
+                                    ? SizedBox(
+                                        height: 90,
+                                        width: 90,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: Image.network(FirebaseAuth
+                                              .instance.currentUser!.photoURL!),
+                                        ),
+                                      )
+                                    : Container(
+                                        padding: const EdgeInsets.all(15),
+                                        decoration: BoxDecoration(
+                                            boxShadow: const [
+                                              BoxShadow(blurRadius: 10),
+                                              BoxShadow()
+                                            ],
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                                color: Theme.of(context)
+                                                    .primaryColor)),
+                                        child: const Icon(
+                                          Icons.person,
+                                          size: 40,
+                                          color: whiteColor,
+                                        )),
+                                const SizedBox(width: 30),
+                                Text(
+                                  snap.data!.displayName.toString(),
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                /*  TextButton(
                                 onPressed: () {
                                   FirebaseAuth.instance.signOut();
                                   TurmasLocal.to.deleteAll();
@@ -98,27 +105,26 @@ class _PerfilPageState extends State<PerfilPage> {
                                   style: TextStyle(color: primary),
                                 ),
                               ), */
-                              // OutlinedButton(
-                              //     style: ButtonStyle(
-                              //         elevation: MaterialStateProperty.all(5),
-                              //         backgroundColor:
-                              //             MaterialStateProperty.all(primary),
-                              //         shape: MaterialStateProperty.all(
-                              //             RoundedRectangleBorder(
-                              //                 borderRadius:
-                              //                     BorderRadius.circular(20),
-                              //                 side: BorderSide(
-                              //                     color: Color(0xffB8DCFF),
-                              //                     width: 10)))),
-                              //     onPressed: () {},
-                              //     child: Text(
-                              //       "Entrar",
-                              //       style: TextStyle(color: Colors.black87),
-                              //     )),
-                            ],
-                          );
-                        }
-                      ),
+                                // OutlinedButton(
+                                //     style: ButtonStyle(
+                                //         elevation: MaterialStateProperty.all(5),
+                                //         backgroundColor:
+                                //             MaterialStateProperty.all(primary),
+                                //         shape: MaterialStateProperty.all(
+                                //             RoundedRectangleBorder(
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(20),
+                                //                 side: BorderSide(
+                                //                     color: Color(0xffB8DCFF),
+                                //                     width: 10)))),
+                                //     onPressed: () {},
+                                //     child: Text(
+                                //       "Entrar",
+                                //       style: TextStyle(color: Colors.black87),
+                                //     )),
+                              ],
+                            );
+                          }),
                     ),
                     ListTile(
                       title: Text("Suas Informações",
@@ -146,6 +152,8 @@ class _PerfilPageState extends State<PerfilPage> {
                               fontSize: 16)),
                       onTap: () {
                         FirebaseAuth.instance.signOut();
+                        context.read<Turmas>().turmasSQL.deleteAll();
+                        context.read<Turmas>().turmasSQL.turmas.clear();
                         // Provider.of<TurmasLocal>(context).deleteAll();
                         // turmas.clear();
                         Navigator.pop(context);

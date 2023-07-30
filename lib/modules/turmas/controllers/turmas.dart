@@ -11,7 +11,7 @@ class Turmas with ChangeNotifier {
   Turma? turmaAtual;
   List<Dever>? deveresAtuais;
 
-  Future<List> getData([List? listFilter]) async {
+  Future<List?> getData([List? listFilter]) async {
     try {
       await turmasSQL.getTurmasData();
 

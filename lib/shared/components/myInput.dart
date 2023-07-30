@@ -31,7 +31,8 @@ class MyField extends StatelessWidget {
       validator: validator,
       controller: nome,
       maxLength: maxLength ??
-          context.read<Settings>().settings["input"]["limiteGeral"],
+          context.read<Settings>().settings["input"]["limiteGeral"] ??
+          50,
       decoration: InputDecoration(
         counterText: "",
         fillColor: color.whiteColor.withOpacity(0.1),

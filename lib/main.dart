@@ -9,7 +9,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Settings settings = Settings();
   try {
-    settings.getSettings();
+    await settings.getSettings();
   } catch (e) {
     debugPrint(e.toString());
   }

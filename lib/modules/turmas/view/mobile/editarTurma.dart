@@ -4,6 +4,8 @@ import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/components/myInput.dart';
+import 'package:cronolab/shared/fonts.dart';
+import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -117,7 +119,7 @@ class _EditarTurmaState extends State<EditarTurma>
                 : Container(),
             const SizedBox(height: 15),
             Text(
-              "Matérias",
+              "Matérias (${turma.materia.length}/${context.read<Settings>().limMaterias})",
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: 15),
@@ -198,18 +200,28 @@ class _EditarTurmaState extends State<EditarTurma>
                               : () {
                                   TextEditingController materia =
                                       TextEditingController();
+                                  if(turma.materia.length<context.read<Settings>().limMaterias) {
+                                    addMateria(context, turma.id, () {})
+                                        .then((value) async {
+                                      await context.read<Turmas>().getData();
+                                      // await turmas.getTurmas();
+                                      turma = context
+                                          .read<Turmas>()
+                                          .getTurmaByID(turma.id)!;
 
-                                  addMateria(context, turma.id, () {})
-                                      .then((value) async {
-                                    await context.read<Turmas>().getData();
-                                    // await turmas.getTurmas();
-                                    turma = context
-                                        .read<Turmas>()
-                                        .getTurmaByID(turma.id)!;
-
+                                      setState(() {});
+                                    });
                                     setState(() {});
-                                  });
-                                  setState(() {});
+                                  }else{
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                        const AlertDialog(
+                                          content: Text(
+                                              "Você atingiu o limite de matérias nessa turma",
+                                              style: labelDark),
+                                        ));
+                                  }
                                 },
                           child: loading
                               ? const CircularProgressIndicator()

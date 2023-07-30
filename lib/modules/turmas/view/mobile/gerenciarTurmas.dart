@@ -1,6 +1,8 @@
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/fonts.dart';
+import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -135,7 +137,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                   TextEditingController code = TextEditingController();
                   showDialog(
                       context: context,
-                      builder: (context) => StatefulBuilder(
+                      builder: (context) => context.read<Turmas>().turmasSQL.turmas.length< context.read<Settings>().limTurmas? StatefulBuilder(
                             builder: (context, setstate) => AlertDialog(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
@@ -218,7 +220,14 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                 ],
                               ),
                             ),
-                          ));
+                          ): AlertDialog(
+                        content: Container(
+                          child: const Text(
+                            "Você já atingiu o limite de turmas!",
+                            style: labelDark,
+                          ),
+                        ),
+                      ));
                 },
           child: loading
               ? CircularProgressIndicator(

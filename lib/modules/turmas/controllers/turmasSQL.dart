@@ -14,13 +14,13 @@ class TurmasSQL with ChangeNotifier {
 
   setUpdate(DateTime lastUpdate) async {
     SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    await sharedPrefs
-        .setInt("ultimaModificacao", lastUpdate.microsecondsSinceEpoch);
+    await sharedPrefs.setInt(
+        "ultimaModificacao", lastUpdate.microsecondsSinceEpoch);
   }
 
   Future<DateTime> getUpdate() async {
     SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    return await DateTime.fromMicrosecondsSinceEpoch(
+    return DateTime.fromMicrosecondsSinceEpoch(
         sharedPrefs.getInt("ultimaModificacao") ?? 0);
   }
 
@@ -154,7 +154,6 @@ class TurmasSQL with ChangeNotifier {
   }
 
   Future<void> createFullTurma(Turma newTurma) async {
-
     await createTurma(newTurma);
     for (var materia in newTurma.materia) {
       await createMateria(materia, newTurma.id);
@@ -365,7 +364,11 @@ class TurmasSQL with ChangeNotifier {
     await db!.delete("dever", where: "dever.id = ?", whereArgs: [dever.id]);
   }
 
-  deleteAll() {}
+  deleteAll() async {
+    await db!.delete("turma");
+    await db!.delete("materia");
+    await db!.delete("dever");
+  }
 
   refresh(TurmasFirebase turmasFB) {
     checkNew(turmasFB);

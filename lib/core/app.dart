@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/load.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
@@ -9,10 +7,11 @@ import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/editarTurma.dart';
+import 'package:cronolab/modules/turmas/view/mobile/mudarTurma.dart';
 import 'package:cronolab/modules/user/view/desktop/perfil.dart';
+import 'package:cronolab/modules/user/view/mobile/loginPage.dart';
 
 import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/models/cronolabExceptions.dart';
 import 'package:cronolab/shared/models/settings.dart';
 import 'package:cronolab/shared/screens/ajudaScreen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -20,7 +19,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -40,20 +38,6 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   var loading = false;
   List<SingleChildWidget> providers = [];
-  Future loadFromFirebase(Turmas turmas) async {
-    //if(loading)return;
-    loading = true;
-
-    var internet = await InternetConnectionChecker().hasConnection;
-
-    if (!internet) {
-      return Future.error(CronolabException("Sem Internet", 100));
-    }
-    await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
-    await turmas.saveFBData();
-    await turmas.getData();
-    loading = false;
-  }
 
   @override
   void initState() {
@@ -153,6 +137,7 @@ class _MainAppState extends State<MainApp> {
                     fontSize: 18,
                     fontWeight: FontWeight.w800)),
             colorScheme: ColorScheme.fromSeed(
+              secondary: secondaryDark,
               seedColor: secondaryDark,
               primary: primaryDark,
             ).copyWith(background: backgroundDark).copyWith(error: redDark)),
@@ -176,45 +161,20 @@ class _MainAppState extends State<MainApp> {
                                       builder: (context) =>
                                           const LoadDataDesktop())
                                   : Builder(builder: (context) {
-                                      return FutureBuilder(
-                                          future: loadFromFirebase(
-                                              context.read<Turmas>()),
-                                          builder: (context, snap) {
-                                            print(snap.error);
-                                            return Stack(
-                                              children: [
-                                                const HomeScreen(),
-                                                Positioned(
-                                                    bottom: 10,
-                                                    left: 10,
-                                                    child: snap.connectionState ==
-                                                            ConnectionState
-                                                                .waiting
-                                                        ? const SizedBox(
-                                                            width: 30,
-                                                            height: 30,
-                                                            child:
-                                                                CircularProgressIndicator())
-                                                        : snap.hasError
-                                                            ? Icon(
-                                                                Icons
-                                                                    .signal_wifi_connected_no_internet_4_outlined,
-                                                                color: primaryDark
-                                                                    .withOpacity(
-                                                                        0.7),
-                                                              )
-                                                            : Container())
-                                              ],
-                                            );
-                                          });
+                                      return const HomeScreen();
                                     });
                             } else {
-                              return const LoginPage();
+                              return MediaQuery.of(context).size.width > 800
+                                  ? const LoginPage()
+                                  : const LoginPageMobile();
                             }
                           } else {
                             return Scaffold(
                               body: Center(
-                                  child: Image.asset("assets/image/logo.png")),
+                                  child: Image.asset(
+                                "assets/image/foreground.png",
+                                width: MediaQuery.of(context).size.width * 0.4,
+                              )),
                             );
                           }
                         },
@@ -224,11 +184,9 @@ class _MainAppState extends State<MainApp> {
 
             case "/perfil":
               return MaterialPageRoute(
-                  builder: (context) => kIsWeb
+                  builder: (context) => MediaQuery.of(context).size.width > 800
                       ? const PerfilPageDesktop()
-                      : Platform.isLinux || Platform.isWindows
-                          ? const PerfilPageDesktop()
-                          : const PerfilPage());
+                      : const PerfilPage());
 
             case "/minhasTurmas":
               return MaterialPageRoute(
@@ -254,6 +212,10 @@ class _MainAppState extends State<MainApp> {
             case "/ajuda":
               return MaterialPageRoute(
                   builder: (context) => const AjudaScreen());
+              break;
+            case "/mudarTurma":
+              return MaterialPageRoute(
+                  builder: (context) => const MudarTurma());
           }
           return null;
         },

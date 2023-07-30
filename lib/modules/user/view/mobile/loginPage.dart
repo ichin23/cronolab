@@ -1,232 +1,211 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
+import 'package:cronolab/shared/components/myInput.dart';
+import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'cadastroPage.dart';
-import 'esqueciSenha.dart';
+import 'dart:ui' as ui;
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPageMobile extends StatefulWidget {
+  const LoginPageMobile({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPageMobile> createState() => _LoginPageMobileState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailCont = TextEditingController();
-  TextEditingController senhaCont = TextEditingController();
+class _LoginPageMobileState extends State<LoginPageMobile> {
+  TextEditingController email = TextEditingController();
+  TextEditingController senha = TextEditingController();
+  TextEditingController nome = TextEditingController();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool hidePassword = true;
   bool loading = false;
+  bool cadastro = false;
+  bool sumir = true;
   @override
   void initState() {
     super.initState();
   }
 
-  final GlobalKey _form = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
-    var padding = MediaQuery.of(context).padding.bottom +
-        MediaQuery.of(context).padding.top +
-        200;
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
-        child: Form(
-          key: _form,
-          child: SizedBox(
-            width: width,
-            height: height - MediaQuery.of(context).padding.bottom,
-            child: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  /* padding: const EdgeInsets.fromLTRB(40, 100, 40, 20), */
-                  width: width * 0.8,
-                  height: MediaQuery.of(context).viewInsets.bottom == 0
-                      ? height * 0.8
-                      : height * 0.65,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Hero(
-                            tag: 'title',
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Text("CRONOLAB",
-                                  style:
-                                      Theme.of(context).textTheme.labelLarge),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                          Hero(
-                            tag: "emailField",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextFormField(
-                                controller: emailCont,
-                                style: const TextStyle(
-                                    fontSize: 16, color: whiteColor),
-                                decoration: InputDecoration(
-                                    label: const Text("Email"),
-                                    labelStyle:
-                                        const TextStyle(color: whiteColor),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                            color: whiteColor))),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 45),
-                          Hero(
-                            tag: "senhaField",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextFormField(
-                                controller: senhaCont,
-                                style: const TextStyle(
-                                    fontSize: 16, color: whiteColor),
-                                obscureText: hidePassword,
-                                decoration: InputDecoration(
-                                    label: const Text("Senha"),
-                                    labelStyle:
-                                        const TextStyle(color: whiteColor),
-                                    suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            hidePassword = !hidePassword;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          hidePassword
-                                              ? Icons.visibility_off
-                                              : Icons.visibility,
-                                          color: whiteColor,
-                                        )),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                            color: whiteColor))),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const EsqueciSenha()));
-                                  },
-                                  child: const Text("Esqueci minha senha")),
-                            ],
-                          ),
-                        ],
+        child: Stack(
+          children: [
+            SizedBox(
+                height: size.height,
+                width: size.width,
+                child: CustomPaint(painter: BackgroundLogin())),
+            Form(
+              key: _form,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: size.height * 0.3),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 500),
+                      opacity: cadastro ? 1 : 0,
+                      child: Visibility(
+                        visible: !sumir,
+                        child: MyField(
+                          nome: nome,
+                          maxLength: 30,
+                          label: const Text("Nome"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Digite um nome";
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      Column(
-                        children: [
-                          Hero(
-                            tag: "button",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    minimumSize: Size(width - 50, 55),
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15))),
-                                child: loading
-                                    ? CircularProgressIndicator(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        strokeWidth: 3)
-                                    : Text("Login",
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .background,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w800)),
-                                onPressed: () async {
-                                  var cancel = BotToast.showLoading();
-                                  await LoginController().loginEmail(
-                                      emailCont.text, senhaCont.text, context);
-                                  cancel();
-                                },
-                              ),
+                    ),
+                    const SizedBox(height: 10),
+                    MyField(
+                      nome: email,
+                      label: const Text("Email"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Digite um email";
+                        }
+                        if (!RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value)) {
+                          return "Digite um email válido";
+                        }
+
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                        controller: senha,
+                        style: inputDark,
+                        obscureText: hidePassword,
+                        decoration: InputDecoration(
+                          label: const Text("Senha"),
+                          labelStyle: labelDark,
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  hidePassword = !hidePassword;
+                                });
+                              },
+                              icon: Icon(
+                                hidePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: whiteColor,
+                              )),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        )),
+                    const SizedBox(height: 40),
+                    Column(
+                      children: [
+                        Hero(
+                          tag: "button",
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                  minimumSize: Size(size.width - 50, 55),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15))),
+                              child: Text(cadastro ? "Cadastrar" : "Login",
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800)),
+                              onPressed: () async {
+                                if (!_form.currentState!.validate()) return;
+
+                                var cancel = BotToast.showLoading();
+                                await CadastroController().siginEmail(
+                                    email.text, senha.text, nome.text, context);
+                                cancel();
+                              },
                             ),
                           ),
-                          const SizedBox(height: 25),
-                          (
-                              //Platform.isLinux
-                              false
-                                  ? Container()
-                                  : TextButton(
-                                      style: TextButton.styleFrom(
-                                          minimumSize: Size(width - 50, 55),
-                                          backgroundColor: whiteColor,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15))),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            "assets/image/google.png",
-                                            height: 30,
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 15),
-                                            child: Text("Entrar com Google",
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.w800)),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () async {
-                                        var cancel = BotToast.showLoading();
-                                        await LoginController()
-                                            .loginGoogle(context);
-
-                                        //await context.read<Turmas>().turmasFB.loadTurmasUser();
-                                        // for (var turma in context.read<Turmas>().turmasFB.turmas){
-                                        //   context.read<Turmas>().turmasSQL.createFullTurma(turma);
-                                        // }
-                                        cancel();
-                                      })),
-                          const SizedBox(height: 20),
-                          Hero(
-                            tag: "conta",
-                            child: Material(
-                              type: MaterialType.transparency,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                        ),
+                        const SizedBox(height: 25),
+                        (TextButton(
+                            style: TextButton.styleFrom(
+                                minimumSize: Size(size.width - 50, 55),
+                                backgroundColor: whiteColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15))),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/image/google.png",
+                                  height: 30,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text("Entrar com Google",
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800)),
+                                ),
+                              ],
+                            ),
+                            onPressed: () async {
+                              var cancel = BotToast.showLoading();
+                              await LoginController().loginGoogle(context);
+                              cancel();
+                            })),
+                      ],
+                    ),
+                    Hero(
+                      tag: "conta",
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: cadastro
+                              ? [
+                                  const Text(
+                                    "Já possui conta?",
+                                    style: TextStyle(
+                                        color: whiteColor, fontSize: 16),
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          cadastro = false;
+                                        });
+                                        Future.delayed(
+                                            const Duration(milliseconds: 300),
+                                            () => setState).then((a) {
+                                          a(() {
+                                            sumir = true;
+                                          });
+                                        });
+                                      },
+                                      child: Text("Logar",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              fontSize: 16)))
+                                ]
+                              : [
                                   const Text(
                                     "Não possui conta?",
                                     style: TextStyle(
@@ -234,10 +213,10 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const CadastroPage()));
+                                        setState(() {
+                                          cadastro = true;
+                                          sumir = false;
+                                        });
                                       },
                                       child: Text("Cadastre-se",
                                           style: TextStyle(
@@ -246,19 +225,82 @@ class _LoginPageState extends State<LoginPage> {
                                                   .primaryColor,
                                               fontSize: 16)))
                                 ],
-                              ),
-                            ),
-                          )
-                        ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const Spacer(),
+                    RichText(
+                      text: const TextSpan(children: [
+                        TextSpan(
+                            text: "Ao continuar, você concorda com os ",
+                            style: TextStyle(color: whiteColor, fontSize: 14)),
+                        TextSpan(
+                            text: "Termos de Uso",
+                            style: TextStyle(color: primaryDark),
+                            mouseCursor: SystemMouseCursors.click),
+                        TextSpan(text: ".")
+                      ]),
+                    )
+                  ],
                 ),
               ),
             ),
-          ),
+            Positioned(
+              top: size.width * 0.1,
+              child: SizedBox(
+                width: size.width,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "CRONOLAB",
+                      style: TextStyle(
+                          color: backgroundDark,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 25),
+                    ),
+                    Text(
+                      "Acesse sua conta agora!",
+                      style: TextStyle(color: whiteColor, fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
+  }
+}
+
+class BackgroundLogin extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint();
+
+    paint.shader = ui.Gradient.linear(
+        Offset.zero,
+        Offset(size.width, size.height),
+        [const Color(0xff52A8FA), const Color(0xffADD6FF)]);
+
+    Path path = Path();
+
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height * 0.2);
+    path.quadraticBezierTo(size.width * 0.8, size.height * 0.25,
+        size.width * 0.5, size.height * 0.2);
+    path.quadraticBezierTo(
+        size.width * 0.2, size.height * 0.17, 0, size.height * 0.3);
+    path.lineTo(0, 0);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
