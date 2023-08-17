@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/user/controller/cadastroController.dart';
+import 'package:cronolab/modules/user/controller/loginController.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
@@ -314,11 +315,18 @@ class _LoginPageState extends State<LoginPage> {
                                     fontWeight: FontWeight.w800)),
                             onPressed: () async {
                               if (!_form.currentState!.validate()) return;
-
-                              var cancel = BotToast.showLoading();
-                              await CadastroController().siginEmail(
-                                  email.text, senha.text, nome.text, context);
-                              cancel();
+                              
+                              if(cadastro){
+                                var cancel = BotToast.showLoading();
+                                await CadastroController(). siginEmail(
+                                    email.text, senha.text, nome.text, context);
+                                cancel();
+                              }else{
+                                var cancel = BotToast.showLoading();
+                                await LoginController().loginEmail(
+                                    email.text, senha.text, context);
+                                cancel();
+                              }
                             },
                           ),
                         ),
