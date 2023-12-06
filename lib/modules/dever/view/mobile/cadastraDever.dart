@@ -190,7 +190,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 vertical: 8.0),
                                                         child: Text(
                                                           "${materia.text} não encontrado",
@@ -309,32 +309,6 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                 cancelText: "Cancelar",
                                                 confirmText: "Selecionar",
                                                 helpText: "Selecione uma data",
-                                                builder: (context, child) =>
-                                                    Theme(
-                                                        data: ThemeData(
-                                                          primaryColor:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          secondaryHeaderColor:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          colorScheme: ColorScheme
-                                                              .dark(
-                                                            primary: Theme.of(
-                                                                    context)
-                                                                .primaryColor,
-                                                            background:
-                                                                Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .background,
-                                                          ).copyWith(
-                                                              background: Theme
-                                                                      .of(context)
-                                                                  .colorScheme
-                                                                  .background),
-                                                        ),
-                                                        child: child!),
                                                 lastDate: DateTime.now().add(
                                                     const Duration(days: 365)));
                                             setstate(() {});

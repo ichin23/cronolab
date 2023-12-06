@@ -315,13 +315,13 @@ class _LoginPageState extends State<LoginPage> {
                                     fontWeight: FontWeight.w800)),
                             onPressed: () async {
                               if (!_form.currentState!.validate()) return;
-                              
-                              if(cadastro){
+
+                              if (cadastro) {
                                 var cancel = BotToast.showLoading();
-                                await CadastroController(). siginEmail(
+                                await CadastroController().siginEmail(
                                     email.text, senha.text, nome.text, context);
                                 cancel();
-                              }else{
+                              } else {
                                 var cancel = BotToast.showLoading();
                                 await LoginController().loginEmail(
                                     email.text, senha.text, context);

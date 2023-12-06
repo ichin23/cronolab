@@ -212,7 +212,6 @@ class _MainAppState extends State<MainApp> {
             case "/ajuda":
               return MaterialPageRoute(
                   builder: (context) => const AjudaScreen());
-              break;
             case "/mudarTurma":
               return MaterialPageRoute(
                   builder: (context) => const MudarTurma());

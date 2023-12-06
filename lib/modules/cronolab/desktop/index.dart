@@ -2,6 +2,7 @@ import 'package:cronolab/modules/cronolab/desktop/widgets/appBar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
+import 'package:cronolab/modules/dever/view/mobile/cadastraDever.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverTileList.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
@@ -45,7 +46,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                             ? Container(
                                 padding: const EdgeInsets.all(5),
                                 width: size.width < 800
-                                    ? size.width * 0.9
+                                    ? size.width
                                     : size.width * 0.35,
                                 child: Consumer<DeveresController>(
                                     builder: (context, deveres, child) {
@@ -86,15 +87,21 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                           right: 20,
                                           child: FloatingActionButton(
                                             onPressed: () {
-                                              cadastraDeverDesktop(
-                                                      context,
-                                                      deveres.diaAtual?.data ??
-                                                          DateTime.now())
-                                                  .then((value) {
-                                                context
-                                                    .read<TurmasStateDesktop>()
-                                                    .getTurmas(context);
-                                              });
+                                              if (size.width > 800) {
+                                                cadastraDeverDesktop(
+                                                        context,
+                                                        deveres.diaAtual
+                                                                ?.data ??
+                                                            DateTime.now())
+                                                    .then((value) {
+                                                  context
+                                                      .read<
+                                                          TurmasStateDesktop>()
+                                                      .getTurmas(context);
+                                                });
+                                              } else {
+                                                //TODO:
+                                              }
                                             },
                                             backgroundColor: primaryDark,
                                             child: const Icon(Icons.add,

@@ -57,29 +57,6 @@ class Turma {
         .delete();
   }
 
-  deleteTurma() async {
-    var docs = await FirebaseFirestore.instance
-        .collectionGroup("turmas")
-        .where("id", isEqualTo: id)
-        .get();
-    var docses = [];
-
-    for (var doc in docs.docs) {
-      var uid = doc.reference.path.split("/")[1];
-      docses.add(id);
-    }
-
-    for (var uid in docses) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(id)
-          .collection("turmas")
-          .doc(id)
-          .delete();
-    }
-    await FirebaseFirestore.instance.collection("turmas").doc(id).delete();
-  }
-
   Future deleteDever(BuildContext context, String idDever) async {
     await FirebaseFirestore.instance
         .collection("turmas")
@@ -87,10 +64,6 @@ class Turma {
         .collection("deveres")
         .doc(idDever)
         .delete();
-    if (Platform.isAndroid) {
-      //TODO: Delete on local
-      // await Provider.of<TurmasLocal>(context).deleteDever(idDever);
-    }
   }
 
   addDever(Dever dever) async {
