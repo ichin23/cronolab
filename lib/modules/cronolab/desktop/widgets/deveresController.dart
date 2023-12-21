@@ -1,9 +1,10 @@
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'dia.dart';
 
 class DeveresController with ChangeNotifier {
@@ -56,12 +57,12 @@ class DeveresController with ChangeNotifier {
     diaAtual = null;
 
     List<Dever> deveres = [];
-    var turmas = Provider.of<TurmasStateDesktop>(context, listen: false);
+    var turmas = GetIt.I.get<Turmas>();
 
-    if (context.read<TurmasStateDesktop>().turmaAtual != null) {
-      deveres = turmas.turmaAtual!.deveres ?? [];
+    if (turmas.turmaAtual.value != null) {
+      deveres = turmas.getDeveresFromTurma();
     } else {
-      deveres = context.read<TurmasStateDesktop>().getAllDeveres();
+      deveres = turmas.deveres.value;
     }
     while (diaI.isBefore(ultimoDia)) {
       /*debugPrint('''

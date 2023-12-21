@@ -9,7 +9,7 @@ import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar(this.width, this.height, {Key? key}) : super(key: key);
@@ -49,7 +49,8 @@ class CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return Consumer<DeveresController>(
+    return ValueListenableBuilder<DeveresController>(
+      valueListenable: ValueNotifier(GetIt.I.get<DeveresController>()),
       builder: (context, deveres, _) => Stack(
         children: [
           SingleChildScrollView(
@@ -279,7 +280,7 @@ class CalendarState extends State<Calendar> {
       PointerDownEvent event, Dia atual, DeveresController deveres) async {
     debugPrint(event.buttons.toString());
 
-    if (event.kind == PointerDeviceKind.mouse &&
+    /*if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton &&
         context.read<TurmasStateDesktop>().turmaAtual != null &&
         (context.read<TurmasStateDesktop>().turmaAtual?.isAdmin ?? false)) {
@@ -292,6 +293,6 @@ class CalendarState extends State<Calendar> {
       } else {
         deveres.diaAtual = atual;
       }
-    }
+    }*/
   }
 }

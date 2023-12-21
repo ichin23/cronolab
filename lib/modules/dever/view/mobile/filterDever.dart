@@ -1,10 +1,8 @@
 import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 Future<List> filterDever(BuildContext context, {List? oldList}) async {
   final _cores = ["Vermelha", "Amarela", "Verde"];
@@ -77,12 +75,12 @@ Future<List> filterDever(BuildContext context, {List? oldList}) async {
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                   const SizedBox(height: 10),
-                  SingleChildScrollView(
+                  const SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ...Provider.of<Turmas>(context)
+                        /*   ...Provider.of<Turmas>(context)
                             .turmaAtual!
                             .materia
                             .map((e) => GestureDetector(
@@ -118,7 +116,7 @@ Future<List> filterDever(BuildContext context, {List? oldList}) async {
                                     ),
                                   ),
                                 ))
-                            .toList(),
+                            .toList(),*/
                       ],
                     ),
                   ),
@@ -127,23 +125,26 @@ Future<List> filterDever(BuildContext context, {List? oldList}) async {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        style: TextButton.styleFrom(textStyle: TextStyle(fontSize:16)),
+                          style: TextButton.styleFrom(
+                              textStyle: const TextStyle(fontSize: 16)),
                           onPressed: () {
                             list = [null, null];
                             Navigator.pop(context);
                           },
                           child: const Text("Limpar")),
-
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       TextButton(
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                               //textStyle: MaterialStatePropertyAll(buttonTextDark),
                               backgroundColor:
                                   MaterialStatePropertyAll(primaryDark)),
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text("OK", style: buttonTextDark,)),
+                          child: const Text(
+                            "OK",
+                            style: buttonTextDark,
+                          )),
                     ],
                   )
                 ],

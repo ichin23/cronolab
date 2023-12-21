@@ -1,11 +1,13 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/modules/user/controller/loginController.dart';
+import 'package:cronolab/modules/user/controller/userProvider.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+
+import 'package:get_it/get_it.dart';
 
 class LoginPageMobile extends StatefulWidget {
   const LoginPageMobile({Key? key}) : super(key: key);
@@ -131,8 +133,9 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                                 if (!_form.currentState!.validate()) return;
 
                                 var cancel = BotToast.showLoading();
-                                await CadastroController().siginEmail(
-                                    email.text, senha.text, nome.text, context);
+                                await GetIt.I
+                                    .get<UserProvider>()
+                                    .login(email.text, senha.text, context);
                                 cancel();
                               },
                             ),

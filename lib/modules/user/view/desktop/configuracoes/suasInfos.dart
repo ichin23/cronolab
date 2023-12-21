@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cronolab/modules/user/controller/userProvider.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class SuasInfosDesktop extends StatefulWidget {
   const SuasInfosDesktop({Key? key}) : super(key: key);
@@ -14,20 +14,22 @@ class SuasInfosDesktop extends StatefulWidget {
 class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
   TextEditingController nome = TextEditingController();
   TextEditingController email = TextEditingController();
-  User? user;
   bool loading = false;
+  late UserProvider userP;
+  /*User? user;
 
   getUser() async {
     user = FirebaseAuth.instance.currentUser;
     nome.text = user!.displayName ?? "";
     email.text = user!.email ?? "";
-  }
+  }*/
 
   @override
   void initState() {
+    userP = GetIt.I.get<UserProvider>();
     super.initState();
-    // nome.text = (FirebaseAuth.instance.getUser()). ?? "";
-    // email.text = FirebaseAuth.instance.currentUser!.email ?? "";
+    nome.text = userP.nome.value ?? "";
+    email.text = userP.email.value ?? "";
   }
 
   @override
@@ -35,7 +37,7 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: FutureBuilder(
-          future: getUser(),
+          future: Future(() {}), //getUser(),
           builder: (context, snap) {
             if (snap.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -87,7 +89,7 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
                             style: labelBlackDark,
                           ),
                     onPressed: () async {
-                      if (FirebaseAuth.instance.currentUser?.displayName !=
+                      /*if (FirebaseAuth.instance.currentUser?.displayName !=
                           nome.text) {
                         setState(() {
                           loading = true;
@@ -101,7 +103,7 @@ class _SuasInfosDesktopState extends State<SuasInfosDesktop> {
                         setState(() {
                           loading = false;
                         });
-                      }
+                      }*/
                     },
                   ),
                 )

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/fonts.dart';
 
 import 'package:flutter/material.dart';
@@ -45,7 +44,10 @@ class _EditarMateriaState extends State<EditarMateria> {
           ? AppBar(
               title: Text("Editar ${widget.materia.nome}"),
               leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios, color: Colors.black45,),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black45,
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -150,7 +152,7 @@ class _EditarMateriaState extends State<EditarMateria> {
                                       setState(() {
                                         loading = true;
                                       });
-                                      await FirebaseFirestore.instance
+                                      /*await FirebaseFirestore.instance
                                           .collection("turmas")
                                           .doc(widget.turmaId)
                                           .collection("materias")
@@ -159,7 +161,7 @@ class _EditarMateriaState extends State<EditarMateria> {
                                         "professor": prof.text,
                                         "nome": nome.text,
                                         "contato": contato.text,
-                                      });
+                                      });*/
 
                                       setState(() {
                                         loading = false;

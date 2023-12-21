@@ -1,24 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 cadastraDeverDesktop(BuildContext context, DateTime data) async {
   DateFormat date = DateFormat("dd/MM");
   TimeOfDay? hora;
+  Turmas turmas = GetIt.I.get<Turmas>();
   var _form = GlobalKey<FormState>();
   var titulo = TextEditingController();
   var local = TextEditingController();
   var pontos = TextEditingController();
+
+  print(turmas.getMateriasFromTurma(turmas.turmaAtual.value!));
 
   Materia? materiaSelect;
   await showDialog(
@@ -42,9 +44,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                           style: fonts.labelDark),
                       const SizedBox(height: 15),
                       TextFormField(
-                          maxLength: context
-                              .read<sett.Settings>()
-                              .settings["input"]["dever"]["titulo"],
+                          maxLength: 10,
                           controller: titulo,
                           validator: (value) {
                             if (value != null && value.isEmpty) {
@@ -75,9 +75,8 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                               )),
                           borderRadius: BorderRadius.circular(10),
                           dropdownColor: backgroundDark,
-                          items: Provider.of<TurmasStateDesktop>(context)
-                              .turmaAtual!
-                              .materia
+                          items: turmas
+                              .getMateriasFromTurma(turmas.turmaAtual.value!)
                               .map((e) => DropdownMenuItem(
                                     child: Text(
                                       e.nome +
@@ -95,9 +94,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       const SizedBox(height: 15),
                       TextFormField(
                           controller: pontos,
-                          maxLength: context
-                              .read<sett.Settings>()
-                              .settings["input"]["dever"]["valor"],
+                          maxLength: 8,
                           validator: (value) {
                             if (value != null && value.isEmpty) {
                               return "Digite um valor";
@@ -121,9 +118,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                       const SizedBox(height: 15),
                       TextFormField(
                           controller: local,
-                          maxLength: context
-                              .read<sett.Settings>()
-                              .settings["input"]["dever"]["local"],
+                          maxLength: 20,
                           validator: (value) {
                             if (value != null && value.isEmpty) {
                               return "Digite um valor";
@@ -182,18 +177,19 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                               return;
                             }
                             debugPrint("Cadastrando");
-                            var deverJson = Dever(
-                                    data: DateTime(data.year, data.month,
-                                        data.day, hora!.hour, hora!.minute),
-                                    materiaID: materiaSelect!.id,
-                                    title: titulo.text,
-                                    pontos: double.parse(pontos.text),
-                                    local: local.text)
-                                .toJson();
-                            deverJson["ultimaModificacao"] = Timestamp.now();
-                            deverJson["data"] =
-                                (deverJson["data"] as Timestamp).toDate();
-                            await FirebaseFirestore.instance
+                            var dever = Dever(
+                                data: DateTime(data.year, data.month, data.day,
+                                    hora!.hour, hora!.minute),
+                                materiaID: materiaSelect!.id,
+                                title: titulo.text,
+                                pontos: double.parse(pontos.text),
+                                local: local.text);
+                            turmas.cadastraDever(dever);
+                            Navigator.pop(context);
+                            turmas.getData().then((value) => GetIt.I
+                                .get<DeveresController>()
+                                .buildCalendar(DateTime.now(), context));
+                            /*await FirebaseFirestore.instance
                                 .collection("turmas")
                                 .doc(context
                                     .read<TurmasStateDesktop>()
@@ -211,7 +207,7 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                                 .then((value) => context
                                     .read<DeveresController>()
                                     .buildCalendar(DateTime.now(), context))
-                                .then((value) => Navigator.pop(context));
+                                .then((value) => Navigator.pop(context));*/
                           },
                           child: const Text("Cadastra"))
                     ],

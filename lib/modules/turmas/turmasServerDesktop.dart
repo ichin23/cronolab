@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+/*
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -306,3 +306,4 @@ class TurmasStateDesktop with ChangeNotifier {
         .add(materia.toJson());
   }
 }
+*/

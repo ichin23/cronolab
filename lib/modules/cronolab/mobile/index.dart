@@ -1,13 +1,11 @@
 import 'package:cronolab/modules/cronolab/mobile/structure/errosGet.dart';
 import 'package:cronolab/modules/cronolab/mobile/structure/getDeveres.dart';
-import 'package:cronolab/modules/dever/view/mobile/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:provider/provider.dart';
 
 import '../../../shared/components/refresh.dart';
 import '../../../shared/models/cronolabExceptions.dart';
@@ -34,9 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!internet) {
       return Future.error(CronolabException("Sem Internet", 100));
     }
-    await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
+    /* await turmas.turmasFB.loadTurmasUser(turmas.turmasSQL);
     await turmas.saveFBData();
-    dataTurmas = turmas.getData();
+    dataTurmas = turmas.getData();*/
     loading = false;
   }
 
@@ -44,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    dataTurmas = context.read<Turmas>().getData();
+    //dataTurmas = context.read<Turmas>().getData();
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: primaryDark,
         systemNavigationBarIconBrightness: Brightness.light,
@@ -59,13 +57,12 @@ class _HomeScreenState extends State<HomeScreen> {
     var padding = MediaQuery.of(context).padding;
 
     return FutureBuilder(
-        future: loadFromFirebase(context.read<Turmas>()),
+        future: Future((() {})),
         builder: (context, snap) {
           print(snap.error);
           return Stack(
             children: [
               Scaffold(
-
                   key: scaffoldKey,
                   body: CustomScrollView(slivers: [
                     SliverAppBar(
@@ -87,22 +84,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.person,
                                   color: Colors.black45))
                         ],
-                        title:
-                            Consumer<Turmas>(builder: (context, turmas, child) {
-                          return Text(
-                            "Cronolab " +
+                        title: const Text(
+                          "Cronolab " /*+
                                 (turmas.turmaAtual != null
                                     ? " - ${turmas.turmaAtual!.nome.toString()}"
-                                    : ""),
-                            style: const TextStyle(
-                                color: Colors.black45,
-                                fontWeight: FontWeight.w800),
-                          );
-                        })),
+                                    : "")*/
+                          ,
+                          style: TextStyle(
+                              color: Colors.black45,
+                              fontWeight: FontWeight.w800),
+                        )),
                     SliverFillRemaining(
                         child: Refresh(
                             onRefresh: () async {
-                              dataTurmas = context.read<Turmas>().getData();
+                              /*dataTurmas = context.read<Turmas>().getData();
                               var internet = await InternetConnectionChecker()
                                   .hasConnection;
 
@@ -112,43 +107,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .turmasFB
                                     .loadTurmasUser(
                                         context.read<Turmas>().turmasSQL);
-                              }
+                              }*/
                             },
                             child: FutureBuilder<List?>(
                                 future: dataTurmas,
                                 builder: (context, snapshot) =>
-                                    Consumer<Turmas>(
+                                    ValueListenableBuilder(
+                                        valueListenable: ValueNotifier("a"),
                                         builder: (context, turmas, _) {
-                                      if (turmas.turmasSQL.turmas.isEmpty &&
+                                          /*  if (turmas.turmasSQL.turmas.isEmpty &&
                                           turmas.turmasFB.turmas.isNotEmpty &&
                                           !turmas.turmasFB.loadingTurmas) {
                                         dataTurmas = turmas.getData();
-                                      }
+                                      }*/
 
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      } else if (snapshot.hasError) {
-                                        return ErrosGet(!snapshot.hasError
-                                            ? CronolabException(
-                                                "Nenhuma turma cadastrada!", 11)
-                                            : snapshot.error
-                                                as CronolabException);
-                                      } else if (snapshot.connectionState ==
-                                          ConnectionState.done) {
-                                        return GetDeveres(turmas);
-                                      } else if (snapshot.connectionState ==
-                                          ConnectionState.none) {
-                                        return const Center(
-                                            child: Text("Erro Desconhecido"));
-                                      }
-                                      return Container();
-                                    }))))
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else if (snapshot.hasError) {
+                                            return ErrosGet(!snapshot.hasError
+                                                ? CronolabException(
+                                                    "Nenhuma turma cadastrada!",
+                                                    11)
+                                                : snapshot.error
+                                                    as CronolabException);
+                                          } else if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            //return GetDeveres(turmas);
+                                          } else if (snapshot.connectionState ==
+                                              ConnectionState.none) {
+                                            return const Center(
+                                                child:
+                                                    Text("Erro Desconhecido"));
+                                          }
+                                          return Container();
+                                        }))))
                   ]),
-                  floatingActionButton:
-                      Consumer<Turmas>(builder: (context, turmas, child) {
-                    if (turmas.turmaAtual != null) {
+                  floatingActionButton: null
+                  /* if (turmas.turmaAtual != null) {
                       if (turmas.turmaAtual!.isAdmin) {
                         return FloatingActionButton(
                           child: const Icon(Icons.add, color: darkPrimary),
@@ -163,10 +161,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         );
                       }
-                    }
+                    }*/
 
-                    return Container();
-                  })),
+                  ),
               Positioned(
                   bottom: 10,
                   left: 10,

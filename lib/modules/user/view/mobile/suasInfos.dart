@@ -1,5 +1,4 @@
 import 'package:cronolab/shared/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SuasInformacoes extends StatefulWidget {
@@ -12,20 +11,19 @@ class SuasInformacoes extends StatefulWidget {
 class _SuasInformacoesState extends State<SuasInformacoes> {
   @override
   Widget build(BuildContext context) {
-    User user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black45,
-            )),
-        title: const Text("Suas Informações"),
-      ),
-      body: StreamBuilder<User?>(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black45,
+              )),
+          title: const Text("Suas Informações"),
+        ),
+        body: /*StreamBuilder<User?>(
           stream: FirebaseAuth.instance.userChanges(),
           builder: (context, snap) {
             return snap.data != null
@@ -189,7 +187,7 @@ class _SuasInformacoesState extends State<SuasInformacoes> {
                     ),
                   )
                 : Container();
-          }),
-    );
+          }),*/
+            null);
   }
 }

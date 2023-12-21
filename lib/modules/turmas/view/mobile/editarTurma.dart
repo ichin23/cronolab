@@ -1,14 +1,9 @@
 import 'package:cronolab/modules/materia/materia.dart';
-import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../materia/view/mobile/editarMateria.dart';
 import '../../turma.dart';
 
@@ -47,7 +42,7 @@ class _EditarTurmaState extends State<EditarTurma>
       });
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
       nome.text = turma.nome;
-      codigo.text = turma.id;
+      codigo.text = turma.id.toString();
     });
     // controller.forward();
   }
@@ -119,7 +114,7 @@ class _EditarTurmaState extends State<EditarTurma>
                 : Container(),
             const SizedBox(height: 15),
             Text(
-              "Matérias (${turma.materia.length}/${context.read<Settings>().limMaterias})",
+              "Matérias (${turma.materia.length}/${10})",
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: 15),
@@ -140,7 +135,8 @@ class _EditarTurmaState extends State<EditarTurma>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => EditarMateria(
-                                            turma.materia[i], turma.id)));
+                                            turma.materia[i],
+                                            turma.id.toString())));
                                 // context
                                 //     .read<Turmas>()
                                 //     .updateMateria(turma.id, newMateria);
@@ -200,8 +196,8 @@ class _EditarTurmaState extends State<EditarTurma>
                               : () {
                                   TextEditingController materia =
                                       TextEditingController();
-                                  if(turma.materia.length<context.read<Settings>().limMaterias) {
-                                    addMateria(context, turma.id, () {})
+                                  if (turma.materia.length < 10) {
+                                    /*addMateria(context, turma.id, () {})
                                         .then((value) async {
                                       await context.read<Turmas>().getData();
                                       // await turmas.getTurmas();
@@ -210,17 +206,16 @@ class _EditarTurmaState extends State<EditarTurma>
                                           .getTurmaByID(turma.id)!;
 
                                       setState(() {});
-                                    });
+                                    });*/
                                     setState(() {});
-                                  }else{
+                                  } else {
                                     showDialog(
                                         context: context,
-                                        builder: (context) =>
-                                        const AlertDialog(
-                                          content: Text(
-                                              "Você atingiu o limite de matérias nessa turma",
-                                              style: labelDark),
-                                        ));
+                                        builder: (context) => const AlertDialog(
+                                              content: Text(
+                                                  "Você atingiu o limite de matérias nessa turma",
+                                                  style: labelDark),
+                                            ));
                                   }
                                 },
                           child: loading

@@ -1,13 +1,7 @@
 // import 'package:cronolab/modules/turmas/turmasLocal.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:provider/provider.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({Key? key}) : super(key: key);
@@ -30,18 +24,18 @@ class _PerfilPageState extends State<PerfilPage> {
   Widget build(BuildContext context) {
     // var turmas = Provider.of(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black45,
-            )),
-        title: const Text("Gerenciar Perfil"),
-      ),
-      body: SafeArea(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black45,
+              )),
+          title: const Text("Gerenciar Perfil"),
+        ),
+        body: /*SafeArea(
         child: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snap) {
@@ -152,8 +146,8 @@ class _PerfilPageState extends State<PerfilPage> {
                               fontSize: 16)),
                       onTap: () {
                         FirebaseAuth.instance.signOut();
-                        context.read<Turmas>().turmasSQL.deleteAll();
-                        context.read<Turmas>().turmasSQL.turmas.clear();
+                        //context.read<Turmas>().turmasSQL.deleteAll();
+                        //context.read<Turmas>().turmasSQL.turmas.clear();
                         // Provider.of<TurmasLocal>(context).deleteAll();
                         // turmas.clear();
                         Navigator.pop(context);
@@ -250,7 +244,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 );
               }
             }),
-      ),
-    );
+      ),*/
+            null);
   }
 }

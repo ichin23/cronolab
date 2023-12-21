@@ -1,5 +1,4 @@
 import 'package:cronolab/shared/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EsqueciSenha extends StatefulWidget {
@@ -97,20 +96,22 @@ class _EsqueciSenhaState extends State<EsqueciSenha> {
                                     child: loading
                                         ? CircularProgressIndicator(
                                             color: Theme.of(context)
-                                                .backgroundColor)
+                                                .colorScheme
+                                                .background)
                                         : Text("Recuperar Senha",
                                             style: TextStyle(
                                                 color: Theme.of(context)
-                                                    .backgroundColor,
+                                                    .colorScheme
+                                                    .background,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w800)),
                                     onPressed: () async {
                                       if (_form.currentState!.validate()) {
-                                        await FirebaseAuth.instance
+                                        /*await FirebaseAuth.instance
                                             .sendPasswordResetEmail(
                                                 email: emailCont.text)
                                             .then((value) =>
-                                                Navigator.pop(context));
+                                                Navigator.pop(context));*/
                                       }
                                     },
                                   ),

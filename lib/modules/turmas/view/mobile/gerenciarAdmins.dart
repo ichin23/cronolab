@@ -1,12 +1,9 @@
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/components/viewAdmins.dart';
 import 'package:cronolab/modules/turmas/view/mobile/components/viewUsers.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class GerenciarAdmins extends StatefulWidget {
   GerenciarAdmins(this.turma, {Key? key}) : super(key: key);
@@ -24,18 +21,18 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
   Future<Map> getParticipantes() async {
     Map results = {};
     if (kIsWeb) {
-      results["admins"] =
+      /*results["admins"] =
           await context.read<TurmasStateDesktop>().getAdmins(widget.turma.id);
       results["participantes"] = await context
           .read<TurmasStateDesktop>()
-          .getParticipantes(widget.turma.id);
+          .getParticipantes(widget.turma.id);*/
     } else {
-      results["admins"] =
+      /*results["admins"] =
           await context.read<Turmas>().turmasFB.getAdmins(widget.turma.id);
       results["participantes"] = await context
           .read<Turmas>()
           .turmasFB
-          .getParticipantes(widget.turma.id);
+          .getParticipantes(widget.turma.id);*/
     }
     return results;
   }

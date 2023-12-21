@@ -1,17 +1,11 @@
-import 'dart:io';
-
-//import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../materia/materia.dart';
 
 class Turma {
   String nome;
-  String id;
+  int id;
   bool isAdmin;
   List<Dever>? deveres;
   List<Materia> materia;
@@ -22,14 +16,6 @@ class Turma {
       this.deveres,
       this.materia = const [],
       this.isAdmin = false});
-
-  Turma.fromFirebase(DocumentSnapshot turma)
-      : this(
-          nome: (turma.data() as Map)['nome'] ?? turma.id,
-          id: turma.id,
-
-          // deveres: json['deveres'] as List,
-        );
 
   Turma.fromSQL(Map turma, [List<Materia>? materias])
       : this(
@@ -48,75 +34,7 @@ class Turma {
 
   set setMaterias(List<Materia> materiasList) => {materia = materiasList};
 
-  sairTurma() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection("turmas")
-        .doc(id)
-        .delete();
-  }
-
-  Future deleteDever(BuildContext context, String idDever) async {
-    await FirebaseFirestore.instance
-        .collection("turmas")
-        .doc(id)
-        .collection("deveres")
-        .doc(idDever)
-        .delete();
-  }
-
-  addDever(Dever dever) async {
-    var data = dever.toJson();
-
-    await FirebaseFirestore.instance
-        .collection("turmas")
-        .doc(id)
-        .collection("deveres")
-        .add(data);
-  }
-
-  Future addMateria(String nome) async {
-    await FirebaseFirestore.instance
-        .collection("turmas")
-        .doc(id)
-        .collection("materias")
-        .add({"nome": nome});
-
-    //await getMaterias();
-  }
-
-  Future deleteMateria(String nome) async {
-    await FirebaseFirestore.instance
-        .collection("turmas")
-        .doc(id)
-        .collection("materias")
-        .doc(nome)
-        .delete();
-    var deveres = await FirebaseFirestore.instance
-        .collection("turmas")
-        .doc(id)
-        .collection("deveres")
-        .where("materia", isEqualTo: nome)
-        .get();
-    for (var element in deveres.docs) {
-      await FirebaseFirestore.instance
-          .collection("turmas")
-          .doc(id)
-          .collection("deveres")
-          .doc(element.id)
-          .delete();
-    }
-  }
-
-  Future update() async {}
-
-  // Future<List?> getAtvDB(BuildContext context, {List? filters}) async {
-  //   return Provider.of<TurmasLocal>(context, listen: false)
-  //       .getDeveres(id, filter: filters);
-  // }
-
-  Future<List?> getAtividades([bool filterToday = true]) async {
+  /*Future<List?> getAtividades([bool filterToday = true]) async {
     try {
       var list = [];
 
@@ -251,5 +169,5 @@ class Turma {
       debugPrint(e.toString());
       return null;
     }
-  }
+  }*/
 }

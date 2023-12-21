@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/components/cardAnimatedOnHover.dart';
 import 'package:flutter/gestures.dart';
@@ -20,8 +19,6 @@ class _AjudaScreenState extends State<AjudaScreen> {
   @override
   void initState() {
     super.initState();
-    loadHelps = FirebaseFirestore.instance.collection("help").get().then(
-        (value) => value.docs.map((e) => {...e.data(), "id": e.id}).toList());
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AlteraSenha extends StatefulWidget {
@@ -62,8 +61,8 @@ class _AlteraSenhaState extends State<AlteraSenha> {
                 ),
                 onPressed: () {
                   if (_form.currentState?.validate() ?? false) {
-                    FirebaseAuth.instance.currentUser
-                        ?.reauthenticateWithPopup(GoogleAuthProvider());
+                    /*FirebaseAuth.instance.currentUser
+                        ?.reauthenticateWithPopup(GoogleAuthProvider());*/
                     /* FirebaseAuth.instance.currentUser.
                         ?.updatePassword(senhaConfirm.text); */
                   }

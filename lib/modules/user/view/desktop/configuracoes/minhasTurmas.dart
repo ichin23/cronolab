@@ -1,10 +1,8 @@
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/desktop/editarTurma.dart';
-import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
-import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 class MinhasTurmasDesktop extends StatefulWidget {
   const MinhasTurmasDesktop({Key? key}) : super(key: key);
@@ -14,74 +12,74 @@ class MinhasTurmasDesktop extends StatefulWidget {
 }
 
 class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
+  late Turmas turmas;
+
+  @override
+  void initState() {
+    turmas = GetIt.I.get<Turmas>();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Stack(
         children: [
-          Consumer<TurmasStateDesktop>(
-            builder: (context, cont, child) => ListView.builder(
-              controller: ScrollController(),
-              itemCount: cont.turmas.length,
-              itemBuilder: (context, i) => MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: ListTile(
-                  trailing: IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: const Text("Excluir"),
-                                content:
-                                    const Text("Deseja excluir essa turma?"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {},
-                                      child: const Text("Não")),
-                                  TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await Provider.of<TurmasStateDesktop>(
-                                                context)
-                                            .deleteTurma(cont.turmas[i].id);
+          ListView.builder(
+            controller: ScrollController(),
+            itemCount: turmas.turmas.length,
+            itemBuilder: (context, i) => MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: ListTile(
+                trailing: IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: const Text("Excluir"),
+                              content: const Text("Deseja excluir essa turma?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {}, child: const Text("Não")),
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      //TODO: deleteTurma
 
-                                        Provider.of<TurmasStateDesktop>(context)
-                                            .getTurmas(context)
-                                            .then((value) => setState(() {}));
-                                      },
-                                      child: const Text("Sim"))
-                                ],
-                              ));
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  onTap: () {
-                    if (cont.turmas[i].isAdmin) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) =>
-                                  EditarTurmaDesktop(cont.turmas[i]))));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) => const AlertDialog(
-                                title: Text("Erro"),
-                                content: Text(
-                                    "Você não é um administrador dessa turma"),
-                              ));
-                    }
+                                      turmas.getData();
+                                    },
+                                    child: const Text("Sim"))
+                              ],
+                            ));
                   },
-                  title: Text(
-                    cont.turmas[i].nome,
-                    style: labelDark,
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.red,
                   ),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                onTap: () {
+                  if (turmas.turmas[i].isAdmin) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                EditarTurmaDesktop(turmas.turmas[i]))));
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (context) => const AlertDialog(
+                              title: Text("Erro"),
+                              content: Text(
+                                  "Você não é um administrador dessa turma"),
+                            ));
+                  }
+                },
+                title: Text(
+                  turmas.turmas[i].nome,
+                  style: labelDark,
                 ),
               ),
             ),
@@ -89,7 +87,8 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
           Positioned(
               bottom: 10,
               right: 10,
-              child: FloatingActionButton(
+              child:
+                  Container() /*FloatingActionButton(
                 isExtended: true,
                 onPressed: () {
                   TextEditingController _turmaCode = TextEditingController();
@@ -142,7 +141,8 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
                 child: Provider.of<TurmasStateDesktop>(context).loading
                     ? const CircularProgressIndicator()
                     : const Icon(Icons.add),
-              ))
+              )*/
+              )
         ],
       ),
     );

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../shared/colors.dart';
 
@@ -147,7 +145,7 @@ Future addMateria(
                                             });
                                             debugPrint("OKOK");
                                             if (kIsWeb) {
-                                              await context
+                                              /* await context
                                                   .read<TurmasStateDesktop>()
                                                   .createMateria(
                                                       Materia(
@@ -160,9 +158,9 @@ Future addMateria(
                                                           nome.text,
                                                           prof.text,
                                                           contato.text),
-                                                      turmaID);
+                                                      turmaID);*/
                                             } else {
-                                              await context
+                                              /*await context
                                                   .read<Turmas>()
                                                   .turmasSQL
                                                   .createMateria(
@@ -176,7 +174,7 @@ Future addMateria(
                                                           nome.text,
                                                           prof.text,
                                                           contato.text),
-                                                      turmaID);
+                                                      turmaID);*/
                                             }
                                             Navigator.pop(context);
 

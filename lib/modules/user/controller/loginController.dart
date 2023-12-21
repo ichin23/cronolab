@@ -1,12 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+import 'package:cronolab/modules/user/controller/userProvider.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart' as fonts;
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cronolab/shared/routes.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class LoginController {
   Future loginGoogle(BuildContext context) async {
@@ -24,7 +26,7 @@ class LoginController {
       final GoogleSignInAuthentication? googleAuth =
           await account?.authentication;
       // Create a new credential
-      final credential = GoogleAuthProvider.credential(
+      /*final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
@@ -37,7 +39,7 @@ class LoginController {
           .set({"nome": user.displayName, "email": user.email});
       if (!kIsWeb) {
         OneSignal().setExternalUserId(FirebaseAuth.instance.currentUser!.uid);
-      }
+      }*/
     } catch (e) {
       debugPrint(e.runtimeType.toString());
       print(e);
@@ -56,28 +58,6 @@ class LoginController {
                       child: const Text("OK"))
                 ],
               ));
-    }
-  }
-
-  Future loginEmail(email, senha, context) async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: senha);
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-          backgroundColor: backgroundDark,
-          title: Text(
-            "Erro no login",
-            style: TextStyle(color: whiteColor),
-          ),
-          content: Text(
-              "Email ou senha incorretos. Certeza que já possui sua conta?",
-              style: TextStyle(color: whiteColor)),
-        ),
-      );
-      debugPrint(e.toString());
     }
   }
 }

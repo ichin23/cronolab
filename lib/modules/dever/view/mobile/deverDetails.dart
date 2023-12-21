@@ -1,14 +1,8 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/shared/colors.dart' as colors;
-import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DeverDetails extends StatefulWidget {
   const DeverDetails(this.dever, this.tagNumber, {Key? key}) : super(key: key);
@@ -88,8 +82,7 @@ class _DeverDetailsState extends State<DeverDetails> {
               Text("Título", style: Theme.of(context).textTheme.labelMedium),
               TextField(
                   decoration: fieldDecoration,
-                  maxLength: context.read<sett.Settings>().settings["input"]
-                      ["dever"]["titulo"],
+                  maxLength: 20,
                   readOnly: !editavel,
                   style: Theme.of(context).textTheme.labelLarge,
                   controller: title,
@@ -151,8 +144,7 @@ class _DeverDetailsState extends State<DeverDetails> {
               Text("Local", style: Theme.of(context).textTheme.labelMedium),
               TextFormField(
                   decoration: fieldDecoration,
-                  maxLength: context.read<sett.Settings>().settings["input"]
-                      ["dever"]["local"],
+                  maxLength: 20,
                   readOnly: !editavel,
                   style: Theme.of(context).textTheme.labelLarge,
                   controller: local,
@@ -178,17 +170,17 @@ class _DeverDetailsState extends State<DeverDetails> {
                             Flexible(
                               child: SizedBox(
                                 width: width * 0.7 - 50,
-                                child: Text("Matéria: ${dever.materia!.nome}",
+                                child: Text("Matéria: ${dever.materiaID}",
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelMedium),
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text("Professor: ${dever.materia!.prof}",
+                            Text("Professor: ${dever.materiaID}",
                                 style: Theme.of(context).textTheme.labelMedium),
                             const SizedBox(height: 10),
-                            Text("Contato: ${dever.materia!.contato}",
+                            Text("Contato: ${dever.materiaID}",
                                 style: Theme.of(context).textTheme.labelMedium)
                           ],
                         ),
@@ -197,7 +189,7 @@ class _DeverDetailsState extends State<DeverDetails> {
           ),
         ),
       ),
-      floatingActionButton: Consumer<Turmas>(
+      /*floatingActionButton: Consumer<Turmas>(
         builder: (context, turmas, _) => turmas.turmaAtual!.isAdmin
             ? FloatingActionButton(
                 onPressed: () async {
@@ -243,7 +235,7 @@ class _DeverDetailsState extends State<DeverDetails> {
                 child: Icon(editavel ? Icons.check : Icons.edit,
                     color: darkPrimary))
             : Container(),
-      ),
+      ),*/
     );
   }
 }

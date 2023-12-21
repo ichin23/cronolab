@@ -1,11 +1,6 @@
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/shared/colors.dart';
-import 'package:cronolab/shared/fonts.dart';
-import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 class GerenciarTurmas extends StatefulWidget {
   const GerenciarTurmas({Key? key}) : super(key: key);
@@ -38,8 +33,6 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Gerenciar Turmas"),
@@ -53,13 +46,11 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
             )),
       ),
       body: SafeArea(
-          child: Consumer<Turmas>(
-              builder: (context, turmas, child) =>
-                   ListView.builder(
-            itemCount: turmas.turmasSQL.turmas.length,
-            itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                  child: ListTile(
+          child: ListView.builder(
+              itemCount: 0 /*turmas.turmasSQL.turmas.length*/,
+              itemBuilder: (context, i) => const Padding(
+                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                    /*child: ListTile(
                       onTap: () async {
                         if (turmas.turmasSQL.turmas[i].isAdmin) {
                           await Navigator.of(context)
@@ -127,10 +118,9 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                       title: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                           child: Text(turmas.turmasSQL.turmas[i].nome.toTitleCase(),
-                              style: Theme.of(context).textTheme.labelMedium))),
-                )),
-              )),
-      floatingActionButton: FloatingActionButton(
+                              style: Theme.of(context).textTheme.labelMedium))),*/
+                  ))),
+      /*floatingActionButton: FloatingActionButton(
           onPressed: loading
               ? null
               : () {
@@ -200,12 +190,12 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                                           : () async {
                                               loading = true;
                                               setstate(() {});
-
+/*
                                               await context.read<Turmas>().turmasSQL.createTurma(Turma(nome: code.text, id: code.text)..setAdmin());
                                               await context.read<Turmas>().turmasFB.createTurma(Turma(nome: code.text, id: code.text)..setAdmin());
                                               await context.read<Turmas>().getData();
 
-
+*/
 
                                               Navigator.pop(context);
                                               setState(() {loading=false;});
@@ -237,7 +227,7 @@ class _GerenciarTurmasState extends State<GerenciarTurmas> {
                   Icons.add,
                   color: Theme.of(context).backgroundColor,
                   size: 40,
-                )),
+                )),*/
       // );
       // }
     );

@@ -1,7 +1,4 @@
-import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class MudarTurma extends StatefulWidget {
   const MudarTurma({super.key});
@@ -13,18 +10,16 @@ class MudarTurma extends StatefulWidget {
 class _MudarTurmaState extends State<MudarTurma> {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text("Trocar turma"),
+        title: const Text("Trocar turma"),
       ),
       body: SafeArea(
-
-        child: Consumer<Turmas>(
-          builder: (context, turmas, _)=>Container(
-            padding: EdgeInsets.symmetric (vertical: 10),
-            child: ListView(children: [
-
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: ListView(children: const [
+/*
               ...context
                   .watch<Turmas>()
                   .turmasSQL
@@ -54,9 +49,8 @@ class _MudarTurmaState extends State<MudarTurma> {
                       TextStyle(color:   whiteColor, fontWeight: FontWeight.w500,),
                     )),
                   ))
-                  .toList(),
-            ]),
-          ),
+                  .toList(),*/
+          ]),
         ),
       ),
     );

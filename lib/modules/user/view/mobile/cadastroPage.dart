@@ -1,4 +1,3 @@
-import 'package:cronolab/modules/user/controller/cadastroController.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -139,11 +138,13 @@ class _CadastroPageState extends State<CadastroPage> {
                                     child: loading
                                         ? CircularProgressIndicator(
                                             color: Theme.of(context)
-                                                .backgroundColor)
+                                                .colorScheme
+                                                .background)
                                         : Text("Cadastrar",
                                             style: TextStyle(
                                                 color: Theme.of(context)
-                                                    .backgroundColor,
+                                                    .colorScheme
+                                                    .background,
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w800)),
                                     onPressed: () {
@@ -151,11 +152,12 @@ class _CadastroPageState extends State<CadastroPage> {
                                         setState(() {
                                           loading = true;
                                         });
-                                        CadastroController().siginEmail(
+
+                                        /* CadastroController().siginEmail(
                                             emailCont.text,
                                             passwordCont.text,
                                             nomeCont.text,
-                                            context);
+                                            context);*/
                                         Navigator.pushNamedAndRemoveUntil(
                                             context,
                                             "/",

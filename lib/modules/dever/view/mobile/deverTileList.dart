@@ -1,14 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/modules/turmas/turma.dart';
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DeverTileList extends StatefulWidget {
   const DeverTileList(
@@ -24,9 +20,10 @@ class DeverTileList extends StatefulWidget {
 
 class _DeverTileListState extends State<DeverTileList> {
   List<PopupMenuItem> popMenu = [];
-
+  late Turmas turmas;
   @override
   void initState() {
+    turmas = GetIt.I.get<Turmas>();
     super.initState();
     //var turmas = Provider.of<Turmas>(context, listen:false);
 
@@ -38,7 +35,7 @@ class _DeverTileListState extends State<DeverTileList> {
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
             onTap: () async {
-              if (widget.dever.status == true) {
+              /*if (widget.dever.status == true) {
                 await context
                     .read<Turmas>()
                     .turmasSQL
@@ -50,7 +47,7 @@ class _DeverTileListState extends State<DeverTileList> {
                     .updateDever(widget.dever..status = true);
               }
 
-              await context.read<Turmas>().getData();
+              await context.read<Turmas>().getData();*/
               if (widget.notifyParent != null) {
                 widget.notifyParent!();
               }
@@ -60,7 +57,7 @@ class _DeverTileListState extends State<DeverTileList> {
             },
           ),
         );
-        if (context.read<Turmas>().turmaAtual!.isAdmin) {
+        /* if (context.read<Turmas>().turmaAtual!.isAdmin) {
           popMenu.add(
             PopupMenuItem(
               child: Text("Excluir",
@@ -109,7 +106,7 @@ class _DeverTileListState extends State<DeverTileList> {
               },
             ),
           );
-        }
+        }*/
       }
     });
   }
@@ -202,7 +199,13 @@ class _DeverTileListState extends State<DeverTileList> {
                                 fontWeight: FontWeight.w600)),
                       ),
                       const SizedBox(height: 5),
-                      Text(widget.dever.materia?.nome ?? "",
+                      Text(
+                          turmas.materias
+                                  .where((element) =>
+                                      element.id == widget.dever.materiaID)
+                                  .first
+                                  .nome ??
+                              "",
                           style: TextStyle(color: corText, fontSize: 16)),
                     ]),
               ),

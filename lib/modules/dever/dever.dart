@@ -1,14 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 
 class Dever {
   // var _firestore = FirebaseFirestore.instance.collection("");
   String title;
   Materia? materia;
-  String? materiaID;
+  int? materiaID;
   DateTime data;
   double? pontos;
-  String? id;
+  int? id;
   String? local;
   bool? status;
   DateTime? ultimaModificacao;
@@ -26,31 +25,30 @@ class Dever {
       this.ultimaModificacao,
       this.deletado});
 
-  Dever.fromJson(Map<String, Object?> document)
+  Dever.fromJson(Map document)
       : this(
-            id: document["id"] as String,
-            title: document['title'].toString(),
-            materia: document["materiaClass"] as Materia,
-            materiaID: document["materia"] as String,
+            id: document["id"] as int,
+            title: document['nome'].toString(),
+            materiaID: document["idMateria"] as int,
             ultimaModificacao: ((document["ultimaModificacao"] as DateTime?)),
-            data: (document['data'] as DateTime),
+            data: (DateTime.parse(document['dataHora'])),
             pontos: double.tryParse(document['pontos'].toString()),
             local: document["local"].toString());
 
   Dever.fromJsonFirestore(Map<String, Object?> document, String id)
       : this(
-            id: id,
+            id: id as int,
             title: document['title'].toString(),
-            materiaID: document["materia"] as String,
+            materiaID: document["materia"] as int,
             ultimaModificacao: DateTime.now(),
             deletado: document["deletado"] == true ? true : false,
-            data: ((document['data'] as Timestamp).toDate()),
+            data: (DateTime.now()),
             pontos: double.tryParse(document['pontos'].toString()),
             local: document["local"].toString());
 
   Dever.fromJsonDB(Map<String, Object?> document)
       : this(
-            id: document["id"] as String,
+            id: document["id"] as int,
             title: document['title'].toString(),
             status: document["status"] == null
                 ? false
@@ -69,10 +67,9 @@ class Dever {
 
   Map<String, Object?> toJson() {
     return {
-      'title': title,
-      'materia': materiaID,
-      'data': Timestamp.fromDate(data),
-      'ultimaModificacao': ultimaModificacao,
+      'titulo': title,
+      'materiaId': materiaID,
+      'dataHora': data.toString(),
       'pontos': pontos,
       "local": local
     };
@@ -81,9 +78,9 @@ class Dever {
   Map<String, Object?> toJsonFB() {
     return {
       'title': title,
-      'data': Timestamp.fromDate(data),
+      'data': DateTime.now(),
       'materia': materiaID ?? materia!.id,
-      'ultimaModificacao': Timestamp.fromDate(ultimaModificacao!),
+      'ultimaModificacao': DateTime.now(),
       "local": local,
       'pontos': pontos,
     };

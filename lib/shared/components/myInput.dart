@@ -2,7 +2,6 @@ import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/fonts.dart' as fonts;
 import 'package:cronolab/shared/models/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class MyField extends StatelessWidget {
   const MyField(
@@ -30,9 +29,7 @@ class MyField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       controller: nome,
-      maxLength: maxLength ??
-          context.read<Settings>().settings["input"]["limiteGeral"] ??
-          50,
+      maxLength: maxLength ?? 50,
       decoration: InputDecoration(
         counterText: "",
         fillColor: color.whiteColor.withOpacity(0.1),

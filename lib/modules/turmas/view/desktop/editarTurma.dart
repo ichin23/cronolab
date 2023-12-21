@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
@@ -9,7 +7,6 @@ import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../turma.dart';
 
@@ -48,7 +45,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
       });
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
       nome.text = turma.nome;
-      codigo.text = turma.id;
+      codigo.text = turma.id.toString();
       setState(() {});
     });
     // controller.forward();
@@ -178,7 +175,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                       "Matérias (" +
                           turma.materia.length.toString() +
                           "/" +
-                          context.read<sett.Settings>().limMaterias.toString() +
+                          //context.read<sett.Settings>().limMaterias.toString() +
                           ")",
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
@@ -211,10 +208,10 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                                             turma.materia[i],
                                                             turma.id))); */
                                             if (newMateria == null) return;
-                                            context
+                                            /*context
                                                 .read<TurmasStateDesktop>()
                                                 .updateMateria(
-                                                    turma.id, newMateria);
+                                                    turma.id, newMateria);*/
 
                                             turma.materia[i] = newMateria;
                                             setState(() {});
@@ -249,24 +246,23 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                         : () {
                                             TextEditingController materia =
                                                 TextEditingController();
-                                            if (turma.materia.length <
-                                                context
-                                                    .read<sett.Settings>()
-                                                    .limMaterias) {
+                                            if (turma.materia.length < 10) {
                                               addMateria(
-                                                      context, turma.id, () {})
+                                                      context,
+                                                      turma.id.toString(),
+                                                      () {})
                                                   .then((value) async {
-                                                var newTurma = await context
+                                                /*var newTurma = await context
                                                     .read<TurmasStateDesktop>()
                                                     .refreshTurma(turma.id);
                                                 if (newTurma != null) {
                                                   turma = newTurma;
-                                                }
+                                                }*/
                                                 setState(() {});
                                               });
-                                              context
+                                              /*context
                                                   .read<TurmasStateDesktop>()
-                                                  .getTurmas(context);
+                                                  .getTurmas(context);*/
                                               setState(() {});
                                             } else {
                                               showDialog(
@@ -336,9 +332,7 @@ Future<Materia?> editarMateria(
                           ),
                           const SizedBox(height: 10),
                           TextFormField(
-                              maxLength: context
-                                  .read<sett.Settings>()
-                                  .settings["input"]["limiteGeral"],
+                              maxLength: 50,
                               controller: nome,
                               validator: (value) {
                                 if (value != null && value.isEmpty) {
@@ -358,9 +352,7 @@ Future<Materia?> editarMateria(
                                   ))),
                           const SizedBox(height: 10),
                           TextFormField(
-                              maxLength: context
-                                  .read<sett.Settings>()
-                                  .settings["input"]["limiteGeral"],
+                              maxLength: 50,
                               controller: prof,
                               validator: (value) {
                                 if (value != null && value.isEmpty) {
@@ -380,9 +372,7 @@ Future<Materia?> editarMateria(
                                   ))),
                           const SizedBox(height: 10),
                           TextFormField(
-                              maxLength: context
-                                  .read<sett.Settings>()
-                                  .settings["input"]["limiteGeral"],
+                              maxLength: 50,
                               controller: cont,
                               validator: (value) {
                                 if (value != null && value.isEmpty) {
@@ -415,7 +405,7 @@ Future<Materia?> editarMateria(
                                         setstate(() {
                                           loading = true;
                                         });
-                                        await turma.deleteMateria(materia.id);
+                                        //await turma.deleteMateria(materia.id);
 
                                         setstate(() {
                                           loading = false;
@@ -440,7 +430,7 @@ Future<Materia?> editarMateria(
                                           setstate(() {
                                             loading = true;
                                           });
-                                          await FirebaseFirestore.instance
+                                          /* await FirebaseFirestore.instance
                                               .collection("turmas")
                                               .doc(turma.id)
                                               .collection("materias")
@@ -449,7 +439,7 @@ Future<Materia?> editarMateria(
                                             "professor": prof.text,
                                             "nome": nome.text,
                                             "contato": cont.text,
-                                          });
+                                          });*/
 
                                           setstate(() {
                                             loading = false;

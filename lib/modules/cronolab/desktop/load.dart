@@ -1,7 +1,8 @@
 import 'package:cronolab/modules/cronolab/desktop/index.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 class LoadDataDesktop extends StatefulWidget {
   const LoadDataDesktop({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _LoadDataDesktopState extends State<LoadDataDesktop> {
   @override
   void initState() {
     super.initState();
-    future = context.read<TurmasStateDesktop>().getTurmas(context);
+    future = GetIt.I.get<Turmas>().getData();
   }
 
   @override

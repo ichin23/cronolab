@@ -1,12 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../../../materia/materia.dart';
 
@@ -64,9 +60,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                 children: [
                                   TextFormField(
                                     enabled: true,
-                                    maxLength: context
-                                        .read<sett.Settings>()
-                                        .settings["input"]["dever"]["titulo"],
+                                    maxLength: 20,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                     keyboardType: TextInputType.name,
@@ -138,8 +132,8 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                           color: whiteColor.withOpacity(0.1),
                                         ),
                                         child: ListView(
-                                          children: [
-                                            ...(turmas.turmaAtual!.materia)
+                                          children: const [
+                                            /* ...(turmas.turmaAtual!.materia)
                                                 .where((Materia element) =>
                                                     element.nome
                                                         .toLowerCase()
@@ -202,7 +196,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                       ),
                                                     ],
                                                   )
-                                                : Container()
+                                                : Container()*/
                                           ],
                                         ),
                                       ),
@@ -210,9 +204,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
-                                    maxLength: context
-                                        .read<sett.Settings>()
-                                        .settings["input"]["dever"]["valor"],
+                                    maxLength: 10,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                     focusNode: pontosFoc,
@@ -246,9 +238,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
-                                    maxLength: context
-                                        .read<sett.Settings>()
-                                        .settings["input"]["dever"]["local"],
+                                    maxLength: 20,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                     focusNode: localFoc,
@@ -431,7 +421,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                 //     .turmaAtual!
                                                 //     .id);
                                                 // await turmas.turmaAtual!.addDever(
-                                                await turmas.turmasFB
+                                                /* await turmas.turmasFB
                                                     .createDever(
                                                         Dever(
                                                             //id: FirebaseFirestore.instance.collection("dever").doc().id,
@@ -472,7 +462,7 @@ cadastra(BuildContext context, Turmas turmas, Function() setState) async {
                                                 }
 
                                                 await turmas.getData();
-
+*/
                                                 // FirestoreApp().getData(Dever(
                                                 //     data: Timestamp
                                                 //         .fromDate(DateTime(

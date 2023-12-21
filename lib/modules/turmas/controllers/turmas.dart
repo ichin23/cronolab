@@ -1,73 +1,71 @@
-import 'package:cronolab/modules/turmas/controllers/turmasFirebase.dart';
-import 'package:cronolab/modules/turmas/controllers/turmasSQL.dart';
-import 'package:cronolab/modules/turmas/turma.dart';
+import 'dart:convert';
+
 import 'package:cronolab/modules/dever/dever.dart';
-import 'package:cronolab/shared/models/cronolabExceptions.dart';
+import 'package:cronolab/modules/materia/materia.dart';
+import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:cronolab/shared/routes.dart' as r;
 
-class Turmas with ChangeNotifier {
-  TurmasFirebase turmasFB = TurmasFirebase();
-  TurmasSQL turmasSQL = TurmasSQL();
-  Turma? turmaAtual;
-  List<Dever>? deveresAtuais;
+class Turmas {
+  List<Turma> turmas = [];
+  List<Materia> materias = [];
+  ValueNotifier<List<Dever>> deveres = ValueNotifier([]);
+  final ValueNotifier<Turma?> _turmaAtual = ValueNotifier(null);
 
-  Future<List?> getData([List? listFilter]) async {
-    try {
-      await turmasSQL.getTurmasData();
+  ValueNotifier<Turma?> get turmaAtual => _turmaAtual;
 
-      if (turmasSQL.turmas.isEmpty) {
-        throw CronolabException("Nenhuma turma cadastrada!", 11);
-      }
-
-      turmaAtual = turmasSQL.turmas.first;
-      var deveres = await turmasSQL.readDeveres(turmaAtual!.id, listFilter);
-      if (deveres == null) {
-        throw CronolabException("Nenhum dever encontrado!", 12);
-      } else {
-        deveresAtuais = deveres;
-      }
-
-      notifyListeners();
-      return deveres;
-    } on CronolabException {
-      rethrow;
+  Future getData() async {
+    var turm = await http.get(r.getData, headers: r.headersAuth);
+    var turmasMap = jsonDecode(turm.body);
+    print(turmasMap);
+    List<Turma> novaTurma = [];
+    List<Materia> nomaMat = [];
+    List<Dever> novoDever = [];
+    for (Map turma in turmasMap["turmas"]) {
+      novaTurma.add(Turma.fromSQL(turma));
     }
+    for (Map materia in turmasMap["materias"]) {
+      nomaMat.add(Materia.fromJson(materia));
+    }
+    for (Map dever in turmasMap["deveres"]) {
+      novoDever.add(Dever.fromJson(dever));
+    }
+    turmas = novaTurma;
+    materias = nomaMat;
+    deveres.value = novoDever;
+    //await getMaterias();
   }
 
-  Turma? getTurmaByID(String id) {
-    for (var turma in turmasSQL.turmas) {
-      if (turma.id == id) {
-        return turma;
-      }
-    }
-    return null;
+  Future getMaterias() async {
+    var turmasIds = turmas.map((e) => e.id).toList();
+
+    var mat = await http.post(r.getMaterias,
+        headers: r.headersAuth, body: jsonEncode({"turmas": turmasIds}));
+    List materias = jsonDecode(mat.body);
+    print(materias);
+    var group = materias.map((e) => MapEntry(e["turmaID"], e));
+    print(group);
   }
 
-  Future saveFBData() async {
-    for (var turma in turmasFB.turmas) {
-      await turmasSQL.createFullTurma(turma);
-    }
+  List<Dever> getDeveresFromTurma([Turma? turma]) {
+    turma ??= turmaAtual.value;
+    return deveres.value
+        .where((element) => getMateriasFromTurma(turma!)
+            .any((materia) => materia.id == element.materiaID))
+        .toList();
   }
 
-  changeTurmaAtual(Turma newTurma) {
-    turmaAtual = newTurma;
-    notifyListeners();
+  List<Materia> getMateriasFromTurma(Turma turma) {
+    return materias.where((element) => element.turmaId == turma.id).toList();
   }
 
-  getDeveres([Turma? turma]) async {
-    try {
-      turma = turma ?? turmaAtual;
-      if (turma != null) {
-        var deveres = await turmasSQL.readDeveres(turma.id);
-        if (deveres == null) {
-          throw CronolabException("Nenhum dever encontrado!", 12);
-        } else {
-          deveresAtuais = deveres;
-        }
-      }
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
+  changeTurma(Turma? turma) {
+    _turmaAtual.value = turma;
+  }
+
+  cadastraDever(Dever dever) async {
+    var res = await http.post(r.addDever,
+        headers: r.headersAuth, body: jsonEncode(dever.toJson()));
   }
 }
