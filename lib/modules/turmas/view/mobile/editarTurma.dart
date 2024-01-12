@@ -1,9 +1,11 @@
 import 'package:cronolab/modules/materia/materia.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../../../materia/view/mobile/editarMateria.dart';
 import '../../turma.dart';
 
@@ -24,12 +26,14 @@ class _EditarTurmaState extends State<EditarTurma>
   late AnimationController controller;
   bool excluindo = false;
   late Turma turma;
+  late Turmas turmas;
   bool privada = false;
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
+    turmas = GetIt.I.get<Turmas>();
     turma = widget.turma;
     controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
@@ -114,7 +118,7 @@ class _EditarTurmaState extends State<EditarTurma>
                 : Container(),
             const SizedBox(height: 15),
             Text(
-              "Matérias (${turma.materia.length}/${10})",
+              "Matérias (${turmas.getMateriasFromTurma(turma).length}/${10})",
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: 15),

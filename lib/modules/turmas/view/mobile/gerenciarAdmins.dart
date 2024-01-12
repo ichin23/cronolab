@@ -1,9 +1,11 @@
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
 import 'package:cronolab/modules/turmas/view/mobile/components/viewAdmins.dart';
 import 'package:cronolab/modules/turmas/view/mobile/components/viewUsers.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class GerenciarAdmins extends StatefulWidget {
   GerenciarAdmins(this.turma, {Key? key}) : super(key: key);
@@ -16,29 +18,11 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
     with TickerProviderStateMixin {
   late TabController tabController;
   late Turma turma;
-  late Future<Map> future;
-
-  Future<Map> getParticipantes() async {
-    Map results = {};
-    if (kIsWeb) {
-      /*results["admins"] =
-          await context.read<TurmasStateDesktop>().getAdmins(widget.turma.id);
-      results["participantes"] = await context
-          .read<TurmasStateDesktop>()
-          .getParticipantes(widget.turma.id);*/
-    } else {
-      /*results["admins"] =
-          await context.read<Turmas>().turmasFB.getAdmins(widget.turma.id);
-      results["participantes"] = await context
-          .read<Turmas>()
-          .turmasFB
-          .getParticipantes(widget.turma.id);*/
-    }
-    return results;
-  }
+  late Turmas turmas;
+  late Future<List> future;
 
   void refresh() {
-    future = getParticipantes();
+    future = turmas.getParticipantes(turma);
     setState(() {});
   }
 
@@ -46,6 +30,8 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
   void initState() {
     super.initState();
     turma = widget.turma;
+    turmas = GetIt.I.get<Turmas>();
+    future = turmas.getParticipantes(turma);
     tabController = TabController(length: 2, vsync: this);
     refresh();
   }
@@ -80,7 +66,7 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
             labelColor: Colors.black26,
           ),
         ),
-        body: FutureBuilder<Map>(
+        body: FutureBuilder<List>(
             future: future,
             builder: (context, snap) {
               switch (snap.connectionState) {
@@ -90,9 +76,21 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
                   return TabBarView(
                     controller: tabController,
                     children: [
-                      ViewAdmins(turma, snap.data!["admins"], refresh),
-                      ViewUsers(turma, snap.data!["admins"],
-                          snap.data!["participantes"], refresh)
+                      ViewAdmins(
+                          turma,
+                          snap.data!
+                              .where((element) => element["admin"] == 1)
+                              .toList(),
+                          refresh),
+                      ViewUsers(
+                          turma,
+                          snap.data!
+                              .where((element) => element["admin"] == 1)
+                              .toList(),
+                          snap.data!
+                              .where((element) => element["admin"] == 0)
+                              .toList(),
+                          refresh)
                     ],
                   );
                 default:

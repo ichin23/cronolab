@@ -74,7 +74,8 @@ class _DeverDetailsState extends State<DeverDetails> {
         title: const Text("Dever"),
       ),
       body: SafeArea(
-        child: Padding(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
           padding: const EdgeInsets.all(15),
           child: Form(
             key: _form,
@@ -153,7 +154,6 @@ class _DeverDetailsState extends State<DeverDetails> {
               Text("Matéria", style: Theme.of(context).textTheme.labelMedium),
               const SizedBox(height: 10),
               Container(
-                  width: width - 30,
                   height: height * 0.25,
                   padding: const EdgeInsets.all(30),
                   decoration: BoxDecoration(
@@ -169,7 +169,6 @@ class _DeverDetailsState extends State<DeverDetails> {
                           children: [
                             Flexible(
                               child: SizedBox(
-                                width: width * 0.7 - 50,
                                 child: Text("Matéria: ${dever.materiaID}",
                                     style: Theme.of(context)
                                         .textTheme

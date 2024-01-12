@@ -1,8 +1,7 @@
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
-import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../shared/colors.dart';
 
@@ -144,38 +143,16 @@ Future addMateria(
                                               loading = true;
                                             });
                                             debugPrint("OKOK");
-                                            if (kIsWeb) {
-                                              /* await context
-                                                  .read<TurmasStateDesktop>()
-                                                  .createMateria(
-                                                      Materia(
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  "turmas")
-                                                              .doc()
-                                                              .id,
-                                                          nome.text,
-                                                          prof.text,
-                                                          contato.text),
-                                                      turmaID);*/
-                                            } else {
-                                              /*await context
-                                                  .read<Turmas>()
-                                                  .turmasSQL
-                                                  .createMateria(
-                                                      Materia(
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  "turmas")
-                                                              .doc()
-                                                              .id,
-                                                          nome.text,
-                                                          prof.text,
-                                                          contato.text),
-                                                      turmaID);*/
-                                            }
+                                            await GetIt.I
+                                                .get<Turmas>()
+                                                .addMateria(Materia(
+                                                    nome.text,
+                                                    prof.text,
+                                                    contato.text,
+                                                    int.parse(turmaID)));
+                                            await GetIt.I
+                                                .get<Turmas>()
+                                                .getData();
                                             Navigator.pop(context);
 
                                             await setstate();

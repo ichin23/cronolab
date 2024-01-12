@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/dever/view/mobile/cadastraDever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:cronolab/modules/materia/materia.dart';
@@ -11,7 +12,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:intl/intl.dart';
 
-cadastraDeverDesktop(BuildContext context, DateTime data) async {
+cadastraDeverDesktop(BuildContext context, DateTime? data) async {
   DateFormat date = DateFormat("dd/MM");
   TimeOfDay? hora;
   Turmas turmas = GetIt.I.get<Turmas>();
@@ -40,7 +41,8 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Cadastrar Matéria para o dia: ${date.format(data)}",
+                      Text(
+                          "Cadastrar Matéria para o dia: ${data == null ? '' : date.format(data!)}",
                           style: fonts.labelDark),
                       const SizedBox(height: 15),
                       TextFormField(
@@ -139,6 +141,35 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                               ))),
                       const SizedBox(height: 15),
                       Row(children: [
+                        const Icon(Icons.calendar_month, color: whiteColor),
+                        const SizedBox(width: 20),
+                        const Text(
+                          "Data: ",
+                          style: fonts.labelDark,
+                        ),
+                        TextButton(
+                            onPressed: () async {
+                              data = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime.now()
+                                      .add(const Duration(days: 365)),
+                                  initialDate: DateTime.now());
+                              setstate(() {});
+                            },
+                            child: Text(
+                              data != null
+                                  ? dateStr.format(data!)
+                                  : "Selecione",
+                              style: TextStyle(
+                                  color:
+                                      hora == null ? primaryDark : whiteColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800),
+                            ))
+                      ]),
+                      const SizedBox(height: 15),
+                      Row(children: [
                         const Icon(Icons.timer, color: whiteColor),
                         const SizedBox(width: 20),
                         const Text(
@@ -176,10 +207,10 @@ cadastraDeverDesktop(BuildContext context, DateTime data) async {
                               debugPrint("Matéria não selecionada");
                               return;
                             }
-                            debugPrint("Cadastrando");
+                            debugPrint("Cadastrando5");
                             var dever = Dever(
-                                data: DateTime(data.year, data.month, data.day,
-                                    hora!.hour, hora!.minute),
+                                data: DateTime(data!.year, data!.month,
+                                    data!.day, hora!.hour, hora!.minute),
                                 materiaID: materiaSelect!.id,
                                 title: titulo.text,
                                 pontos: double.parse(pontos.text),

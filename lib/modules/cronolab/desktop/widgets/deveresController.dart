@@ -1,6 +1,7 @@
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -8,11 +9,11 @@ import 'package:intl/intl.dart';
 import 'dia.dart';
 
 class DeveresController with ChangeNotifier {
-  Dia? _diaAtual;
+  final ValueNotifier<Dia?> diaAtualList = ValueNotifier(null);
 
-  Dia? get diaAtual => _diaAtual;
+  Dia? get diaAtual => diaAtualList.value;
   set diaAtual(Dia? newDia) {
-    _diaAtual = newDia;
+    diaAtualList.value = newDia;
     notifyListeners();
   }
 

@@ -1,4 +1,5 @@
 import 'package:cronolab/modules/dever/dever.dart';
+import 'package:cronolab/modules/dever/view/desktop/showDeverCard.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -136,8 +137,15 @@ class _DeverTileListState extends State<DeverTileList> {
         //debugPrint(
         //  "NOW: ${DateTime.now().millisecondsSinceEpoch}\nDever: ${widget.dever.data.millisecondsSinceEpoch}");
         if (!kIsWeb) {
-          Navigator.pushNamed(context, "/dever",
-              arguments: {"dever": widget.dever, "index": widget.index});
+          showDialog(
+              context: context,
+              builder: (context) => ShowDeverCard(widget.dever)).then((value) {
+            if (widget.notifyParent != null) {
+              widget.notifyParent!();
+            }
+          });
+          //Navigator.pushNamed(context, "/dever",
+          // arguments: {"dever": widget.dever, "index": widget.index});
         } else {
           showMenu(
             color: backgroundDark,
@@ -175,40 +183,34 @@ class _DeverTileListState extends State<DeverTileList> {
             borderRadius: BorderRadius.circular(12),
             color: widget.dever.status ?? false
                 ? const Color.fromRGBO(182, 181, 181, 1)
-                : data.difference(DateTime.now()).inDays < 1
+                : widget.dever.deverUrgencia == DeverUrgencia.alta
                     ? const Color(0xffFFD1D0)
-                    : data.difference(DateTime.now()).inDays < 5
+                    : widget.dever.deverUrgencia == DeverUrgencia.media
                         ? const Color(0xFFFBF5C5)
                         : const Color(0xffBDF6E3),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                /*constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.6),*/
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Hero(
-                        tag: "title${widget.index.toString()}",
-                        child: Text(widget.dever.title,
-                            style: TextStyle(
-                                color: corText,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600)),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                          turmas.materias
-                                  .where((element) =>
-                                      element.id == widget.dever.materiaID)
-                                  .first
-                                  .nome ??
-                              "",
-                          style: TextStyle(color: corText, fontSize: 16)),
-                    ]),
-              ),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Hero(
+                  tag: "title${widget.index.toString()}",
+                  child: Text(widget.dever.title,
+                      style: TextStyle(
+                          color: corText,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600)),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                    turmas.materias
+                            .where((element) =>
+                                element.id == widget.dever.materiaID)
+                            .first
+                            .nome ??
+                        "",
+                    style: TextStyle(color: corText, fontSize: 16)),
+              ]),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,

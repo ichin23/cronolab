@@ -61,32 +61,38 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                               : size.width * 0.35,
                                           child: Stack(
                                             children: [
-                                              ListView.builder(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 15),
-                                                  itemCount: deveres
-                                                              .diaAtual !=
-                                                          null
-                                                      ? deveres.diaAtual!
-                                                          .deveres.length
-                                                      : turmas
-                                                          .getDeveresFromTurma()
-                                                          .length,
-                                                  itemBuilder: (context, i) =>
-                                                      DeverTileList(
-                                                          dever: deveres
-                                                                      .diaAtual !=
-                                                                  null
-                                                              ? deveres
-                                                                  .diaAtual!
-                                                                  .deveres[i]
-                                                              : turmas
-                                                                  .getDeveresFromTurma()[i],
-                                                          index: i,
-                                                          notifyParent: () {
-                                                            setState(() {});
-                                                          })),
+                                              ValueListenableBuilder(
+                                                  valueListenable:
+                                                      turmas.deveres,
+                                                  builder:
+                                                      (context, devers, _) {
+                                                    return ListView.builder(
+                                                        padding: const EdgeInsets
+                                                            .only(right: 15),
+                                                        itemCount: deveres
+                                                                    .diaAtual !=
+                                                                null
+                                                            ? deveres.diaAtual!
+                                                                .deveres.length
+                                                            : turmas
+                                                                .getDeveresFromTurma()
+                                                                .length,
+                                                        itemBuilder: (context,
+                                                                i) =>
+                                                            DeverTileList(
+                                                                dever: deveres
+                                                                            .diaAtual !=
+                                                                        null
+                                                                    ? deveres
+                                                                        .diaAtual!
+                                                                        .deveres[i]
+                                                                    : turmas.getDeveresFromTurma()[i],
+                                                                index: i,
+                                                                notifyParent: () {
+                                                                  setState(
+                                                                      () {});
+                                                                }));
+                                                  }),
                                               Visibility(
                                                 visible: turmaAtual.isAdmin,
                                                 child: Positioned(
@@ -98,9 +104,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                         cadastraDeverDesktop(
                                                                 context,
                                                                 deveres.diaAtual
-                                                                        ?.data ??
-                                                                    DateTime
-                                                                        .now())
+                                                                    ?.data)
                                                             .then((value) {
                                                           turmas.getData();
                                                         });

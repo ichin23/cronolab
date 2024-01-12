@@ -1,9 +1,11 @@
 //import 'dart:html' if (dart.library.html) 'dart:html';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/dia.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turmasServerDesktop.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -140,126 +142,134 @@ class CalendarState extends State<Calendar> {
                                   /* ...List.filled(data.weekday, Container()),
                                   Text(data.day.toString()) */
                                   ...deveres.weeks
-                                      .map(
-                                          (e) => Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    ...e
-                                                        .map((f) => MouseRegion(
-                                                              cursor:
-                                                                  SystemMouseCursors
-                                                                      .click,
-                                                              onEnter: (ev) {
-                                                                if (f != null) {
-                                                                  debugPrint(f
-                                                                      .deveres
-                                                                      .toString());
-                                                                  if (f.deveres
-                                                                      .isNotEmpty) {
-                                                                    deveres.deveresToShow =
-                                                                        f.deveres;
-                                                                    deveres.showDeveres =
-                                                                        true;
-                                                                    deveres.showDeveresPosition =
-                                                                        ev.position;
-                                                                  }
-                                                                }
-                                                              },
-                                                              onExit: (ev) {
-                                                                if (f != null) {
-                                                                  if (f.deveres
-                                                                      .isNotEmpty) {
-                                                                    setState(
-                                                                        () {
-                                                                      deveres.deveresToShow =
-                                                                          [];
-                                                                      deveres.showDeveres =
-                                                                          false;
-                                                                      deveres.showDeveresPosition =
-                                                                          null;
-                                                                      // deveres.diaAtual =
-                                                                      //     null;
-                                                                    });
-                                                                  }
-                                                                }
-                                                              },
-                                                              child: Listener(
-                                                                onPointerDown:
-                                                                    (event) {
+                                      .map((e) => Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                ...e
+                                                    .map((f) =>
+                                                        ValueListenableBuilder<
+                                                                Dia?>(
+                                                            valueListenable:
+                                                                deveres
+                                                                    .diaAtualList,
+                                                            builder: (context,
+                                                                dia, _) {
+                                                              return MouseRegion(
+                                                                cursor:
+                                                                    SystemMouseCursors
+                                                                        .click,
+                                                                onEnter: (ev) {
                                                                   if (f !=
                                                                       null) {
-                                                                    if (!f.data.isBefore(deveres
-                                                                        .hoje
-                                                                        .subtract(const Duration(
-                                                                            days:
-                                                                                1)))) {
-                                                                      cliqueDireito(
-                                                                          event,
-                                                                          f,
-                                                                          deveres);
+                                                                    if (f
+                                                                        .deveres
+                                                                        .isNotEmpty) {
+                                                                      deveres.deveresToShow =
+                                                                          f.deveres;
+                                                                      deveres.showDeveres =
+                                                                          true;
+                                                                      deveres.showDeveresPosition =
+                                                                          ev.position;
                                                                     }
                                                                   }
                                                                 },
-                                                                child: Container(
-                                                                    alignment: Alignment.center,
-                                                                    height: 60,
-                                                                    width: 60,
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius: BorderRadius.circular(5),
-                                                                        border: f == deveres.diaAtual
-                                                                            ? Border.all(
-                                                                                color: primaryDark,
-                                                                                width: 3,
-                                                                              )
-                                                                            : null,
-                                                                        color: f != null
-                                                                            ? f.deveres.isNotEmpty
-                                                                                ? (f.deveres[0] as Dever).data.difference(DateTime.now()).compareTo(const Duration(hours: 23, minutes: 59)) < 1
-                                                                                    ? const Color.fromARGB(255, 247, 150, 148)
-                                                                                    : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
-                                                                                        ? const Color.fromARGB(255, 245, 218, 147)
-                                                                                        : const Color.fromARGB(255, 159, 245, 170)
-                                                                                : const Color(0xff3C353C)
-                                                                            : Colors.transparent),
-                                                                    child: f != null
-                                                                        ? Column(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.center,
-                                                                            children: [
-                                                                              Text(
-                                                                                f.data.day.toString(),
-                                                                                style: TextStyle(
-                                                                                    color: f.data.isAfter(deveres.ultimoDia) || f.data.isBefore(deveres.primeiroDia) || (f.data.month == deveres.hoje.month && f.data.isBefore(deveres.hoje.subtract(const Duration(days: 1))))
-                                                                                        // || f.data.isBefore(diaI)
-                                                                                        ? Colors.white24
-                                                                                        : f.deveres.isNotEmpty
-                                                                                            ? backgroundDark
-                                                                                            : Colors.white,
-                                                                                    fontWeight: FontWeight.w800,
-                                                                                    fontSize: f == deveres.diaAtual ? 36 : 40),
-                                                                              ),
-                                                                              // f.deveres.isNotEmpty
-                                                                              //     ? Container(
-                                                                              //         width: 10,
-                                                                              //         height: 10,
-                                                                              //         decoration: BoxDecoration(
-                                                                              //             color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
-                                                                              //                 ? const Color.fromARGB(255, 247, 150, 148)
-                                                                              //                 : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
-                                                                              //                     ? const Color.fromARGB(255, 245, 218, 147)
-                                                                              //                     : const Color.fromARGB(255, 159, 245, 170),
-                                                                              //             shape: BoxShape.circle),
-                                                                              //       )
-                                                                              //     : Container(),
-                                                                            ],
-                                                                          )
-                                                                        : Container()),
-                                                              ),
-                                                            ))
-                                                        .toList()
-                                                  ]))
+                                                                onExit: (ev) {
+                                                                  if (f !=
+                                                                      null) {
+                                                                    if (f
+                                                                        .deveres
+                                                                        .isNotEmpty) {
+                                                                      setState(
+                                                                          () {
+                                                                        deveres.deveresToShow =
+                                                                            [];
+                                                                        deveres.showDeveres =
+                                                                            false;
+                                                                        deveres.showDeveresPosition =
+                                                                            null;
+                                                                        // deveres.diaAtual =
+                                                                        //     null;
+                                                                      });
+                                                                    }
+                                                                  }
+                                                                },
+                                                                child: Listener(
+                                                                  onPointerDown:
+                                                                      (event) {
+                                                                    if (f !=
+                                                                        null) {
+                                                                      if (!f.data.isBefore(deveres
+                                                                          .hoje
+                                                                          .subtract(
+                                                                              const Duration(days: 1)))) {
+                                                                        cliqueDireito(
+                                                                            event,
+                                                                            f,
+                                                                            deveres);
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  child: Container(
+                                                                      alignment: Alignment.center,
+                                                                      height: (widget.height - 100) / deveres.weeks.length - 10,
+                                                                      //width: 60,
+                                                                      width: (widget.width - 30) / 7 - 10,
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(5),
+                                                                          border: f == dia
+                                                                              ? Border.all(
+                                                                                  color: primaryDark,
+                                                                                  width: 3,
+                                                                                )
+                                                                              : null,
+                                                                          color: f != null
+                                                                              ? f.deveres.isNotEmpty
+                                                                                  ? (f.deveres[0] as Dever).deverUrgencia == DeverUrgencia.alta
+                                                                                      ? const Color.fromARGB(255, 247, 150, 148)
+                                                                                      : (f.deveres[0] as Dever).deverUrgencia == DeverUrgencia.media
+                                                                                          ? const Color.fromARGB(255, 245, 218, 147)
+                                                                                          : const Color.fromARGB(255, 159, 245, 170)
+                                                                                  : const Color(0xff3C353C)
+                                                                              : Colors.transparent),
+                                                                      child: f != null
+                                                                          ? Column(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              children: [
+                                                                                AutoSizeText(
+                                                                                  f.data.day.toString(),
+                                                                                  maxLines: 1,
+                                                                                  style: TextStyle(
+                                                                                      color: f.data.isAfter(deveres.ultimoDia) || f.data.isBefore(deveres.primeiroDia) || (f.data.month == deveres.hoje.month && f.data.isBefore(deveres.hoje.subtract(const Duration(days: 1))))
+                                                                                          // || f.data.isBefore(diaI)
+                                                                                          ? Colors.white24
+                                                                                          : f.deveres.isNotEmpty
+                                                                                              ? backgroundDark
+                                                                                              : Colors.white,
+                                                                                      fontWeight: FontWeight.w800,
+                                                                                      fontSize: f == dia ? 36 : 40),
+                                                                                ),
+                                                                                // f.deveres.isNotEmpty
+                                                                                //     ? Container(
+                                                                                //         width: 10,
+                                                                                //         height: 10,
+                                                                                //         decoration: BoxDecoration(
+                                                                                //             color: (f.deveres[0] as Dever).data.day == deveres.hoje.day && (f.deveres[0] as Dever).data.month == deveres.hoje.month && (f.deveres[0] as Dever).data.year == deveres.hoje.year
+                                                                                //                 ? const Color.fromARGB(255, 247, 150, 148)
+                                                                                //                 : (f.deveres[0] as Dever).data.difference(DateTime.now()).inDays < 5
+                                                                                //                     ? const Color.fromARGB(255, 245, 218, 147)
+                                                                                //                     : const Color.fromARGB(255, 159, 245, 170),
+                                                                                //             shape: BoxShape.circle),
+                                                                                //       )
+                                                                                //     : Container(),
+                                                                              ],
+                                                                            )
+                                                                          : Container()),
+                                                                ),
+                                                              );
+                                                            }))
+                                                    .toList()
+                                              ]))
                                       .toList()
                                 ]),
                           )
@@ -279,20 +289,21 @@ class CalendarState extends State<Calendar> {
   Future<void> cliqueDireito(
       PointerDownEvent event, Dia atual, DeveresController deveres) async {
     debugPrint(event.buttons.toString());
+    var turmas = GetIt.I.get<Turmas>();
 
-    /*if (event.kind == PointerDeviceKind.mouse &&
+    if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton &&
-        context.read<TurmasStateDesktop>().turmaAtual != null &&
-        (context.read<TurmasStateDesktop>().turmaAtual?.isAdmin ?? false)) {
+        turmas.turmaAtual.value != null &&
+        (turmas.turmaAtual.value?.isAdmin ?? false)) {
       await cadastraDeverDesktop(context, atual.data);
-      await context.read<TurmasStateDesktop>().refreshDeveres(context);
-      context.read<DeveresController>().buildCalendar(DateTime.now(), context);
+      await turmas.getData();
+      deveres.buildCalendar(DateTime.now(), context);
     } else {
       if (deveres.diaAtual == atual) {
         deveres.diaAtual = null;
       } else {
         deveres.diaAtual = atual;
       }
-    }*/
+    }
   }
 }

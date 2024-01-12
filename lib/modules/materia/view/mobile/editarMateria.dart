@@ -168,8 +168,12 @@ class _EditarMateriaState extends State<EditarMateria> {
                                       });
                                       Navigator.pop(
                                           context,
-                                          Materia(widget.materia.id, nome.text,
-                                              prof.text, contato.text));
+                                          Materia(
+                                              nome.text,
+                                              prof.text,
+                                              contato.text,
+                                              null,
+                                              widget.materia.id));
                                       // turmas.getTurmas(
                                       //     Provider.of<TurmasLocal>(
                                       //         context,

@@ -1,5 +1,11 @@
 import 'package:cronolab/modules/materia/materia.dart';
 
+enum DeverUrgencia {
+  alta,
+  media,
+  baixa,
+}
+
 class Dever {
   // var _firestore = FirebaseFirestore.instance.collection("");
   String title;
@@ -12,6 +18,7 @@ class Dever {
   bool? status;
   DateTime? ultimaModificacao;
   bool? deletado;
+  late DeverUrgencia deverUrgencia;
 
   Dever(
       {this.id,
@@ -23,7 +30,16 @@ class Dever {
       this.status,
       this.materia,
       this.ultimaModificacao,
-      this.deletado});
+      this.deletado}) {
+    var hoje = DateTime.now().difference(data);
+    if (hoje.inDays.abs() > 5) {
+      deverUrgencia = DeverUrgencia.baixa;
+    } else if (hoje.inDays.abs() > 2) {
+      deverUrgencia = DeverUrgencia.media;
+    } else {
+      deverUrgencia = DeverUrgencia.alta;
+    }
+  }
 
   Dever.fromJson(Map document)
       : this(
@@ -32,6 +48,7 @@ class Dever {
             materiaID: document["idMateria"] as int,
             ultimaModificacao: ((document["ultimaModificacao"] as DateTime?)),
             data: (DateTime.parse(document['dataHora'])),
+            status: document["concluiu"] == 0 ? false : true,
             pontos: double.tryParse(document['pontos'].toString()),
             local: document["local"].toString());
 
@@ -98,6 +115,4 @@ class Dever {
       "status": status == true ? 1 : 0,
     };
   }
-
-  delete() {}
 }

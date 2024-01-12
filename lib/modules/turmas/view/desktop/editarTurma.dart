@@ -1,5 +1,6 @@
 import 'package:cronolab/modules/materia/materia.dart';
 import 'package:cronolab/modules/materia/view/mobile/addMateria.dart';
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/view/mobile/gerenciarAdmins.dart';
 import 'package:cronolab/shared/colors.dart' as color;
 import 'package:cronolab/shared/colors.dart';
@@ -7,6 +8,7 @@ import 'package:cronolab/shared/components/myInput.dart';
 import 'package:cronolab/shared/fonts.dart';
 import 'package:cronolab/shared/models/settings.dart' as sett;
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../turma.dart';
 
@@ -27,6 +29,8 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
   late AnimationController controller;
   bool excluindo = false;
   late Turma turma;
+  late Turmas turmas;
+  List<Materia> materias = [];
   bool privada = false;
   bool loading = false;
 
@@ -34,6 +38,8 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
   void initState() {
     super.initState();
     turma = widget.turma;
+    turmas = GetIt.I.get<Turmas>();
+    materias = turmas.getMateriasFromTurma(turma);
     controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
     animation = Tween<double>(begin: 100, end: 0).animate(controller)
@@ -172,11 +178,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                 child: Column(
                   children: [
                     Text(
-                      "Matérias (" +
-                          turma.materia.length.toString() +
-                          "/" +
-                          //context.read<sett.Settings>().limMaterias.toString() +
-                          ")",
+                      "Matérias (" + materias.length.toString() + "/10)",
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                     const SizedBox(height: 15),
@@ -189,16 +191,16 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                         ),
                         child: Stack(
                           children: [
-                            turma.materia.isNotEmpty
+                            materias.isNotEmpty
                                 ? Padding(
                                     padding: const EdgeInsets.all(10),
                                     child: ListView.builder(
-                                      itemCount: turma.materia.length,
+                                      itemCount: materias.length,
                                       itemBuilder: (context, i) => ListTile(
                                           onTap: () async {
                                             Materia? newMateria =
                                                 await editarMateria(context,
-                                                    turma.materia[i], turma);
+                                                    materias[i], turma);
                                             /*   Materia? newMateria =
                                             await Navigator.push(
                                                 context,
@@ -213,7 +215,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                                 .updateMateria(
                                                     turma.id, newMateria);*/
 
-                                            turma.materia[i] = newMateria;
+                                            materias[i] = newMateria;
                                             setState(() {});
                                           },
                                           shape: RoundedRectangleBorder(
@@ -223,7 +225,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .primary),
-                                          title: Text(turma.materia[i].nome,
+                                          title: Text(materias[i].nome,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .labelMedium)),
@@ -252,17 +254,13 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                                       turma.id.toString(),
                                                       () {})
                                                   .then((value) async {
-                                                /*var newTurma = await context
-                                                    .read<TurmasStateDesktop>()
-                                                    .refreshTurma(turma.id);
-                                                if (newTurma != null) {
-                                                  turma = newTurma;
-                                                }*/
+                                                materias =
+                                                    turmas.getMateriasFromTurma(
+                                                        turma);
+
                                                 setState(() {});
                                               });
-                                              /*context
-                                                  .read<TurmasStateDesktop>()
-                                                  .getTurmas(context);*/
+
                                               setState(() {});
                                             } else {
                                               showDialog(
@@ -405,7 +403,9 @@ Future<Materia?> editarMateria(
                                         setstate(() {
                                           loading = true;
                                         });
-                                        //await turma.deleteMateria(materia.id);
+                                        GetIt.I
+                                            .get<Turmas>()
+                                            .deleteMateria(materia);
 
                                         setstate(() {
                                           loading = false;

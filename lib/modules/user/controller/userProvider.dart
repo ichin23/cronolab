@@ -38,6 +38,7 @@ class UserProvider {
       if (value.statusCode == 200) {
         var body = jsonDecode(value.body) as Map;
         token.value = body["accessToken"];
+        preferences!.setString("accessToken", body["accessToken"]);
         this.email.value = body["email"];
         nome.value = body["nome"];
       }
