@@ -15,7 +15,7 @@ final getTurmas = Uri.parse(baseUrl + "/getTurmas");
 final getMaterias = Uri.parse(baseUrl + "/getMaterias");
 final getParticipantes = Uri.parse(baseUrl + "/getParticipantes");
 
-final addDever = Uri.parse(baseUrl + "/dever");
-final addMateria = Uri.parse(baseUrl + "/materia");
+final dever = Uri.parse(baseUrl + "/dever");
+final materia = Uri.parse(baseUrl + "/materia");
 
 final statusDever = Uri.parse(baseUrl + "/statusDever");

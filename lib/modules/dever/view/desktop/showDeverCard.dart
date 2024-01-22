@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/shared/fonts.dart';
@@ -24,6 +25,25 @@ class _ShowDeverCardState extends State<ShowDeverCard> {
       contentPadding: EdgeInsets.zero,
       actions: [
         TextButton(
+          child: const Text("Deletar", style: TextStyle(color: Colors.white38)),
+          onPressed: GetIt.I.get<Turmas>().checkAdmin(widget.dever)
+              ? () async {
+                  var cancel = BotToast.showLoading();
+                  try {
+                    await GetIt.I.get<Turmas>().deleteDever(widget.dever);
+                  } catch (e) {
+                    print(e);
+                  } finally {
+                    cancel();
+                    GetIt.I
+                        .get<Turmas>()
+                        .getData()
+                        .then((value) => Navigator.pop(context));
+                  }
+                }
+              : null,
+        ),
+        TextButton(
             child:
                 Text((widget.dever.status ?? false) ? "Desfazer" : "Concluir"),
             onPressed: () async {
@@ -32,7 +52,7 @@ class _ShowDeverCardState extends State<ShowDeverCard> {
                   widget.dever.id!, !(widget.dever.status ?? false));
               await turmas.getData();
               Navigator.pop(context);
-            })
+            }),
       ],
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.45,

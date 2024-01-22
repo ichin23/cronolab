@@ -215,7 +215,7 @@ cadastraDeverDesktop(BuildContext context, DateTime? data) async {
                                 title: titulo.text,
                                 pontos: double.parse(pontos.text),
                                 local: local.text);
-                            turmas.cadastraDever(dever);
+                            await turmas.cadastraDever(dever);
                             Navigator.pop(context);
                             turmas.getData().then((value) => GetIt.I
                                 .get<DeveresController>()

@@ -1,7 +1,6 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/appBar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/calendar.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
-import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/dever/view/desktop/cadastraDever.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverTileList.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
@@ -31,7 +30,6 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
     deveres = GetIt.I.get<DeveresController>();
     super.initState();
     deveres.buildCalendar(DateTime.now(), context);
-    //turmasFuture = context.read<TurmasStateDesktop>().getTurmas(context);
   }
 
   @override
@@ -89,6 +87,13 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                                     : turmas.getDeveresFromTurma()[i],
                                                                 index: i,
                                                                 notifyParent: () {
+                                                                  GetIt.I
+                                                                      .get<
+                                                                          DeveresController>()
+                                                                      .buildCalendar(
+                                                                          DateTime
+                                                                              .now(),
+                                                                          context);
                                                                   setState(
                                                                       () {});
                                                                 }));
@@ -106,7 +111,7 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                                 deveres.diaAtual
                                                                     ?.data)
                                                             .then((value) {
-                                                          turmas.getData();
+                                                          setState(() {});
                                                         });
                                                       } else {
                                                         //TODO:
@@ -153,6 +158,12 @@ class _HomePageDesktopState extends State<HomePageDesktop> {
                                                               .deveres.value[i],
                                                       index: i,
                                                       notifyParent: () {
+                                                        GetIt.I
+                                                            .get<
+                                                                DeveresController>()
+                                                            .buildCalendar(
+                                                                DateTime.now(),
+                                                                context);
                                                         setState(() {});
                                                       })))
                                       : Container(

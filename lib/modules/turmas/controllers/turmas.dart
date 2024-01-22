@@ -51,6 +51,13 @@ class Turmas {
     //await getMaterias();
   }
 
+  checkAdmin(Dever dever) {
+    return turmas
+        .where((t) => t.id == getMateriaById(dever.materiaID!)!.turmaId!)
+        .toList()[0]
+        .isAdmin;
+  }
+
   Future getMaterias() async {
     var turmasIds = turmas.map((e) => e.id).toList();
 
@@ -96,13 +103,18 @@ class Turmas {
   }
 
   cadastraDever(Dever dever) async {
-    var res = await http.post(r.addDever,
+    var res = await http.post(r.dever,
         headers: r.headersAuth, body: jsonEncode(dever.toJson()));
+  }
+
+  deleteDever(Dever dever) async {
+    var res = await http.delete(r.dever.replace(query: "deverId=${dever.id}"),
+        headers: r.headersAuth);
   }
 
   addMateria(Materia materia) async {
     try {
-      var res = await http.post(r.addMateria,
+      var res = await http.post(r.materia,
           headers: r.headersAuth, body: jsonEncode(materia.toJson()));
       debugPrint(res.body);
     } catch (e) {
