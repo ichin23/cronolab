@@ -50,7 +50,6 @@ class _DeverDetailsState extends State<DeverDetails> {
     title.text = dever.title;
     data.text = dateStr.format(dever.data);
     hora.text = horaStr.format(dever.data);
-    local.text = dever.local ?? "";
     //editavel = TurmasLocal.to.turmaAtual!.isAdmin;
     editavel = false;
     // debugPrint(editavel);

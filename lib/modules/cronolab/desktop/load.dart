@@ -16,7 +16,7 @@ class _LoadDataDesktopState extends State<LoadDataDesktop> {
   @override
   void initState() {
     super.initState();
-    future = GetIt.I.get<Turmas>().getData();
+    future = GetIt.I.get<TurmasServer>().getData();
   }
 
   @override

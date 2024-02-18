@@ -5,7 +5,7 @@ import '../materia/materia.dart';
 
 class Turma {
   String nome;
-  int id;
+  String id;
   bool isAdmin;
   List<Dever>? deveres;
   List<Materia> materia;

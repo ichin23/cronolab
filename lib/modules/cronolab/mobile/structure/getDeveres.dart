@@ -6,7 +6,7 @@ enum ShowView { Grid, List }
 
 class GetDeveres extends StatefulWidget {
   const GetDeveres(this.turmas, {Key? key}) : super(key: key);
-  final Turmas turmas;
+  final TurmasServer turmas;
   @override
   State<GetDeveres> createState() => _GetDeveresState();
 }

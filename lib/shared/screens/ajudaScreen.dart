@@ -31,6 +31,10 @@ class _AjudaScreenState extends State<AjudaScreen> {
             tamanhoAtual = snap.data?.length ?? 0;
             return CustomScrollView(
               slivers: [
+                const SliverToBoxAdapter(
+                    child: BackButton(
+                  color: primaryDark,
+                )),
                 SliverPadding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 25, vertical: 20),

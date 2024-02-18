@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/dever/dever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
@@ -21,155 +22,159 @@ class _ShowDeverCardState extends State<ShowDeverCard> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog.adaptive(
-      backgroundColor: const Color(0xff332E33),
-      contentPadding: EdgeInsets.zero,
-      actions: [
-        TextButton(
-          child: const Text("Deletar", style: TextStyle(color: Colors.white38)),
-          onPressed: GetIt.I.get<Turmas>().checkAdmin(widget.dever)
-              ? () async {
-                  var cancel = BotToast.showLoading();
-                  try {
-                    await GetIt.I.get<Turmas>().deleteDever(widget.dever);
-                  } catch (e) {
-                    print(e);
-                  } finally {
-                    cancel();
-                    GetIt.I
-                        .get<Turmas>()
-                        .getData()
-                        .then((value) => Navigator.pop(context));
-                  }
-                }
-              : null,
-        ),
-        TextButton(
+        backgroundColor: const Color(0xff332E33),
+        contentPadding: EdgeInsets.zero,
+        actions: [
+          TextButton(
             child:
-                Text((widget.dever.status ?? false) ? "Desfazer" : "Concluir"),
-            onPressed: () async {
-              var turmas = GetIt.I.get<Turmas>();
-              await turmas.statusDever(
-                  widget.dever.id!, !(widget.dever.status ?? false));
-              await turmas.getData();
-              Navigator.pop(context);
-            }),
-      ],
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.45,
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 40, left: 40),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.dever.title,
-                              style: const TextStyle(
-                                  color: colors.whiteColor,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                            Text(
-                                GetIt.I
-                                        .get<Turmas>()
-                                        .getMateriaById(widget.dever.materiaID!)
-                                        ?.nome ??
-                                    "5",
-                                style: const TextStyle(
-                                    color: colors.darkPrimary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500)),
-                          ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Valor: ${widget.dever.pontos.toString()}",
-                              style: const TextStyle(
-                                  color: colors.whiteColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            Text("Local: ${widget.dever.local ?? ''}",
-                                style: const TextStyle(
-                                    color: colors.whiteColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700)),
-                          ]),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Nota: ",
-                                style: TextStyle(
-                                    color: colors.whiteColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700)),
-                            Container(
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.15,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: const Color(0xff393939)))
-                          ])
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.35,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                const Text("Deletar", style: TextStyle(color: Colors.white38)),
+            onPressed: GetIt.I.get<TurmasServer>().checkAdmin(widget.dever)
+                ? () async {
+                    var cancel = BotToast.showLoading();
+                    try {
+                      await GetIt.I
+                          .get<TurmasServer>()
+                          .deleteDever(widget.dever);
+                    } catch (e) {
+                      print(e);
+                    } finally {
+                      cancel();
+                      GetIt.I
+                          .get<TurmasServer>()
+                          .getData()
+                          .then((value) => Navigator.pop(context));
+                    }
+                  }
+                : null,
+          ),
+          TextButton(
+              child: Text(
+                  (widget.dever.status ?? false) ? "Desfazer" : "Concluir"),
+              onPressed: () async {
+                var turmas = GetIt.I.get<TurmasServer>();
+                await turmas.updateDever(widget.dever
+                    .copyWith(status: !(widget.dever.status ?? false)));
+                await turmas.getData();
+                Navigator.pop(context);
+              }),
+        ],
+        content: Container(
+            width: MediaQuery.of(context).size.width * 0.45,
+            constraints: const BoxConstraints(maxHeight: 360, maxWidth: 576),
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Stack(children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40, left: 40, right: 40),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          children: [
-                            const Icon(Icons.calendar_today,
-                                size: 80, color: Colors.white),
-                            Text(data.format(widget.dever.data),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700)),
-                          ],
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.dever.title,
+                                  style: const TextStyle(
+                                      color: colors.whiteColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800),
+                                ),
+                                Text(
+                                    GetIt.I
+                                            .get<TurmasServer>()
+                                            .getMateriaById(
+                                                widget.dever.materiaID!)
+                                            ?.nome ??
+                                        "5",
+                                    style: const TextStyle(
+                                        color: colors.darkPrimary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500)),
+                              ]),
                         ),
                         Column(
-                          children: [
-                            const Icon(Icons.schedule_outlined,
-                                size: 80, color: Colors.white),
-                            Text(hora.format(widget.dever.data),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Valor: ${widget.dever.pontos.toString()}",
                                 style: const TextStyle(
-                                    color: Colors.white,
+                                    color: colors.whiteColor,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w700)),
-                          ],
-                        )
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ]),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Nota: ",
+                                  style: TextStyle(
+                                      color: colors.whiteColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700)),
+                              Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: const Color(0xff393939)),
+                                  child: SingleChildScrollView(
+                                      child:
+                                          Text(widget.dever.descricao ?? "")))
+                            ]),
                       ],
                     ),
-                  ),
-                  Container()
-                ],
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      constraints: const BoxConstraints(maxHeight: 270),
+                      width: 80,
+                      margin: const EdgeInsets.only(right: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 80, color: Colors.white),
+                              Text(data.format(widget.dever.data),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700)),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const Icon(Icons.schedule_outlined,
+                                  size: 80, color: Colors.white),
+                              Text(hora.format(widget.dever.data),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-                top: 0,
-                right: 100,
-                child: CustomPaint(
-                    painter: FlagStatusPainter(widget.dever.deverUrgencia)))
-          ],
-        ),
-      ),
-    );
+              Positioned(
+                  top: 0,
+                  right: 100,
+                  child: CustomPaint(
+                      painter: FlagStatusPainter(widget.dever.deverUrgencia)))
+            ])));
   }
 }
 

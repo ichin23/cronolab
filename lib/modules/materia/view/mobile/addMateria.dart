@@ -144,14 +144,14 @@ Future addMateria(
                                             });
                                             debugPrint("OKOK");
                                             await GetIt.I
-                                                .get<Turmas>()
+                                                .get<TurmasServer>()
                                                 .addMateria(Materia(
                                                     nome.text,
                                                     prof.text,
                                                     contato.text,
-                                                    int.parse(turmaID)));
+                                                    turmaID));
                                             await GetIt.I
-                                                .get<Turmas>()
+                                                .get<TurmasServer>()
                                                 .getData();
                                             Navigator.pop(context);
 

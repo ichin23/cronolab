@@ -58,7 +58,7 @@ class DeveresController with ChangeNotifier {
     diaAtual = null;
 
     List<Dever> deveres = [];
-    var turmas = GetIt.I.get<Turmas>();
+    var turmas = GetIt.I.get<TurmasServer>();
 
     if (turmas.turmaAtual.value != null) {
       deveres = turmas.getDeveresFromTurma();

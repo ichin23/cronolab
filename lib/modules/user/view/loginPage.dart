@@ -316,10 +316,12 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () async {
                               if (!_form.currentState!.validate()) return;
                               var userP = GetIt.I.get<UserProvider>();
+                              print(cadastro);
                               if (cadastro) {
                                 var cancel = BotToast.showLoading();
-                                //await userP.cadastro(
-                                //    email.text, senha.text, nome.text);
+
+                                await userP.cadastro(
+                                    nome.text, email.text, senha.text, context);
                                 cancel();
                               } else {
                                 var cancel = BotToast.showLoading();

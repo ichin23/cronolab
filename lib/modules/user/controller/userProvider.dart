@@ -26,6 +26,34 @@ class UserProvider {
     });
   }
 
+  cadastro(
+      String nome, String email, String senha, BuildContext context) async {
+    try {
+      var values = await http.post(r.cadastro,
+          headers: r.headers,
+          body: jsonEncode({
+            "email": email,
+            "password": senha,
+            "nome": nome,
+          }));
+      await login(email, senha, context);
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          backgroundColor: backgroundDark,
+          title: Text(
+            "Erro no login",
+            style: TextStyle(color: whiteColor),
+          ),
+          content: Text(
+              "Email ou senha incorretos. Certeza que já possui sua conta?",
+              style: TextStyle(color: whiteColor)),
+        ),
+      );
+    }
+  }
+
   login(String email, String senha, BuildContext context) async {
     try {
       var value = await http.post(r.login,
@@ -43,6 +71,7 @@ class UserProvider {
         nome.value = body["nome"];
       }
     } catch (e) {
+      print(e);
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
@@ -57,6 +86,7 @@ class UserProvider {
         ),
       );
     }
+    print(token.value);
   }
 
   getData() {

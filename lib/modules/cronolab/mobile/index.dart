@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List?> dataTurmas = Future.value();
   var defaultView = ShowView.Grid;
   bool loading = false;
-  Future loadFromFirebase(Turmas turmas) async {
+  Future loadFromFirebase(TurmasServer turmas) async {
     //if(loading)return;
     loading = true;
 

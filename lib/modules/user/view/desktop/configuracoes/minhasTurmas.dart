@@ -12,11 +12,11 @@ class MinhasTurmasDesktop extends StatefulWidget {
 }
 
 class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
-  late Turmas turmas;
+  late TurmasServer turmas;
 
   @override
   void initState() {
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     super.initState();
   }
 
@@ -28,7 +28,7 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
         children: [
           ListView.builder(
             controller: ScrollController(),
-            itemCount: turmas.turmas.length,
+            itemCount: turmas.turmas.value.length,
             itemBuilder: (context, i) => MouseRegion(
               cursor: SystemMouseCursors.click,
               child: ListTile(
@@ -61,12 +61,12 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 onTap: () {
-                  if (turmas.turmas[i].isAdmin) {
+                  if (turmas.turmas.value[i].isAdmin) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: ((context) =>
-                                EditarTurmaDesktop(turmas.turmas[i]))));
+                                EditarTurmaDesktop(turmas.turmas.value[i]))));
                   } else {
                     showDialog(
                         context: context,
@@ -78,7 +78,7 @@ class _MinhasTurmasDesktopState extends State<MinhasTurmasDesktop> {
                   }
                 },
                 title: Text(
-                  turmas.turmas[i].nome,
+                  turmas.turmas.value[i].nome,
                   style: labelDark,
                 ),
               ),

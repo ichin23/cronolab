@@ -21,10 +21,10 @@ class DeverTileList extends StatefulWidget {
 
 class _DeverTileListState extends State<DeverTileList> {
   List<PopupMenuItem> popMenu = [];
-  late Turmas turmas;
+  late TurmasServer turmas;
   @override
   void initState() {
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     super.initState();
     //var turmas = Provider.of<Turmas>(context, listen:false);
 
@@ -120,9 +120,9 @@ class _DeverTileListState extends State<DeverTileList> {
     var width = MediaQuery.of(context).size.width;
     Color corText = widget.dever.status ?? false
         ? const Color.fromARGB(255, 109, 109, 109)
-        : data.difference(DateTime.now()).inDays < 1
+        : widget.dever.deverUrgencia == DeverUrgencia.alta
             ? const Color(0xff813838)
-            : data.difference(DateTime.now()).inDays < 5
+            : widget.dever.deverUrgencia == DeverUrgencia.media
                 ? const Color(0xFF817938)
                 : const Color(0xff3A8138);
 

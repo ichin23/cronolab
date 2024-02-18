@@ -289,7 +289,7 @@ class CalendarState extends State<Calendar> {
   Future<void> cliqueDireito(
       PointerDownEvent event, Dia atual, DeveresController deveres) async {
     debugPrint(event.buttons.toString());
-    var turmas = GetIt.I.get<Turmas>();
+    var turmas = GetIt.I.get<TurmasServer>();
 
     if (event.kind == PointerDeviceKind.mouse &&
         event.buttons == kSecondaryMouseButton &&

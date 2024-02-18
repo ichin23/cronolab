@@ -29,7 +29,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
   late AnimationController controller;
   bool excluindo = false;
   late Turma turma;
-  late Turmas turmas;
+  late TurmasServer turmas;
   List<Materia> materias = [];
   bool privada = false;
   bool loading = false;
@@ -38,7 +38,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
   void initState() {
     super.initState();
     turma = widget.turma;
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     materias = turmas.getMateriasFromTurma(turma);
     controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
@@ -68,8 +68,10 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(
           "Gerenciar ${turma.nome}",
+          style: const TextStyle(color: primaryDark),
         ),
         leading: IconButton(
             onPressed: () {
@@ -77,7 +79,7 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
             },
             icon: const Icon(
               Icons.arrow_back_ios,
-              color: Colors.black45,
+              color: primaryDark,
             )),
       ),
       body: SafeArea(
@@ -89,7 +91,8 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                 width: size.width * 0.3,
                 child: Stack(
                   children: [
-                    ListView(children: [
+                    Column(children: [
+                      const SizedBox(height: 38),
                       MyField(
                           nome: nome,
                           onChanged: (val) {
@@ -155,8 +158,29 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                         trailing: const Icon(Icons.arrow_forward_ios,
                             color: color.whiteColor),
                       ),
-                      const SizedBox(height: 15),
-
+                      const Spacer(),
+                      SizedBox(
+                        width: size.width * 0.3 - 30,
+                        height: 50,
+                        child: TextButton(
+                          onPressed: () {
+                            GetIt.I
+                                .get<TurmasServer>()
+                                .sairTurma(context, turma.id);
+                          },
+                          child: const Text(
+                            "Sair",
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.w700),
+                          ),
+                          style: TextButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: const BorderSide(
+                                      color: Colors.red, width: 2))),
+                        ),
+                      )
                       // : Container()
                     ]),
                     Visibility(
@@ -201,14 +225,10 @@ class _EditarTurmaDesktopState extends State<EditarTurmaDesktop>
                                             Materia? newMateria =
                                                 await editarMateria(context,
                                                     materias[i], turma);
-                                            /*   Materia? newMateria =
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditarMateria(
-                                                            turma.materia[i],
-                                                            turma.id))); */
+                                            materias = GetIt.I
+                                                .get<TurmasServer>()
+                                                .getMateriasFromTurma(turma);
+
                                             if (newMateria == null) return;
                                             /*context
                                                 .read<TurmasStateDesktop>()
@@ -403,9 +423,12 @@ Future<Materia?> editarMateria(
                                         setstate(() {
                                           loading = true;
                                         });
-                                        GetIt.I
-                                            .get<Turmas>()
+                                        await GetIt.I
+                                            .get<TurmasServer>()
                                             .deleteMateria(materia);
+                                        await GetIt.I
+                                            .get<TurmasServer>()
+                                            .getData();
 
                                         setstate(() {
                                           loading = false;
@@ -430,6 +453,9 @@ Future<Materia?> editarMateria(
                                           setstate(() {
                                             loading = true;
                                           });
+                                          GetIt.I
+                                              .get<TurmasServer>()
+                                              .editarMateria(materia);
                                           /* await FirebaseFirestore.instance
                                               .collection("turmas")
                                               .doc(turma.id)

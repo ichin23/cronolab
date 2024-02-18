@@ -18,7 +18,7 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
     with TickerProviderStateMixin {
   late TabController tabController;
   late Turma turma;
-  late Turmas turmas;
+  late TurmasServer turmas;
   late Future<List> future;
 
   void refresh() {
@@ -30,7 +30,7 @@ class _GerenciarAdminsState extends State<GerenciarAdmins>
   void initState() {
     super.initState();
     turma = widget.turma;
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     future = turmas.getParticipantes(turma);
     tabController = TabController(length: 2, vsync: this);
     refresh();

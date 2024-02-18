@@ -8,7 +8,7 @@ import '../../../materia/materia.dart';
 
 DateFormat dateStr = DateFormat("dd/MM/yy");
 
-cadastra(BuildContext context, Turmas turmas, Function() setState) async {
+cadastra(BuildContext context, TurmasServer turmas, Function() setState) async {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController titulo = TextEditingController();
   TextEditingController materia = TextEditingController();

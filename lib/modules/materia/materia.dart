@@ -3,9 +3,14 @@ class Materia {
   String nome;
   String? prof;
   String? contato;
-  int? turmaId;
+  String? turmaId;
 
   Materia(this.nome, [this.prof, this.contato, this.turmaId, this.id]);
+
+  copyWith({String? nome, String? prof, String? contato}) {
+    return Materia(nome ?? this.nome, prof ?? this.prof,
+        contato ?? this.contato, turmaId, id);
+  }
 
   Materia.fromJson(Map json)
       : this(json["nome"], json["professor"], json["contato"], json["turmaID"],

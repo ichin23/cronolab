@@ -26,14 +26,14 @@ class _EditarTurmaState extends State<EditarTurma>
   late AnimationController controller;
   bool excluindo = false;
   late Turma turma;
-  late Turmas turmas;
+  late TurmasServer turmas;
   bool privada = false;
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     turma = widget.turma;
     controller = AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);

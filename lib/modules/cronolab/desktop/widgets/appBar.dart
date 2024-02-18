@@ -1,8 +1,10 @@
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
+import 'package:cronolab/modules/turmas/view/desktop/novaTurma.dart';
 import 'package:cronolab/shared/colors.dart';
 import 'package:cronolab/shared/fonts.dart';
+import 'package:cronolab/shared/models/cronolabExceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -14,12 +16,12 @@ class AppBarDesktop extends StatefulWidget {
 }
 
 class _AppBarDesktopState extends State<AppBarDesktop> {
-  late Turmas turmas;
+  late TurmasServer turmas;
   late DeveresController deveres;
 
   @override
   void initState() {
-    turmas = GetIt.I.get<Turmas>();
+    turmas = GetIt.I.get<TurmasServer>();
     deveres = GetIt.I.get<DeveresController>();
     super.initState();
   }
@@ -69,150 +71,79 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                                               : primaryDark),
                                     ))),
                             Expanded(
-                                child: ListView(
+                                child: ValueListenableBuilder<List<Turma>>(
+                              builder: (context, turmasList, _) {
+                                return ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: [
-                                  ...turmas.turmas
-                                      .map(
-                                        (e) => Container(
-                                          margin: const EdgeInsets.only(top: 8),
-                                          child: MouseRegion(
-                                            cursor: SystemMouseCursors.click,
-                                            child: InkWell(
-                                              onTap: () async {
-                                                turmas.changeTurma(e);
-                                                deveres.buildCalendar(
-                                                    DateTime.now(), context);
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft: Radius
-                                                              .circular(5),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  5),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  0)),
-                                                  color: e.id == turmaAtual?.id
-                                                      ? primaryDark
-                                                      : Colors.transparent,
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                child: Text(
-                                                  e.nome,
-                                                  style: TextStyle(
-                                                      color:
-                                                          e.id == turmaAtual?.id
+                                      ...turmasList
+                                          .map(
+                                            (e) => Container(
+                                              margin:
+                                                  const EdgeInsets.only(top: 8),
+                                              child: MouseRegion(
+                                                cursor:
+                                                    SystemMouseCursors.click,
+                                                child: InkWell(
+                                                  onTap: () async {
+                                                    await turmas.changeTurma(e);
+                                                    await deveres.buildCalendar(
+                                                        DateTime.now(),
+                                                        context);
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              topLeft: Radius
+                                                                  .circular(5),
+                                                              topRight: Radius
+                                                                  .circular(5),
+                                                              bottomLeft: Radius
+                                                                  .circular(0)),
+                                                      color: e.id ==
+                                                              turmaAtual?.id
+                                                          ? primaryDark
+                                                          : Colors.transparent,
+                                                    ),
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Text(
+                                                      e.nome,
+                                                      style: TextStyle(
+                                                          color: e.id ==
+                                                                  turmaAtual?.id
                                                               ? backgroundDark
                                                               : branco50Dark),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  IconButton(
-                                      onPressed: () {
-                                        TextEditingController code =
-                                            TextEditingController();
-                                        bool loading = false;
-
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                turmas.turmas.length < 3
-                                                    ? StatefulBuilder(builder:
-                                                        (context, setstate) {
-                                                        return AlertDialog(
-                                                          content: Container(
-                                                            constraints:
-                                                                const BoxConstraints(
-                                                                    minHeight:
-                                                                        100),
-                                                            child: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Digite o código da turma",
-                                                                    style:
-                                                                        labelDark,
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          8),
-                                                                  TextField(
-                                                                    style:
-                                                                        labelDark,
-                                                                    controller:
-                                                                        code,
-                                                                    onSubmitted:
-                                                                        (codeStr) async {
-                                                                      loading =
-                                                                          true;
-                                                                      setstate(
-                                                                          () {});
-                                                                      //TODO:Cria turma
-
-                                                                      loading =
-                                                                          false;
-                                                                      setstate(
-                                                                          () {});
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                      await turmas
-                                                                          .getData();
-                                                                    },
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          8),
-                                                                  TextButton(
-                                                                    child: loading
-                                                                        ? const CircularProgressIndicator()
-                                                                        : const Text(
-                                                                            "Adicionar"),
-                                                                    onPressed: loading
-                                                                        ? null
-                                                                        : () async {
-                                                                            loading =
-                                                                                true;
-                                                                            setstate(() {});
-                                                                            //TODO: Criar turma
-                                                                            loading =
-                                                                                false;
-                                                                            setstate(() {});
-                                                                            Navigator.pop(context);
-                                                                            turmas.getData();
-                                                                          },
-                                                                  )
-                                                                ]),
-                                                          ),
-                                                        );
-                                                      })
-                                                    : AlertDialog(
-                                                        content: Container(
-                                                          child: const Text(
-                                                            "Você já atingiu o limite de turmas!",
-                                                            style: labelDark,
-                                                          ),
-                                                        ),
-                                                      ));
-                                      },
-                                      icon: const Icon(
-                                        Icons.add,
-                                        color: primaryDark,
-                                      ))
-                                ])),
+                                          )
+                                          .toList(),
+                                      IconButton(
+                                          onPressed: () async {
+                                            try {
+                                              await novaTurma(context);
+                                            } on CronolabException catch (e) {
+                                              switch (e.code) {
+                                                case 8:
+                                                  novaTurma(context, true,
+                                                      e.data as String);
+                                              }
+                                            }
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(
+                                            Icons.add,
+                                            color: primaryDark,
+                                          ))
+                                    ]);
+                              },
+                              valueListenable: turmas.turmas,
+                            )),
                             Row(
                               children: [
                                 IconButton(
@@ -255,7 +186,7 @@ class _AppBarDesktopState extends State<AppBarDesktop> {
                                   items: [
                                     const DropdownMenuItem(
                                         child: Text("Todos"), value: null),
-                                    ...turmas.turmas
+                                    ...turmas.turmas.value
                                         .map((e) => DropdownMenuItem(
                                               child: Text(e.nome),
                                               value: e,
