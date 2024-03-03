@@ -73,66 +73,39 @@ class DeveresController with ChangeNotifier {
         Dia1Pronto: $dia1Pronto
       ''');*/
 
-      weeks.add(List.generate(7, (index) {
-        if (deveres.isNotEmpty) {
-          if (!dia1Pronto) {
-            if (index == changeWeekStart(diaI.weekday)) {
-              dia1Pronto = true;
+      // Definir a data inicial
+      DateTime dataInicial = DateTime.now();
 
-              return Dia(
-                  diaI,
-                  deveres
-                      .where((dever) =>
-                          dever.data.day == diaI.day &&
-                          dever.data.month == diaI.month &&
-                          dever.data.year == diaI.year)
-                      .toList());
-            } else {
-              return Dia(
-                diaI.subtract(
-                    Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
-              );
-            }
-          } else {
-            diaI = diaI.add(const Duration(days: 1));
+      // Obter o primeiro dia do mês
+      DateTime primeiroDiaDoMes =
+          DateTime(dataInicial.year, dataInicial.month, 1);
 
-            return Dia(
-                diaI,
-                deveres
-                    .where((dever) =>
-                        dever.data.day == diaI.day &&
-                        dever.data.month == diaI.month &&
-                        dever.data.year == diaI.year)
-                    .toList());
-          }
+      // Obter o último dia do mês
+      DateTime ultimoDiaDoMes =
+          DateTime(dataInicial.year, dataInicial.month + 1, 0);
+
+      // Obter o dia da semana do primeiro dia do mês
+      int diaDaSemanaPrimeiroDia = primeiroDiaDoMes.weekday;
+
+      // Loop para percorrer as semanas do mês
+      for (DateTime data = primeiroDiaDoMes
+              .subtract(Duration(days: diaDaSemanaPrimeiroDia - 1));
+          data.isBefore(ultimoDiaDoMes);
+          data = data.add(const Duration(days: 7))) {
+        // Criar uma lista para armazenar os dias da semana
+        List<Dia> diasDaSemana = [];
+
+        // Loop para adicionar os dias da semana à lista
+        for (int j = 0; j < 7; j++) {
+          // Adicionar o dia à lista
+          diasDaSemana.add(Dia(data.add(Duration(days: j))));
         }
-        if (!dia1Pronto) {
-          if (index == diaI.weekday) {
-            dia1Pronto = true;
 
-            return Dia(
-              diaI,
-            );
-          } else {
-            return Dia(
-              diaI.subtract(
-                  Duration(days: 7 - (7 - diaI.weekday + 1) - index + 1)),
-            );
-          }
-        } else {
-          diaI = diaI.add(const Duration(days: 1));
-
-          return Dia(
-            diaI,
-          );
-        }
-      }));
-
-      if (diaI.isAfter(ultimoDia) || diaI.isAtSameMomentAs(ultimoDia)) {
-        break;
+        // Adicionar a lista de dias da semana à lista de semanas
+        weeks.add(diasDaSemana);
       }
-    }
 
-    notifyListeners();
+      notifyListeners();
+    }
   }
 }

@@ -1,7 +1,8 @@
 import 'package:cronolab/modules/user/controller/userProvider.dart';
 import 'package:get_it/get_it.dart';
 
-const baseUrl = "http://localhost:3000";
+const baseUrl =
+    "https://acf9-2804-1a10-ba11-1000-4300-8eac-f36-ba3d.ngrok-free.app";
 const headers = {'Content-Type': 'application/json'};
 var headersAuth = {
   ...headers,

@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:cronolab/modules/cronolab/desktop/load.dart';
 import 'package:cronolab/modules/cronolab/desktop/widgets/deveresController.dart';
 import 'package:cronolab/modules/cronolab/mobile/index.dart';
+import 'package:cronolab/modules/cronolab/mobile/testIndex.dart';
 import 'package:cronolab/modules/dever/view/mobile/deverDetails.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:cronolab/modules/turmas/turma.dart';
@@ -124,7 +125,7 @@ class _MainAppState extends State<MainApp> {
             secondary: secondaryDark,
             seedColor: secondaryDark,
             primary: primaryDark,
-          ).copyWith(background: backgroundDark).copyWith(error: redDark)),
+          ).copyWith(background: backgroundDark, error: redDark)),
       onGenerateRoute: (settings) {
         var args = settings.arguments;
         switch (settings.name) {
@@ -134,8 +135,10 @@ class _MainAppState extends State<MainApp> {
                   valueListenable: useProv.token,
                   builder: (context, token, _) {
                     if (token != null) {
-                      return Builder(
-                          builder: (context) => const LoadDataDesktop());
+                      return kIsWeb
+                          ? Builder(
+                              builder: (context) => const LoadDataDesktop())
+                          : const HomePage();
                     } else {
                       return MediaQuery.of(context).size.width > 800
                           ? const LoginPage()

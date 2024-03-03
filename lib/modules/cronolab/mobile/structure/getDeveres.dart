@@ -1,18 +1,21 @@
+import 'package:cronolab/modules/dever/view/mobile/deverTileList.dart';
 import 'package:cronolab/modules/dever/view/mobile/filterDever.dart';
 import 'package:cronolab/modules/turmas/controllers/turmas.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 enum ShowView { Grid, List }
 
 class GetDeveres extends StatefulWidget {
-  const GetDeveres(this.turmas, {Key? key}) : super(key: key);
-  final TurmasServer turmas;
+  const GetDeveres({Key? key}) : super(key: key);
+
   @override
   State<GetDeveres> createState() => _GetDeveresState();
 }
 
 class _GetDeveresState extends State<GetDeveres> {
   var defaultView = ShowView.List;
+  TurmasServer turmas = GetIt.I.get<TurmasServer>();
   List? listFilter;
 
   @override
@@ -125,53 +128,43 @@ class _GetDeveresState extends State<GetDeveres> {
               ),
             ],
           ),
-          /*turmas.deveresAtuais!=null && turmas.deveresAtuais!.isNotEmpty
-                        ? SizedBox(
-                            height: size.height -
-                                padding.top -
-                                padding.bottom -
-                                55 -
-                                50,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10, right: 10),
-                              child: defaultView == ShowView.Grid
-                                  ? GridView.builder(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                              childAspectRatio: 1 / 1.4,
-                                              crossAxisCount: size.width < 600
-                                                  ? 2
-                                                  : (size.width / 300).round(),
-                                              crossAxisSpacing: 5,
-                                              mainAxisSpacing: 5),
-                                      itemBuilder: (context, i) => DeverTile(
-                                          turmas.deveresAtuais![i],
-                                          notifyParent: (){
-                                            setState(() {
-
-                                            });
-                                          },
-                                          index: i),
-                                      itemCount: turmas.deveresAtuais!.length,
-                                    )
-                                  : ListView.builder(
-                                      itemCount:  turmas.deveresAtuais!.length,
-                                      itemBuilder: (context, i) =>
-                                          DeverTileList(dever:  turmas.deveresAtuais![i], index: i)),
-                            ),
+          turmas.deveres.value.isNotEmpty
+              ? SizedBox(
+                  height: size.height - padding.top - padding.bottom - 55 - 50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: defaultView == ShowView.Grid
+                        ? GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 1 / 1.4,
+                                    crossAxisCount: size.width < 600
+                                        ? 2
+                                        : (size.width / 300).round(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5),
+                            itemBuilder: (context, i) => DeverTileList(
+                                dever: turmas.deveres.value[i],
+                                notifyParent: () {
+                                  setState(() {});
+                                },
+                                index: i),
+                            itemCount: turmas.deveres.value.length,
                           )
-                        :   SizedBox(
-                            height: size.height -
-                                padding.top -
-                                padding.bottom -
-                                55 -
-                                50,
-                            child: Center(
-                                child: Text(
-                              "Não há atividades cadastradas",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            )),
-                          )*/
+                        : ListView.builder(
+                            itemCount: turmas.deveres.value.length,
+                            itemBuilder: (context, i) => DeverTileList(
+                                dever: turmas.deveres.value[i], index: i)),
+                  ),
+                )
+              : SizedBox(
+                  height: size.height - padding.top - padding.bottom - 55 - 50,
+                  child: Center(
+                      child: Text(
+                    "Não há atividades cadastradas",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )),
+                )
         ]));
   }
 }

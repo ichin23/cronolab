@@ -46,8 +46,8 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: ListView(
+                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: size.height * 0.3),
                     AnimatedOpacity(

@@ -1,4 +1,7 @@
+import 'package:cronolab/modules/turmas/controllers/turmas.dart';
+import 'package:cronolab/shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class MudarTurma extends StatefulWidget {
   const MudarTurma({super.key});
@@ -8,6 +11,7 @@ class MudarTurma extends StatefulWidget {
 }
 
 class _MudarTurmaState extends State<MudarTurma> {
+  var turmas = GetIt.I.get<TurmasServer>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,38 +22,36 @@ class _MudarTurmaState extends State<MudarTurma> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          child: ListView(children: const [
-/*
-              ...context
-                  .watch<Turmas>()
-                  .turmasSQL
-                  .turmas
-                  .map((turma) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal:12, vertical: 8),
-                    child: RadioListTile(
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      value:  turma.id,
-                      groupValue: turmas.turmaAtual?.id,
-                      onChanged: (val)async{
-                        await turmas.changeTurmaAtual(turma);
-                        await turmas.getDeveres();
-                        setState(() {
-
-                        });
-                        Navigator.pop(context);
-                      },
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    tileColor: Theme.of(context)
-                        .hoverColor,
-                        selectedTileColor: Theme.of(context).colorScheme.secondary,
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    title: Text(
-                      turma.nome,
-                      style:
-                      TextStyle(color:   whiteColor, fontWeight: FontWeight.w500,),
-                    )),
-                  ))
-                  .toList(),*/
+          child: ListView(children: [
+            ...turmas.turmas.value
+                .map((turma) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: RadioListTile<String>(
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          value: turma.id,
+                          groupValue: turmas.turmaAtual.value?.id,
+                          onChanged: (val) async {
+                            //await turmas.changeTurmaAtual(turma);
+                            await turmas.getData();
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          tileColor: Theme.of(context).hoverColor,
+                          selectedTileColor:
+                              Theme.of(context).colorScheme.secondary,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          title: Text(
+                            turma.nome,
+                            style: const TextStyle(
+                              color: whiteColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )),
+                    ))
+                .toList(),
           ]),
         ),
       ),
